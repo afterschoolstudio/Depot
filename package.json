@@ -4,20 +4,49 @@
 	"description": "Tools to help create and mod Cantata",
 	"version": "0.0.1",
 	"engines": {
-		"vscode": "^1.48.0"
+		"vscode": "^1.46.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:cantata-tools.helloWorld"
+		"onCommand:cantata-tools.interactable.new",
+		"onCommand:cantata-tools.terrain.new",
+		"onCustomEditor:cantata-tools.interactable",
+		"onCustomEditor:catCustoms.terrain"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"customEditors": [
+			{
+				"viewType": "cantata-tools.interactable",
+				"displayName": "Cantata Interactable",
+				"selector": [
+					{
+						"filenamePattern": "*.cinteractable"
+					}
+				]
+			},
+			{
+				"viewType": "cantata-tools.terrain",
+				"displayName": "Cantata Terrain",
+				"selector": [
+					{
+						"filenamePattern": "*.cterrain"
+					}
+				]
+			}
+		],
 		"commands": [
 			{
-				"command": "cantata-tools.helloWorld",
-				"title": "Hello World"
+				"command": "cantata-tools.interactable.new",
+				"title": "Create new Cantata Interactable",
+				"category": "Cantata Tools"
+			},
+			{
+				"command": "cantata-tools.interactable.new",
+				"title": "Create new Cantata Interactable",
+				"category": "Cantata Tools"
 			}
 		]
 	},
