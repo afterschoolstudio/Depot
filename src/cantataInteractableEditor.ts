@@ -82,8 +82,11 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 				// case 'delete':
 				// 	this.deleteScratch(document, e.id);
                 //     return;
-                case 'validate':
-                    this.validateInteractable(document);
+                // case 'validate':
+                //     this.validateInteractable(document);
+                //     return;
+                case 'test':
+                    vscode.window.showInformationMessage("testing from svelte component");
                     return;
 			}
 		});
@@ -96,11 +99,18 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 	 */
 	private getHtmlForWebview(webview: vscode.Webview, document: vscode.TextDocument): string {
 		// Local path to script and css for the webview
+		// const scriptUri = webview.asWebviewUri(vscode.Uri.file(
+		// 	path.join(this.context.extensionPath, 'media', 'catScratch.js')
+		// ));
+		// const styleUri = webview.asWebviewUri(vscode.Uri.file(
+		// 	path.join(this.context.extensionPath, 'media', 'catScratch.css')
+        // ));
+        
 		const scriptUri = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, 'media', 'catScratch.js')
+			path.join(this.context.extensionPath, 'compiled', 'build/bundle.js')
 		));
 		const styleUri = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, 'media', 'catScratch.css')
+			path.join(this.context.extensionPath, 'compiled', 'build/bundle.css')
 		));
 
         const json = this.getDocumentAsJson(document);
@@ -134,30 +144,53 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 				
 		// 		<script nonce="${nonce}" src="${scriptUri}"></script>
 		// 	</body>
+        // 	</html>`;
+        
+
+		// return /* html */`
+		// 	<!DOCTYPE html>
+		// 	<html lang="en">
+		// 	<head>
+		// 		<meta charset="UTF-8">
+
+		// 		<!--
+		// 		Use a content security policy to only allow loading images from https or from our extension directory,
+		// 		and only allow scripts that have a specific nonce.
+		// 		-->
+		// 		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+
+		// 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		// 		<link href="${styleUri}" rel="stylesheet" />
+
+		// 		<title>Cantata Interactable</title>
+		// 	</head>
+        //     <body>
+        //         <h1>Testing Interactable</h1>
+        //         <h1>${json.name}</h1>
+		// 	</body>
 		// 	</html>`;
-		return /* html */`
-			<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-
-				<!--
-				Use a content security policy to only allow loading images from https or from our extension directory,
-				and only allow scripts that have a specific nonce.
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-				<link href="${styleUri}" rel="stylesheet" />
-
-				<title>Cantata Interactable</title>
-			</head>
-            <body>
-                <h1>Testing Interactable</h1>
-                <h1>${json.name}</h1>
-			</body>
-			</html>`;
+        
+        
+        return /* html */`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset='utf-8'>
+            <meta name='viewport' content='width=device-width,initial-scale=1'>
+        
+            <title>Svelte app</title>
+        
+            <!--- <link rel='icon' type='image/png' href='/favicon.png'> -->
+            <!--- <link rel='stylesheet' href='/global.css'> -->
+            <link rel='stylesheet' href="${styleUri}">
+            <script> documentJSON = ${json} </script>
+            <script defer src="${scriptUri}"></script>
+        </head>
+        
+        <body>
+        </body>
+        </html>`;
 	}
 
 	/**

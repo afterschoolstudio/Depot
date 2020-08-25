@@ -51,6 +51,10 @@
 		]
 	},
 	"scripts": {
+		"svelte-build": "rollup -c",
+		"svelte-dev": "rollup -c -w",
+		"start": "sirv public",
+
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
@@ -69,6 +73,16 @@
 		"glob": "^7.1.6",
 		"mocha": "^8.0.1",
 		"typescript": "^3.8.3",
-		"vscode-test": "^1.4.0"
+		"vscode-test": "^1.4.0",
+		"@rollup/plugin-commonjs": "^14.0.0",
+		"@rollup/plugin-node-resolve": "^8.0.0",
+		"rollup": "^2.3.4",
+		"rollup-plugin-livereload": "^1.0.0",
+		"rollup-plugin-svelte": "^5.0.3",
+		"rollup-plugin-terser": "^7.0.0",
+		"svelte": "^3.0.0"
+	},
+	"dependencies": {
+		"sirv-cli": "^1.0.0"
 	}
 }
