@@ -75,13 +75,6 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 		// Receive message from the webview.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
-				// case 'add':
-				// 	this.addNewScratch(document);
-				// 	return;
-
-				// case 'delete':
-				// 	this.deleteScratch(document, e.id);
-                //     return;
                 // case 'validate':
                 //     this.validateInteractable(document);
                 //     return;
@@ -89,14 +82,10 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
                     
                     vscode.window.showInformationMessage("recieved message from svelte component");
                     return;
-                case 'updateRecieved':
-                    
-                    vscode.window.showInformationMessage("recieved update message in svelte script");
-                    return;
-                case 'updateName':
-					const json = this.getDocumentAsJson(document);
-					console.log(e.json);
-					this.updateTextDocument(document, e.json);
+                case 'updateDocumentFromInput':
+					var json = this.getDocumentAsJson(document);
+					json[e.update.key] = e.update.value;
+					this.updateTextDocument(document, json);
                     return;
 			}
 		});
@@ -124,6 +113,7 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 		));
 		const styleUri = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
+			// path.join(this.context.extensionPath, 'includes', 'bulma.css')
 		));
 
         // const json = this.getDocumentAsJson(document);
@@ -191,8 +181,7 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
         <head>
             <meta charset='utf-8'>
             <meta name='viewport' content='width=device-width,initial-scale=1'>
-        
-            <title>Svelte app</title>
+            <title>Cantata Data Editor</title>
         
             <!--- <link rel='icon' type='image/png' href='/favicon.png'> -->
             <!--- <link rel='stylesheet' href='/global.css'> -->

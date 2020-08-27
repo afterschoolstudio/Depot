@@ -1,5 +1,7 @@
 <script>
     import { onMount, setContext } from 'svelte';
+    import Field from './Field.svelte';
+
     // const vscode = acquireVsCodeApi();
     function handleClick() {
         vscode.postMessage({
@@ -10,9 +12,6 @@
     
     function windowMessage(event) {
         const message = event.data; // The json data that the extension sent
-        vscode.postMessage({
-            type: 'updateRecieved'
-        });
 		switch (message.type) {
 			case 'update':
 				const text = message.text;
@@ -29,12 +28,10 @@
 		}
     }
 
-    function updateName() {
-        console.log("updaing name to:");
-        console.log(interactableJSON);
+    function updateData(key) {
         vscode.postMessage({
-            type: 'updateName',
-            json: interactableJSON
+            type: 'updateDocumentFromInput',
+            update: {"key" : key, "value" : interactableJSON[key]}
 		});
     }
 
@@ -43,7 +40,7 @@
 		try {
             interactableJSON = JSON.parse(text);
             console.log(interactableJSON);
-            vscode.window.showInformationMessage(interactableJSON);
+            // vscode.window.showInformationMessage(interactableJSON);
 		} catch {
             // vscode.window.showErrorMessage("json read issue");
 			// notesContainer.style.display = 'none';
@@ -57,20 +54,21 @@
 	if (state) {
 		updateContent(state.text);
     }
+    
+    setContext("data", interactableJSON);
+
     // setContext("data", {
     //     getData: () => data
     // });
 
-    // let data = interactableJSON;
-    // setContext("data", data);
-    // setContext("data", "tedt");
-
 </script>
 
 <svelte:window on:message={windowMessage}/>
-<button on:click={handleClick}>
+<h1>{interactableJSON.name}</h1>
+<!-- <button on:click={handleClick}>
     {interactableJSON.name}
-	<!-- Clicked {count} {count === 1 ? 'time' : 'times'} -->
-</button>
-<input bind:value={interactableJSON.name} on:input={updateName}>
+</button> -->
+<!-- <Field key={"name"} description={"something"}> -->
+<input bind:value={interactableJSON.name} on:input={() => updateData("name")}>
+<input bind:value={interactableJSON.another_value} on:input={() => updateData("another_value")}>
 <!-- <svelte:window on:={handleKeydown}/> -->
