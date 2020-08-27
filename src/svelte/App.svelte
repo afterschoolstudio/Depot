@@ -1,9 +1,12 @@
 <script>
-    import InteractableName from './InteractableName.svelte';
+	import InteractableData from './InteractableData.svelte';
+    // import InteractableName from './InteractableName.svelte';
 </script>
 
 <main>
-	<h1>Helloowo {InteractableName.iname}!</h1>
+	<!-- <h1>Helloowo {InteractableName.iname}!</h1> -->
+	<h1>Test</h1>
+	<InteractableData/>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 </main>
 
