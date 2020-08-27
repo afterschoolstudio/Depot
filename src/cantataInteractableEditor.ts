@@ -86,7 +86,12 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
                 //     this.validateInteractable(document);
                 //     return;
                 case 'test':
-                    vscode.window.showInformationMessage("testing from svelte component");
+                    
+                    vscode.window.showInformationMessage("recieved message from svelte component");
+                    return;
+                case 'testjs':
+                    
+                    vscode.window.showInformationMessage("recieved message from svelte component");
                     return;
 			}
 		});
@@ -107,13 +112,16 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
         // ));
         
 		const scriptUri = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, 'compiled', 'build/bundle.js')
+			path.join(this.context.extensionPath, 'out', 'compiled/bundle.js')
+		));
+		const interactableDataUri = webview.asWebviewUri(vscode.Uri.file(
+			path.join(this.context.extensionPath, 'includes', 'interactableData.js')
 		));
 		const styleUri = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, 'compiled', 'build/bundle.css')
+			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
 		));
 
-        const json = this.getDocumentAsJson(document);
+        // const json = this.getDocumentAsJson(document);
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
@@ -184,11 +192,11 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
             <!--- <link rel='icon' type='image/png' href='/favicon.png'> -->
             <!--- <link rel='stylesheet' href='/global.css'> -->
             <link rel='stylesheet' href="${styleUri}">
-            <script> documentJSON = ${json} </script>
+			<script src="${interactableDataUri}"></script>
             <script defer src="${scriptUri}"></script>
-        </head>
-        
-        <body>
+		</head>
+			
+		<body>
         </body>
         </html>`;
 	}

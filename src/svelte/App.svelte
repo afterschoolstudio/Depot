@@ -1,13 +1,9 @@
 <script>
-	export let name;
-	const vscode = acquireVsCodeApi();
-	vscode.postMessage({
-		type: 'test'
-	});
+    import InteractableName from './InteractableName.svelte';
 </script>
 
 <main>
-	<h1>Helloowo {name}!</h1>
+	<h1>Helloowo {InteractableName.iname}!</h1>
 	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
 </main>
 

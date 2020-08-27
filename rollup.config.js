@@ -33,7 +33,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'compiled/build/bundle.js'
+		file: 'out/compiled/bundle.js'
 	},
 	plugins: [
 		svelte({
@@ -42,7 +42,7 @@ export default {
 			// we'll extract any component CSS out into
 			// a separate file - better for performance
 			css: css => {
-				css.write('compiled/build/bundle.css');
+				css.write('out/compiled/bundle.css');
 			}
 		}),
 
@@ -63,7 +63,7 @@ export default {
 
 		// Watch the `public` directory and refresh the
 		// browser on changes when not in production
-		!production && livereload('compiled'),
+		!production && livereload('out'),
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
