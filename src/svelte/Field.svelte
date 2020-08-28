@@ -1,16 +1,19 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+    // import { createEventDispatcher } from 'svelte';
+    import { interactableData } from './dataStores.js';
+    import { readable, get } from 'svelte/store'
 
-    export let json;
+    let value = get(interactableData.name);
     export let key;
     // $: value = json[key];
-    let value = json[key];
-    const dispatch = createEventDispatcher();
+    // let value = json[key];
+    // const dispatch = createEventDispatcher();
     function fieldUpdated() {
-        dispatch('message', {
-            "key": key,
-            "value": value
-        });
+        // dispatch('message', {
+        //     "key": key,
+        //     "value": value
+        // });
+        interactableData.update(e => e[key] = value);
     }
     // let value = interactableData[key];
     // function updateValue() {

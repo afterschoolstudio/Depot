@@ -83,9 +83,9 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
                     vscode.window.showInformationMessage("recieved message from svelte component");
                     return;
                 case 'updateDocumentFromInput':
-					var json = this.getDocumentAsJson(document);
-					json[e.update.key] = e.update.value;
-					this.updateTextDocument(document, json);
+					// var json = this.getDocumentAsJson(document);
+					// json[e.update.key] = e.update.value;
+					this.updateTextDocument(document, e.update);
                     return;
 			}
 		});
