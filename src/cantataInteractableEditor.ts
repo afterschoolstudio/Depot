@@ -73,6 +73,7 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 			}
 		});
 
+
 		// Make sure we get rid of the listener when our editor is closed.
 		webviewPanel.onDidDispose(() => {
 			changeDocumentSubscription.dispose();
@@ -84,20 +85,18 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
                 // case 'validate':
                 //     this.validateInteractable(document);
 				//     return;
+				case 'init-view':
+					initWebview();
+					return;
 				case 'update':
 					this.updateTextDocument(document, e.data);
 					return;
-				case 'getData':
-					initWebview();
-					return;
-                case 'updateDocumentFromInput':
-					var json = this.getDocumentAsJson(document);
-					json[e.update.key] = e.update.value;
-					this.updateTextDocument(document, json);
-                    return;
 			}
 		});
 
+		//this is only called the first time the view is created
+		//it isn't called if the view is focused again after changing to a different document
+		//so instead we just manage it all in svelte onMount
 		// initWebview();
 	}
 
@@ -105,19 +104,9 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 	 * Get the static html used for the editor webviews.
 	 */
 	private getHtmlForWebview(webview: vscode.Webview, document: vscode.TextDocument): string {
-		// Local path to script and css for the webview
-		// const scriptUri = webview.asWebviewUri(vscode.Uri.file(
-		// 	path.join(this.context.extensionPath, 'media', 'catScratch.js')
-		// ));
-		// const styleUri = webview.asWebviewUri(vscode.Uri.file(
-		// 	path.join(this.context.extensionPath, 'media', 'catScratch.css')
-        // ));
         
 		const scriptUri = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.js')
-		));
-		const interactableDataUri = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, 'includes', 'interactableData.js')
 		));
 		const styleUri = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
@@ -194,7 +183,6 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
             <!-- <link rel='icon' type='image/png' href='/favicon.png'> -->
             <!-- <link rel='stylesheet' href='/global.css'> -->
             <link rel='stylesheet' href="${styleUri}">
-			<script src="${interactableDataUri}"></script>
             <script defer src="${scriptUri}"></script>
 		</head>
 			

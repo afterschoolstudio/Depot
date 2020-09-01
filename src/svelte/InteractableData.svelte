@@ -7,10 +7,22 @@
 
     let InteractableJSON = {};
 
+    function flushState() {
+        vscode.setState(null);
+        vscode.postMessage({
+            type: 'init-view',
+		});
+    } 
+
+    onMount(() => {
+        getData();
+    });
+
     function windowMessage(event) {
         const message = event.data; // The json data that the extension sent
 		switch (message.type) {
             case 'init':
+                console.log("initing view");
                 //the extension is sending us an init event with the document text
                 //not this is the document NOT the state, the state takes precendece
                 const state = vscode.getState();
@@ -26,9 +38,11 @@
                     // this pings the document to send us its state
                     // it's then recieved in the windowMessage function where we update our content
                     updateContent(message.text);
+                    const newState = message.text
                 }
                 return;
 			case 'update':
+                console.log("updating view");
 				const text = message.text;
 
                 // Update our webview's content
@@ -38,7 +52,7 @@
 				// This state is returned in the call to `vscode.getState` below when a webview is reloaded.
 				vscode.setState({ text });
 
-				return;
+                return;
 		}
     }
 
@@ -46,7 +60,7 @@
         //send a call out to extension to get the data
         //callback will hit the update route in our window message reciever
         vscode.postMessage({
-            type: 'getData',
+            type: 'init-view',
 		});
 
     }
@@ -57,7 +71,6 @@
         //could switch here for data objects to pass in the json as well
         // InteractableJSON[event.detail.key] = event.detail.value;
         console.log(InteractableJSON);
-
         vscode.postMessage({
             type: 'update',
             data: InteractableJSON
@@ -89,7 +102,7 @@
 {#if Object.keys(InteractableJSON).length === 0}
 {(console.log("no keys, loading"), '')}
 <p>Loading</p>
-{getData()}
+<!-- {getData()} -->
 {:else}
 <!-- <svelte:window on:load={initData} on:message={windowMessage}/> -->
 <h1>{InteractableJSON.name}</h1>
@@ -110,7 +123,7 @@
 
 </table>
 {/if}
-
+<button on:click={flushState}/>
 <pre>
     {JSON.stringify({InteractableJSON},null,2)}
 </pre>
