@@ -3,13 +3,18 @@
 
     export let json;
     export let key;
+    export let data;
     // $: value = json[key];
-    let value = json[key];
+    // let value = json[key];
+    console.log("value: " + data);
     const dispatch = createEventDispatcher();
     function fieldUpdated() {
+        // dispatch('message', {
+        //     "key": key,
+        //     "value": value
+        // });
         dispatch('message', {
-            "key": key,
-            "value": value
+            "type" : "update"
         });
     }
     // let value = interactableData[key];
@@ -20,6 +25,6 @@
 
 <label>
     key: {key} <br>
-    <input bind:value={value} on:input={fieldUpdated}>
+    <input bind:value={data} on:input={fieldUpdated}>
     <!-- <input bind:value={value} > -->
 </label>

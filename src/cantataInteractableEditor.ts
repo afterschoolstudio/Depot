@@ -52,6 +52,12 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 				text: document.getText(),
 			});
 		}
+		function initWebview() {
+			webviewPanel.webview.postMessage({
+				type: 'init',
+				text: document.getText(),
+			});
+		}
 
 		// Hook up event handlers so that we can synchronize the webview with the text document.
 		//
@@ -77,7 +83,13 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 			switch (e.type) {
                 // case 'validate':
                 //     this.validateInteractable(document);
-                //     return;
+				//     return;
+				case 'update':
+					this.updateTextDocument(document, e.data);
+					return;
+				case 'initDoc':
+					updateWebview();
+					return;
                 case 'testsvelte':
                     
                     vscode.window.showInformationMessage("recieved message from svelte component");
@@ -90,7 +102,7 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 			}
 		});
 
-		updateWebview();
+		initWebview();
 	}
 
 	/**
@@ -170,7 +182,7 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 		// 	</head>
         //     <body>
         //         <h1>Testing Interactable</h1>
-        //         <h1>${json.name}</h1>
+		//         <h1>${json.name}</h1>
 		// 	</body>
 		// 	</html>`;
         
@@ -183,8 +195,8 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
             <meta name='viewport' content='width=device-width,initial-scale=1'>
             <title>Cantata Data Editor</title>
         
-            <!--- <link rel='icon' type='image/png' href='/favicon.png'> -->
-            <!--- <link rel='stylesheet' href='/global.css'> -->
+            <!-- <link rel='icon' type='image/png' href='/favicon.png'> -->
+            <!-- <link rel='stylesheet' href='/global.css'> -->
             <link rel='stylesheet' href="${styleUri}">
 			<script src="${interactableDataUri}"></script>
             <script defer src="${scriptUri}"></script>
@@ -193,10 +205,6 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 		<body>
 		<script>
 			const vscode = acquireVsCodeApi();
-			window.onload = function() {
-				vscode.postMessage({ command: 'get-data' });
-				console.log('Ready to accept data.');
-			};
 		</script>
         </body>
         </html>`;
