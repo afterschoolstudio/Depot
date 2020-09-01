@@ -5,40 +5,7 @@
     import Field from './Field.svelte';
     import { onMount } from 'svelte';
 
-    let InteractableJSON = {
-        };
-
-    // const vscode = acquireVsCodeApi();
-    function handleClick() {
-        vscode.postMessage({
-            type: 'testsvelte'
-        });
-        // count += 1;
-    }
-
-    // const state = vscode.getState();
-    // function initData() {
-    //     console.log("onload initing data");
-    //     if (state) {
-    //         //we push this state from the vscode workspace to the JSON this component is looking at
-    //         console.log("found previous state: " + state.text);
-    //         InteractableJSON = JSON.parse(state.text);
-    //     }
-    //     else
-    //     {
-    //         //grab new content
-    //         console.log("no previous state: initing");
-    //         // this pings the document to send us its state
-    //         // it's then recieved in the windowMessage function where we update our content
-    //         vscode.postMessage({
-    //             type: 'initDoc'
-    //         });
-    //     }
-    // }
-
-    // onMount(() => {
-    //    initData();
-    // });
+    let InteractableJSON = {};
 
     function windowMessage(event) {
         const message = event.data; // The json data that the extension sent
@@ -75,11 +42,13 @@
 		}
     }
 
-    function updateData(key) {
+    function getData() {
+        //send a call out to extension to get the data
+        //callback will hit the update route in our window message reciever
         vscode.postMessage({
-            type: 'updateDocumentFromInput',
-            update: {"key" : key, "value" : InteractableJSON[key]}
+            type: 'getData',
 		});
+
     }
 
     function handleMessage(event) {
@@ -93,7 +62,6 @@
             type: 'update',
             data: InteractableJSON
 		});
-        // updateData(event.detail.key);
     }
 
 
@@ -118,17 +86,17 @@
 
 <svelte:window on:message={windowMessage}/>
 {(console.log("initing rendering"), '')}
-<!-- {#if Object.keys({InteractableJSON}).length !== 0} -->
-
+{#if Object.keys(InteractableJSON).length === 0}
+{(console.log("no keys, loading"), '')}
+<p>Loading</p>
+{getData()}
+{:else}
 <!-- <svelte:window on:load={initData} on:message={windowMessage}/> -->
 <h1>{InteractableJSON.name}</h1>
-<!-- <button on:click={handleClick}>
-    {interactableJSON.name}
-</button> -->
 {(console.log("testing .name for field bind"), '')}
 <table>
     <tr>
-        <th>Key</th>
+        <th>Field</th>
         <th>Value</th>
     </tr>
     <!-- <Field key={"field name"} bind:data={InteractableJSON.name} on:message={handleMessage}/> -->
@@ -141,12 +109,36 @@
     {/each}
 
 </table>
+{/if}
 
 <pre>
     {JSON.stringify({InteractableJSON},null,2)}
 </pre>
-<!-- {:else} -->
-<!-- <p>Loading</p> -->
-<!-- <input bind:value={interactableJSON.name} on:input={() => updateData("name")}>
-    <input bind:value={interactableJSON.another_value} on:input={() => updateData("another_value")}> -->
-<!-- {/if} -->
+
+<style>
+    table {
+    /* border: 2px solid #252526; */
+    width: 100%;
+    text-align: left;
+    }
+    table td, table th {
+        border:none;
+        border-bottom: 3px solid #252526;
+        border-right: 3px solid #252526;
+        border-left: 3px solid #252526;
+        padding: 5px 0px 5px 10px;
+    }
+    table td:nth-child(odd), table th:nth-child(even) {
+        border-right: none;
+    }
+    table tbody td {
+    font-size: 13px;
+    }
+    table th {
+        background: #252526;
+        font-size: 13px;
+        font-weight: bold;
+        /* color: #383838; */
+        text-align: left;
+    }
+</style>

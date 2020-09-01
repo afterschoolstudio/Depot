@@ -9,8 +9,14 @@
         });
     }
 </script>
+<input bind:value={data} on:input={fieldUpdated}>
 
-<label>
-    <input bind:value={data} on:input={fieldUpdated}>
-    <!-- <input bind:value={value} > -->
-</label>
+<style>
+    input {
+        padding: 5px;
+        font-size: 13px;
+        border-width: 0px;
+        background-color: #3c3c3c;
+        color: #f0f0f0;
+    }
+</style>

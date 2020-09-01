@@ -87,13 +87,9 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 				case 'update':
 					this.updateTextDocument(document, e.data);
 					return;
-				case 'initDoc':
-					updateWebview();
+				case 'getData':
+					initWebview();
 					return;
-                case 'testsvelte':
-                    
-                    vscode.window.showInformationMessage("recieved message from svelte component");
-                    return;
                 case 'updateDocumentFromInput':
 					var json = this.getDocumentAsJson(document);
 					json[e.update.key] = e.update.value;
@@ -102,7 +98,7 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 			}
 		});
 
-		initWebview();
+		// initWebview();
 	}
 
 	/**
