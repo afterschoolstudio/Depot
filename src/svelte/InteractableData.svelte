@@ -1,5 +1,5 @@
 <script>
-    import { init } from 'svelte/internal';
+    import { each, init } from 'svelte/internal';
 
     // import { interactableData } from './dataStores.js';
     import Field from './Field.svelte';
@@ -96,19 +96,6 @@
         // updateData(event.detail.key);
     }
 
-    // let interactableName;
-    // const unsubscribe = interactableData.subscribe(value => {
-    //     interactableName = value.name;
-    //     console.log("data updated from field update, new data:");
-    //     console.log(value);
-    //     vscode.postMessage({
-    //         type: 'updateDocumentFromInput',
-    //         update: value
-    //     });
-	// });
-
-	// onDestroy(unsubscribe);
-
 
 
 	function updateContent(/** @type {string} */ text) {
@@ -126,35 +113,40 @@
 			return;
 		}
 	}
-    
-    // setContext("data", interactableJSON);
-
-    // setContext("data", {
-    //     getData: () => data
-    // });
 
 </script>
 
 <svelte:window on:message={windowMessage}/>
 {(console.log("initing rendering"), '')}
-{#if Object.keys({InteractableJSON}).length !== 0}
+<!-- {#if Object.keys({InteractableJSON}).length !== 0} -->
 
 <!-- <svelte:window on:load={initData} on:message={windowMessage}/> -->
-{(console.log("testing .name"), '')}
 <h1>{InteractableJSON.name}</h1>
 <!-- <button on:click={handleClick}>
     {interactableJSON.name}
 </button> -->
 {(console.log("testing .name for field bind"), '')}
-<Field bind:data={InteractableJSON.name} on:message={handleMessage}/>
-<br>
-<!-- <Field json={InteractableJSON} key={"another_value"} on:message={handleMessage}/> -->
+<table>
+    <tr>
+        <th>Key</th>
+        <th>Value</th>
+    </tr>
+    <!-- <Field key={"field name"} bind:data={InteractableJSON.name} on:message={handleMessage}/> -->
+    <!-- this could be used to iterate through keys for things that are simple filed updates with raw text input -->
+    {#each Object.keys(InteractableJSON) as key}
+        <tr>
+            <td>{key}</td>
+            <td> <Field key={key} bind:data={InteractableJSON[key]} on:message={handleMessage}/> </td>
+        </tr>
+    {/each}
+
+</table>
 
 <pre>
     {JSON.stringify({InteractableJSON},null,2)}
 </pre>
-{:else}
-<p>Loading</p>
+<!-- {:else} -->
+<!-- <p>Loading</p> -->
 <!-- <input bind:value={interactableJSON.name} on:input={() => updateData("name")}>
     <input bind:value={interactableJSON.another_value} on:input={() => updateData("another_value")}> -->
-{/if}
+<!-- {/if} -->
