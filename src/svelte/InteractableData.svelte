@@ -18,6 +18,8 @@
         getData();
     });
 
+    // console.log(doctype);
+
     function windowMessage(event) {
         const message = event.data; // The json data that the extension sent
 		switch (message.type) {
@@ -112,8 +114,6 @@
         <th>Field</th>
         <th>Value</th>
     </tr>
-    <!-- <Field key={"field name"} bind:data={InteractableJSON.name} on:message={handleMessage}/> -->
-    <!-- this could be used to iterate through keys for things that are simple filed updates with raw text input -->
     {#each Object.keys(InteractableJSON) as key}
         <tr>
             <td>{key}</td>

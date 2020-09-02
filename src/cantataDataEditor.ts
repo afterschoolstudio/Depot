@@ -14,15 +14,15 @@ import { getNonce } from './util';
  * - Loading scripts and styles in a custom editor.
  * - Synchronizing changes between a text document and a custom editor.
  */
-export class CantataInteractableEditorProvider implements vscode.CustomTextEditorProvider {
+export class CantataDataEditorProvider implements vscode.CustomTextEditorProvider {
 
 	public static register(context: vscode.ExtensionContext): vscode.Disposable { 
-		const provider = new CantataInteractableEditorProvider(context);
-		const providerRegistration = vscode.window.registerCustomEditorProvider(CantataInteractableEditorProvider.viewType, provider);
+		const provider = new CantataDataEditorProvider(context);
+		const providerRegistration = vscode.window.registerCustomEditorProvider(CantataDataEditorProvider.viewType, provider);
 		return providerRegistration;
 	}
 
-	private static readonly viewType = 'cantata-tools.interactable';
+	private static readonly viewType = 'cantata-tools.data';
 
 
 	constructor(
@@ -84,6 +84,31 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
                 // case 'validate':
                 //     this.validateInteractable(document);
 				//     return;
+				case 'get-type':
+					let dataType = "";
+					switch (document.fileName.split('.').pop()) 
+					{
+						case 'cterrain':
+							dataType = 'terrain';
+							break;
+						case 'cinteractable':
+							dataType = 'interactable';
+							break;
+						case 'cruleset':
+							dataType = 'ruleset';
+							break;
+						case 'cfaction':
+							dataType = 'faction';
+							break;
+						case 'csupply':
+							dataType = 'supply';
+							break;			
+					}
+					webviewPanel.webview.postMessage({
+						type: 'get-type',
+						text: dataType,
+					});
+					return;
 				case 'init-view':
 					initWebview();
 					return;
@@ -112,64 +137,8 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
 			// path.join(this.context.extensionPath, 'includes', 'bulma.css')
 		));
 
-        // const json = this.getDocumentAsJson(document);
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
-
-		// return /* html */`
-		// 	<!DOCTYPE html>
-		// 	<html lang="en">
-		// 	<head>
-		// 		<meta charset="UTF-8">
-
-		// 		<!--
-		// 		Use a content security policy to only allow loading images from https or from our extension directory,
-		// 		and only allow scripts that have a specific nonce.
-		// 		-->
-		// 		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
-		// 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-		// 		<link href="${styleUri}" rel="stylesheet" />
-
-		// 		<title>Cat Scratch</title>
-		// 	</head>
-		// 	<body>
-		// 		<div class="notes">
-		// 			<div class="add-button">
-		// 				<button>Scratch!</button>
-		// 			</div>
-		// 		</div>
-				
-		// 		<script nonce="${nonce}" src="${scriptUri}"></script>
-		// 	</body>
-        // 	</html>`;
-        
-
-		// return /* html */`
-		// 	<!DOCTYPE html>
-		// 	<html lang="en">
-		// 	<head>
-		// 		<meta charset="UTF-8">
-
-		// 		<!--
-		// 		Use a content security policy to only allow loading images from https or from our extension directory,
-		// 		and only allow scripts that have a specific nonce.
-		// 		-->
-		// 		<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
-		// 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-		// 		<link href="${styleUri}" rel="stylesheet" />
-
-		// 		<title>Cantata Interactable</title>
-		// 	</head>
-        //     <body>
-        //         <h1>Testing Interactable</h1>
-		//         <h1>${json.name}</h1>
-		// 	</body>
-		// 	</html>`;
-        
         
         return /* html */`
         <!DOCTYPE html>
@@ -181,8 +150,8 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
         
             <!-- <link rel='icon' type='image/png' href='/favicon.png'> -->
             <!-- <link rel='stylesheet' href='/global.css'> -->
-            <link rel='stylesheet' href="${styleUri}">
-            <script defer src="${scriptUri}"></script>
+			<link rel='stylesheet' href="${styleUri}">
+			<script defer src="${scriptUri}"></script>
 		</head>
 			
 		<body>
@@ -192,43 +161,11 @@ export class CantataInteractableEditorProvider implements vscode.CustomTextEdito
         </body>
         </html>`;
 	}
-
-	/**
-	 * Add a new scratch to the current document.
-	 */
-	// private addNewScratch(document: vscode.TextDocument) {
-	// 	const json = this.getDocumentAsJson(document);
-	// 	const character = CantataInteractableEditorProvider.scratchCharacters[Math.floor(Math.random() * CantataInteractableEditorProvider.scratchCharacters.length)];
-	// 	json.scratches = [
-	// 		...(Array.isArray(json.scratches) ? json.scratches : []),
-	// 		{
-	// 			id: getNonce(),
-	// 			text: character,
-	// 			created: Date.now(),
-	// 		}
-	// 	];
-
-	// 	return this.updateTextDocument(document, json);
-	// }
-
-	/**
-	 * Delete an existing scratch from a document.
-	 */
-	// private deleteScratch(document: vscode.TextDocument, id: string) {
-	// 	const json = this.getDocumentAsJson(document);
-	// 	if (!Array.isArray(json.scratches)) {
-	// 		return;
-	// 	}
-
-	// 	json.scratches = json.scratches.filter((note: any) => note.id !== id);
-
-	// 	return this.updateTextDocument(document, json);
-    // }
     
     private validateInteractable(document: vscode.TextDocument) {
         const json = this.getDocumentAsJson(document);
         //TODO: run validation code
-		// const character = CantataInteractableEditorProvider.scratchCharacters[Math.floor(Math.random() * CantataInteractableEditorProvider.scratchCharacters.length)];
+		// const character = CantataDataEditorProvider.scratchCharacters[Math.floor(Math.random() * CantataDataEditorProvider.scratchCharacters.length)];
 		// json.scratches = [
 		// 	...(Array.isArray(json.scratches) ? json.scratches : []),
 		// 	{

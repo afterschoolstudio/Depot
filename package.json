@@ -10,42 +10,32 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:cantata-tools.interactable.new",
-		"onCommand:cantata-tools.terrain.new",
-		"onCustomEditor:cantata-tools.interactable",
-		"onCustomEditor:catCustoms.terrain"
+		"onCommand:cantata-tools.data.newInteractable",
+		"onCommand:cantata-tools.data.newTerrain",
+		"onCustomEditor:cantata-tools.data"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"customEditors": [
 			{
-				"viewType": "cantata-tools.interactable",
-				"displayName": "Cantata Interactable",
+				"viewType": "cantata-tools.data",
+				"displayName": "Cantata Data",
 				"selector": [
 					{
-						"filenamePattern": "*.cinteractable"
-					}
-				]
-			},
-			{
-				"viewType": "cantata-tools.terrain",
-				"displayName": "Cantata Terrain",
-				"selector": [
-					{
-						"filenamePattern": "*.cterrain"
+						"filenamePattern": "*.{cterrain,cinteractable,cruleset,cfaction,csupply}"
 					}
 				]
 			}
 		],
 		"commands": [
 			{
-				"command": "cantata-tools.interactable.new",
+				"command": "cantata-tools.data.newInteractable",
 				"title": "Create new Cantata Interactable",
 				"category": "Cantata Tools"
 			},
 			{
-				"command": "cantata-tools.interactable.new",
-				"title": "Create new Cantata Interactable",
+				"command": "cantata-tools.data.newTerrain",
+				"title": "Create new Cantata Terrain",
 				"category": "Cantata Tools"
 			}
 		]
