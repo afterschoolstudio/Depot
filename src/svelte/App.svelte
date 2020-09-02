@@ -114,4 +114,32 @@
 			max-width: none;
 		}
 	}
+
+
+	/* Table Stuff */
+	:global(table) {
+        /* border: 2px solid #252526; */
+        width: 100%;
+        text-align: left;
+    }
+    :global(table td, table th) {
+        border:none;
+        border-bottom: 3px solid #252526;
+        border-right: 3px solid #252526;
+        border-left: 3px solid #252526;
+        padding: 5px 0px 5px 10px;
+    }
+    :global(table td:nth-child(odd), table th:nth-child(even)) {
+        border-right: none;
+    }
+    :global(table tbody td) {
+        font-size: 13px;
+    }
+    :global(table th) {
+        background: #252526;
+        font-size: 13px;
+        font-weight: bold;
+        /* color: #383838; */
+        text-align: left;
+    }
 </style>
