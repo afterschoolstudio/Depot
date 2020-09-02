@@ -5,30 +5,85 @@
 
 	onMount(() => {
         vscode.postMessage({
-            type: 'get-type',
+            type: 'init-view',
 		});
 	});
 
-	let dataType = ""
+	let dataType = "";
+    let jsonData = {};
+
 	function windowMessage(event) {
         const message = event.data; // The json data that the extension sent
 		switch (message.type) {
-            case 'get-type':
-				dataType = message.text;
-				return;
+            case 'init':
+				console.log("initing view");
+                //the extension is sending us an init event with the document text
+                //not this is the document NOT the state, the state takes precendece
+                const state = vscode.getState();
+                if (state) {
+                    //we push this state from the vscode workspace to the JSON this component is looking at
+                    console.log("found previous state: " + state.text);
+                    updateContent(state.text);
+                }
+                else
+                {
+                    //grab new content
+                    console.log("no previous state: initing");
+                    // this pings the document to send us its state
+                    // it's then recieved in the windowMessage function where we update our content
+                    updateContent(message.text);
+                    const newState = message.text
+				}
+				dataType = message.jsonType;
+                return;
+			case 'update':
+                console.log("updating view");
+				const text = message.text;
+
+                // Update our webview's content
+				updateContent(text);
+
+				// Then persist state information.
+				// This state is returned in the call to `vscode.getState` below when a webview is reloaded.
+				vscode.setState({ text });
+
+                return;
 		}
-    }
-	// import { getContext } from 'svelte';
-	// var { data } = getContext("data");
+	}
+	
+	function handleMessage(event) {
+        console.log("data update handle");
+        console.log(jsonData);
+        vscode.postMessage({
+            type: 'update',
+            data: jsonData
+		});
+	}
+
+	function updateContent(/** @type {string} */ text) {
+        console.log("updating content");
+		try {
+            console.log(JSON.parse(text));
+            // interactableData.update(n => n = JSON.parse(text))
+            jsonData = JSON.parse(text);
+            // vscode.window.showInformationMessage(interactableJSON);
+		} catch {
+            // vscode.window.showErrorMessage("json read issue");
+			// notesContainer.style.display = 'none';
+			// errorContainer.innerText = 'Error: Document is not valid json';
+			// errorContainer.style.display = '';
+			return;
+		}
+	}
 </script>
 
 <svelte:window on:message={windowMessage}/>
 {#if dataType == ""}
 <p>Loading</p>
 {:else if dataType === "interactable"}
-<InteractableData/>
+<InteractableData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "terrain"}
-<TerrainData/>
+<TerrainData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "ruleset"}
 <p>Ruleset not implemented</p>
 {:else if dataType === "faction"}

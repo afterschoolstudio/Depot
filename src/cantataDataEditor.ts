@@ -52,9 +52,29 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			});
 		}
 		function initWebview() {
+			let dataType = "";
+			switch (document.fileName.split('.').pop()) 
+			{
+				case 'cterrain':
+					dataType = 'terrain';
+					break;
+				case 'cinteractable':
+					dataType = 'interactable';
+					break;
+				case 'cruleset':
+					dataType = 'ruleset';
+					break;
+				case 'cfaction':
+					dataType = 'faction';
+					break;
+				case 'csupply':
+					dataType = 'supply';
+					break;			
+			}
 			webviewPanel.webview.postMessage({
 				type: 'init',
 				text: document.getText(),
+				jsonType: dataType
 			});
 		}
 
@@ -84,31 +104,6 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
                 // case 'validate':
                 //     this.validateInteractable(document);
 				//     return;
-				case 'get-type':
-					let dataType = "";
-					switch (document.fileName.split('.').pop()) 
-					{
-						case 'cterrain':
-							dataType = 'terrain';
-							break;
-						case 'cinteractable':
-							dataType = 'interactable';
-							break;
-						case 'cruleset':
-							dataType = 'ruleset';
-							break;
-						case 'cfaction':
-							dataType = 'faction';
-							break;
-						case 'csupply':
-							dataType = 'supply';
-							break;			
-					}
-					webviewPanel.webview.postMessage({
-						type: 'get-type',
-						text: dataType,
-					});
-					return;
 				case 'init-view':
 					initWebview();
 					return;

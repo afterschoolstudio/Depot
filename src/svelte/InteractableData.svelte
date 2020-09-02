@@ -1,131 +1,27 @@
 <script>
-    import { each, init } from 'svelte/internal';
-
-    // import { interactableData } from './dataStores.js';
-    import Field from './Field.svelte';
-    import { onMount } from 'svelte';
-
-    let InteractableJSON = {};
-
-    function flushState() {
-        vscode.setState(null);
-        vscode.postMessage({
-            type: 'init-view',
-		});
-    } 
-
-    onMount(() => {
-        getData();
-    });
-
-    // console.log(doctype);
-
-    function windowMessage(event) {
-        const message = event.data; // The json data that the extension sent
-		switch (message.type) {
-            case 'init':
-                console.log("initing view");
-                //the extension is sending us an init event with the document text
-                //not this is the document NOT the state, the state takes precendece
-                const state = vscode.getState();
-                if (state) {
-                    //we push this state from the vscode workspace to the JSON this component is looking at
-                    console.log("found previous state: " + state.text);
-                    updateContent(state.text);
-                }
-                else
-                {
-                    //grab new content
-                    console.log("no previous state: initing");
-                    // this pings the document to send us its state
-                    // it's then recieved in the windowMessage function where we update our content
-                    updateContent(message.text);
-                    const newState = message.text
-                }
-                return;
-			case 'update':
-                console.log("updating view");
-				const text = message.text;
-
-                // Update our webview's content
-				updateContent(text);
-
-				// Then persist state information.
-				// This state is returned in the call to `vscode.getState` below when a webview is reloaded.
-				vscode.setState({ text });
-
-                return;
-		}
-    }
-
-    function getData() {
-        //send a call out to extension to get the data
-        //callback will hit the update route in our window message reciever
-        vscode.postMessage({
-            type: 'init-view',
-		});
-
-    }
-
-    function handleMessage(event) {
-        console.log("filed update handle");
-        // console.log(event.detail.key);
-        //could switch here for data objects to pass in the json as well
-        // InteractableJSON[event.detail.key] = event.detail.value;
-        console.log(InteractableJSON);
-        vscode.postMessage({
-            type: 'update',
-            data: InteractableJSON
-		});
-    }
-
-
-
-	function updateContent(/** @type {string} */ text) {
-        console.log("updating content");
-		try {
-            console.log(JSON.parse(text));
-            // interactableData.update(n => n = JSON.parse(text))
-            InteractableJSON = JSON.parse(text);
-            // vscode.window.showInformationMessage(interactableJSON);
-		} catch {
-            // vscode.window.showErrorMessage("json read issue");
-			// notesContainer.style.display = 'none';
-			// errorContainer.innerText = 'Error: Document is not valid json';
-			// errorContainer.style.display = '';
-			return;
-		}
-	}
-
+import { each, init } from 'svelte/internal';
+import Field from './Field.svelte';
+export let data;
 </script>
 
-<svelte:window on:message={windowMessage}/>
-{(console.log("initing rendering"), '')}
-{#if Object.keys(InteractableJSON).length === 0}
-{(console.log("no keys, loading"), '')}
-<p>Loading</p>
-<!-- {getData()} -->
-{:else}
-<!-- <svelte:window on:load={initData} on:message={windowMessage}/> -->
-<h1>{InteractableJSON.name}</h1>
+
+<h1>{data.name}</h1>
 {(console.log("testing .name for field bind"), '')}
 <table>
     <tr>
         <th>Field</th>
         <th>Value</th>
     </tr>
-    {#each Object.keys(InteractableJSON) as key}
+    {#each Object. keys(data) as key}
         <tr>
             <td>{key}</td>
-            <td> <Field key={key} bind:data={InteractableJSON[key]} on:message={handleMessage}/> </td>
+            <td> <Field key={key} bind:data={data[key]} on:message/> </td>
         </tr>
     {/each}
 
 </table>
-{/if}
-<button on:click={flushState}/>
 <pre>
-    {JSON.stringify({InteractableJSON},null,2)}
+    {JSON.stringify({data},null,2)}
 </pre>
 
 <style>
