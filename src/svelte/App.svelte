@@ -79,20 +79,21 @@
 
 <svelte:window on:message={windowMessage}/>
 {#if dataType == ""}
-<p>Loading</p>
+	<p>Loading</p>
 {:else if dataType === "interactable"}
-<InteractableData bind:data={jsonData} on:message={handleMessage}/>
+	<InteractableData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "terrain"}
-<TerrainData bind:data={jsonData} on:message={handleMessage}/>
+	<TerrainData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "ruleset"}
-<p>Ruleset not implemented</p>
+	<p>Ruleset not implemented</p>
 {:else if dataType === "faction"}
-<p>Faction not implemented</p>
+	<p>Faction not implemented</p>
 {:else if dataType === "supply"}
-<p>Supply not implemented</p>
+	<p>Supply not implemented</p>
 {:else}
-<p>Error: Invalid Data Type {dataType}</p>
+	<p>Error: Invalid Data Type {dataType}</p>
 {/if}
+<pre>{JSON.stringify({jsonData},null,2)}</pre>
 
 <style>
 	main {

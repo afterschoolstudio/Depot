@@ -1,0 +1,29 @@
+{
+    "manifest" : {
+        "cantataDataVersion" : "1",
+        "owner" : "",
+        "version" : "1",
+        "guid" : "generated?"
+    },    
+    "info" : {
+        "name" : "default terrain name",
+        "terrainType" : "base",
+        "placementSound" : "none"
+    },
+    "spriteInfo" : {
+        "tilemap" : "default.png",
+        "numSprites" : 1,
+        "spriteType" : "single",
+        "heroSpriteIndex" : 0
+    },
+    "generatorInfo" : {
+        "heightIndex" : 0.4,
+        "generatorChooseRandom" : false
+    },
+    "gameplay" : {
+        "capactiy" : "1",
+        "visibilityCost" : "1",
+        "movementCost" : "1",
+        "isWater" : false
+    }
+}
