@@ -120,19 +120,26 @@
         /* border: 2px solid #252526; */
         width: 100%;
         text-align: left;
+        border-collapse: collapse;
     }
     :global(table td, table th) {
-        border:none;
-        border-bottom: 3px solid #252526;
+        /* border:none; */
+        border:3px solid #252526;
+        /* border-bottom: 3px solid #252526;
         border-right: 3px solid #252526;
-        border-left: 3px solid #252526;
-        padding: 5px 0px 5px 10px;
-    }
-    :global(table td:nth-child(odd), table th:nth-child(even)) {
+        border-left: 3px solid #252526; */
+        /* border-spacing: 0px; */
+        padding: 0px;
+        width: 50%
+    } 
+    /* :global(table td:nth-child(odd), table th:nth-child(odd)) {
         border-right: none;
-    }
+    } */
     :global(table tbody td) {
         font-size: 13px;
+    }
+    :global(table tr td.fieldLabel) {
+        padding-left: 5px;
     }
     :global(table th) {
         background: #252526;
