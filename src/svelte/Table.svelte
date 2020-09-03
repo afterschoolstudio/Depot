@@ -1,7 +1,8 @@
 <script>
 import Field from './Field.svelte';
-export let data;
+export let data = []
 export let name;
+export let meta;
 </script>
 
 <h2>{name}</h2>
@@ -10,10 +11,13 @@ export let name;
         <th>Field</th>
         <th>Value</th>
     </tr>
-    {#each Object.keys(JSON.parse(JSON.stringify(data))) as key}
+    {(console.log(meta), '')}
+    {(console.log(meta.keys()), '')}
+    {#each [...meta.keys()] as key}
+        {(console.log(key), '')}
         <tr>
-            <td>{key}</td>
-            <td> <Field key={key} bind:data={data[key]} on:message/> </td>
+            <td>{meta.get(key)}</td>
+            <td> <Field bind:data={data[key]} on:message/> </td>
         </tr>
     {/each}
 </table>
