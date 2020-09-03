@@ -1,14 +1,13 @@
 <script>
     import Field from './Field.svelte';
     import Table from './Table.svelte';
+    import { manifest, terrainData } from './cantataDataSpec.js';
     export let data;
-    let manifestMeta = new Map([
-        ['cantataDataVersion', 'Data Version'],
-        ['owner', 'Owner'],
-        ['version', 'Version'],
-        ['guid', 'GUID'],
-    ]);
 </script>
 
 <h1>Cantata Terrain Editor</h1>
-<Table name={"Manifest"} bind:data={data.manifest} meta={manifestMeta} on:message/>
+<Table name={"Manifest"} bind:data={data.manifest} meta={manifest} on:message/>
+<Table name={"Terrrain Info"} bind:data={data.info} meta={terrainData.info} on:message/>
+<!-- <Table name={"Info"} bind:data={data.manifest} meta={infoMeta} on:message/>
+<Table name={"Sprite Info"} bind:data={data.manifest} meta={spriteMeta} on:message/>
+<Table name={"Generator Info"} bind:data={data.manifest} meta={generatorMeta} on:message/> -->

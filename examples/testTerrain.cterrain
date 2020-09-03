@@ -1,29 +1,29 @@
 {
-  "gameplay": {
-    "capactiy": "1",
-    "isWater": false,
-    "movementCost": "1",
-    "visibilityCost": "1"
-  },
-  "generatorInfo": {
-    "generatorChooseRandom": false,
-    "heightIndex": 0.4
-  },
-  "info": {
-    "name": "default terrain name",
-    "placementSound": "none",
-    "terrainType": "base"
-  },
-  "manifest": {
-    "cantataDataVersion": "1",
-    "guid": "generated?",
-    "owner": "aaaa",
-    "version": "1"
-  },
-  "spriteInfo": {
-    "heroSpriteIndex": 0,
-    "numSprites": 1,
-    "spriteType": "single",
-    "tilemap": "default.png"
-  }
+    "gameplay": {
+        "capacity": "1",
+        "isWater": false,
+        "movementCost": "1",
+        "visibilityCost": "1"
+    },
+    "generatorInfo": {
+        "generatorChooseRandom": false,
+        "heightIndex": 0.4
+    },
+    "info": {
+        "name": "default terrain name",
+        "placementSound": "none",
+        "terrainType": "base"
+    },
+    "manifest": {
+        "cantataDataVersion": "1",
+        "guid": "generated?",
+        "owner": "aaaa",
+        "version": "1"
+    },
+    "spriteInfo": {
+        "heroSpriteIndex": 0,
+        "numSprites": 1,
+        "spriteType": "single",
+        "tilemap": "default.png"
+    }
 }

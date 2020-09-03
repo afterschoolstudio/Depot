@@ -11,14 +11,12 @@ export let meta;
         <th>Field</th>
         <th>Value</th>
     </tr>
-    {(console.log(meta), '')}
-    {(console.log(meta.keys()), '')}
     {#each [...meta.keys()] as key}
         {(console.log(key), '')}
         <tr>
-            <td>{meta.get(key)}</td>
+            <td>{meta.get(key).name}</td>
             <td> <Field bind:data={data[key]} on:message/> </td>
         </tr>
     {/each}
 </table>
-<pre>{JSON.stringify({data},null,2)}</pre>
+<!-- <pre>{JSON.stringify({data},null,2)}</pre> -->
