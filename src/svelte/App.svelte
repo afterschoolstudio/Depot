@@ -52,8 +52,6 @@
 	}
 	
 	function handleMessage(event) {
-        console.log("data update handle");
-        console.log(jsonData);
         vscode.postMessage({
             type: 'update',
             data: jsonData

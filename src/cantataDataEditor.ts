@@ -201,7 +201,7 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 		edit.replace(
 			document.uri,
 			new vscode.Range(0, 0, document.lineCount, 0),
-			JSON.stringify(json, null, 2));
+			JSON.stringify(json, null, 4));
 		
 		return vscode.workspace.applyEdit(edit);
 	}
