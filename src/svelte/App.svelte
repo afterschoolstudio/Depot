@@ -1,6 +1,6 @@
 <script>
-	import InteractableData from './InteractableData.svelte';
-	import TerrainData from './TerrainData.svelte';
+	import InteractableData from './DataTypes/InteractableData.svelte';
+	import TerrainData from './DataTypes/TerrainData.svelte';
     import { onMount } from 'svelte';
 
 	onMount(() => {
@@ -80,6 +80,8 @@
 <svelte:window on:message={windowMessage}/>
 {#if dataType == ""}
 	<p>Loading</p>
+{:else if dataType === "manifest"}
+	<InteractableData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "interactable"}
 	<InteractableData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "terrain"}

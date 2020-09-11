@@ -1,6 +1,6 @@
 <script>
-    import Table from './Table.svelte';
-    import { manifest, terrainData } from './cantataDataSpec.js';
+    import Table from '../Table.svelte';
+    import { manifest, terrainData } from '../cantataDataSpec.js';
     export let data;
 </script>
 
