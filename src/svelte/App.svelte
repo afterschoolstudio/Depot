@@ -52,6 +52,8 @@
 	}
 	
 	function handleMessage(event) {
+        console.log("pushing data",jsonData)
+        //this is where we could conform the data, like flooring an int field if it gets a float value
         vscode.postMessage({
             type: 'update',
             data: jsonData
@@ -123,29 +125,21 @@
         border-collapse: collapse;
     }
     :global(table td, table th) {
-        /* border:none; */
         border:3px solid #252526;
-        /* border-bottom: 3px solid #252526;
-        border-right: 3px solid #252526;
-        border-left: 3px solid #252526; */
-        /* border-spacing: 0px; */
         padding: 0px;
         width: 50%
     } 
-    /* :global(table td:nth-child(odd), table th:nth-child(odd)) {
-        border-right: none;
-    } */
     :global(table tbody td) {
         font-size: 13px;
     }
     :global(table tr td.fieldLabel) {
-        padding-left: 5px;
+        /* padding-left: 5px; */
+        padding: 5px;
     }
     :global(table th) {
         background: #252526;
         font-size: 13px;
         font-weight: bold;
-        /* color: #383838; */
         text-align: left;
     }
 </style>

@@ -1,5 +1,6 @@
 export let cantataDataVersion = 1;
 function fieldInfo(name, type, desc, defVal) { return {"name" : name,"type" : type,"description" : desc, "defaultValue" : defVal}}
+function numberInfo(name, type, desc, defVal, min, max) { return {"name" : name,"type" : type,"description" : desc, "defaultValue" : defVal, "min" : min, "max" : max}}
 export let manifest = new Map([
     ["cantataDataVersion", fieldInfo(
         "Cantata Data Version",
@@ -23,50 +24,50 @@ export let manifest = new Map([
         "Version",
         "text",
         "Version index of this specific piece of data",
-        1
+        "1"
     )]
 ]);
 
 
 export let terrainData = {
     'gameplay' : new Map([
-        ["capacity", fieldInfo(
+        ["capacity", numberInfo(
             "Capacity",
-            "text",
+            "number",
             "How much this terrain can hold",
-            10
+            10,0,10
         )],
         ["isWater", fieldInfo(
             "Water?",
-            "text",
+            "bool",
             "Does this terrain count as Water",
             false
         )],
-        ["movementCost", fieldInfo(
+        ["movementCost", numberInfo(
             "Movement Cost",
-            "text",
+            "number",
             "How much does this terrain cost to move through",
-            1
+            1,1,10
         )],
-        ["visibilityCost", fieldInfo(
+        ["visibilityCost", numberInfo(
             "Visibility Cost",
-            "text",
+            "number",
             "How much does this terrain cost to see into",
-            1
+            1,1,10
         )],
     ]),
     'generatorInfo' : new Map([
         ["generatorChooseRandom", fieldInfo(
             "Choose Random Sprite on Generation",
-            "text",
+            "bool",
             "If used in terrain generation, should a random sprite be picked? Otherwise use hero always",
             true
         )],
-        ["heightIndex", fieldInfo(
+        ["heightIndex", numberInfo(
             "Height Index",
-            "text",
+            "number",
             "Generator height Index",
-            0.5
+            0.5,0,1
         )],
     ]),
     'info' : new Map([
@@ -94,18 +95,18 @@ export let terrainData = {
     ]),
     'spriteInfo' : new Map([
         ["heroSpriteIndex", 
-            fieldInfo(
+            numberInfo(
             "Hero Sprite Index",
-            "text",
+            "number",
             "Which sprite should be used in UI to show this terrain?",
-            0
+            0,0,64
         )],
         ["numSprites", 
-            fieldInfo(
+            numberInfo(
             "Number of Sprites",
-            "text",
+            "number",
             "How many sprites does this sheet contain?",
-            1
+            1,1,64
         )],
         ["spriteType", 
             fieldInfo(

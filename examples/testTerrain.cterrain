@@ -1,6 +1,6 @@
 {
     "gameplay": {
-        "capacity": "1",
+        "capacity": 1,
         "isWater": false,
         "movementCost": "1",
         "visibilityCost": "1"
@@ -15,13 +15,13 @@
         "terrainType": "base"
     },
     "manifest": {
-        "cantataDataVersion": "1",
+        "cantataDataVersion": "1000",
         "guid": "generated?",
         "owner": "aaaa",
         "version": "1"
     },
     "spriteInfo": {
-        "heroSpriteIndex": 0,
+        "heroSpriteIndex": 1,
         "numSprites": 1,
         "spriteType": "single",
         "tilemap": "default.png"

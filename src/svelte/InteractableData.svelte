@@ -1,5 +1,5 @@
-<script>
-import Field from './Field.svelte';
+<!-- <script>
+import Field from './TextField.svelte';
 export let data;
 </script>
 
@@ -15,4 +15,4 @@ export let data;
             <td> <Field key={key} bind:data={data[key]} on:message/> </td>
         </tr>
     {/each}
-</table>
+</table> -->

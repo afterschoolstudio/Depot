@@ -1,5 +1,4 @@
 <script>
-    import Field from './Field.svelte';
     import Table from './Table.svelte';
     import { manifest, terrainData } from './cantataDataSpec.js';
     export let data;
