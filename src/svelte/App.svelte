@@ -32,7 +32,6 @@
                     // this pings the document to send us its state
                     // it's then recieved in the windowMessage function where we update our content
                     updateContent(message.text);
-                    const newState = message.text
 				}
 				dataType = message.jsonType;
                 return;
@@ -48,16 +47,38 @@
 				vscode.setState({ text });
 
                 return;
+            case 'filePicked':
+                jsonData["spriteInfo"].tilemap = message.filePath; 
+                vscode.postMessage({
+                    type: 'update',
+                    data: jsonData
+                });
+                return;
 		}
 	}
 	
 	function handleMessage(event) {
-        console.log("pushing data",jsonData)
-        //this is where we could conform the data, like flooring an int field if it gets a float value
-        vscode.postMessage({
-            type: 'update',
-            data: jsonData
-		});
+        console.log(event);
+        switch (event.detail.type) {
+            case "update":
+                console.log("pushing data",jsonData)
+                //this is where we could conform the data, like flooring an int field if it gets a float value
+                vscode.postMessage({
+                    type: 'update',
+                    data: jsonData
+                });
+                break;
+            case "pickFile":
+                console.log("firing file picker");
+                vscode.postMessage({
+                    type: 'pickFile',
+                    fileKey: event.detail.fileKey
+                });
+                break;
+            default:
+                break;
+        }
+        
 	}
 
 	function updateContent(/** @type {string} */ text) {

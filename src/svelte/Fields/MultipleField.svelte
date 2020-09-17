@@ -2,6 +2,7 @@
     import { createEventDispatcher } from 'svelte';
 
     export let data;
+    export let options;
     const dispatch = createEventDispatcher();
     function fieldUpdated() {
         dispatch('message', {
@@ -9,4 +10,11 @@
         });
     }
 </script>
-<input type=checkbox bind:checked={data} on:change={fieldUpdated}>
+<!-- svelte-ignore a11y-no-onchange -->
+<select multiple bind:value={data} on:change={fieldUpdated}>
+    {#each options as option}
+    <option value={option}>
+        {option}
+    </option>
+    {/each}
+</select>

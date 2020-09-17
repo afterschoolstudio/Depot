@@ -3,6 +3,9 @@
         "capacity": 1,
         "isWater": false,
         "movementCost": "1",
+        "testMultipleField": [
+            "first"
+        ],
         "visibilityCost": "1"
     },
     "generatorInfo": {
@@ -10,6 +13,7 @@
         "heightIndex": 0.4
     },
     "info": {
+        "description": "a new description",
         "name": "default terrain name",
         "placementSound": "none",
         "terrainType": "base"
@@ -24,6 +28,6 @@
         "heroSpriteIndex": 1,
         "numSprites": 1,
         "spriteType": "single",
-        "tilemap": "default.png"
+        "tilemap": ""
     }
 }

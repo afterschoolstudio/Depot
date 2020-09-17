@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<ScappleDocument ID="932F9F58-FCAC-4833-A2A7-21FEC2F67227" Version="1.1">
+   <Notes>
+      <Note Width="185.938" FontSize="12" ID="0" Position="18.8,18.0">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>.cabinet file
+
+this is the manifest for the cabinet functionality in the target folder. it defines which files/extensions should use cabinet (.cmod/etc)
+
+maybe this can be handled through vscode settings directly instead?</String>
+      </Note>
+      <Note Width="212.5" FontSize="12" ID="1" Position="11.7,228.1">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <Formatting>
+            <FormatRange Bold="Yes">0,5</FormatRange>
+         </Formatting>
+         <String>.cmod
+
+holds data about its own schema and the data itself
+
+uses special fields (like aspects and stuff) not available in the vanilla cabinet</String>
+      </Note>
+      <Note Width="291.406" FontSize="12" ID="2" Position="328.1,44.5">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>.cabinet files and others defaults:
+same fields as cdb</String>
+      </Note>
+      <Note Width="156.25" FontSize="12" ID="3" Position="328.9,98.4">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>can start by vscode command to make a “new cabinet file” and pops out a .cabinet</String>
+         <ConnectedNoteIDs>4</ConnectedNoteIDs>
+      </Note>
+      <Note Width="156.25" FontSize="12" ID="4" Position="552.3,98.4">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>its a blank sheet (like cdb) but you can quickly add new colums of different types</String>
+         <ConnectedNoteIDs>3</ConnectedNoteIDs>
+      </Note>
+      <Note Width="233.594" FontSize="12" ID="5" Position="379.7,244.5">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>.cmod is the main game data
+.csound is the audio stuff
+.ctext is the text stuff</String>
+      </Note>
+      <Note Width="156.25" FontSize="12" ID="6" Position="367.2,313.3">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>cmod text stuff can point to keyed item in .cmod/text sheet</String>
+         <ConnectedNoteIDs>7</ConnectedNoteIDs>
+      </Note>
+      <Note Width="156.25" FontSize="12" ID="7" Position="711.7,343.0">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>this means translations are easy to implement as mod files by just substituting the text for the key</String>
+         <ConnectedNoteIDs>6</ConnectedNoteIDs>
+      </Note>
+   </Notes>
+   <BackgroundShapes/>
+   <NoteStyles>
+      <Style AffectFontStyle="No" AffectAlignment="No" Name="Green Bubble" ID="CF4ACE54-FD69-406B-9B95-DA5BE660E6B0" AffectTextColor="No" AffectNoteBody="Yes" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <BorderThickness>1</BorderThickness>
+         <BorderColor>0.399100 0.583322 0.354864</BorderColor>
+         <FillColor>0.808835 0.872419 0.801343</FillColor>
+      </Style>
+      <Style AffectFontStyle="No" AffectAlignment="No" Name="Pink Bubble" ID="3B15F63D-0FC5-4DAC-820D-ABA5198D008C" AffectTextColor="No" AffectNoteBody="Yes" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <BorderThickness>1</BorderThickness>
+         <BorderColor>0.690303 0.407263 0.550912</BorderColor>
+         <FillColor>0.898329 0.817472 0.865339</FillColor>
+      </Style>
+      <Style AffectFontStyle="No" AffectAlignment="No" Name="Blue Bubble" ID="417DE486-DAE6-4BD4-AB34-1FA6F3C9724A" AffectTextColor="No" AffectNoteBody="Yes" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <BorderThickness>1</BorderThickness>
+         <BorderColor>0.485893 0.568933 0.756207</BorderColor>
+         <FillColor>0.844068 0.869596 0.923064</FillColor>
+      </Style>
+      <Style AffectFontStyle="Yes" AffectAlignment="Yes" Name="Title Text" ID="39D5F171-1A58-4FB1-9A0C-6C960020B56A" AffectTextColor="No" AffectNoteBody="No" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <IsBold>Yes</IsBold>
+         <FontSize>12.0</FontSize>
+      </Style>
+      <Style AffectFontStyle="No" AffectAlignment="No" Name="Yellow Bubble" ID="FB048224-D1AA-4F84-AF02-AB6F722D0893" AffectTextColor="No" AffectNoteBody="Yes" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <BorderThickness>1</BorderThickness>
+         <BorderColor>0.769436 0.762219 0.390143</BorderColor>
+         <FillColor>0.912963 0.894118 0.644541</FillColor>
+      </Style>
+      <Style AffectFontStyle="No" AffectAlignment="No" Name="Brown Bubble" ID="5A5A3A81-C2C7-4C5E-8565-58FA8C0159C9" AffectTextColor="No" AffectNoteBody="Yes" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <BorderThickness>1</BorderThickness>
+         <BorderColor>0.269490 0.164034 0.186694</BorderColor>
+         <FillColor>0.934157 0.888319 0.785290</FillColor>
+      </Style>
+      <Style AffectFontStyle="No" AffectAlignment="No" Name="Red Text" ID="6BDD4BF7-A154-4DC1-AE51-0418AEE5BAAF" AffectTextColor="Yes" AffectNoteBody="No" AffectSticky="No" AffectSize="No" AffectFade="No">
+         <TextColor>1.0 0.0 0.0</TextColor>
+      </Style>
+   </NoteStyles>
+   <UISettings>
+      <BackgroundColor>1.0 0.988006 0.945006</BackgroundColor>
+      <DefaultFont>Helvetica</DefaultFont>
+      <DefaultTextColor>0.0 0.0 0.0</DefaultTextColor>
+   </UISettings>
+   <PrintSettings VerticalPagination="Auto" HorizontalPagination="Clip" Orientation="Portrait" RightMargin="12.000000" BottomMargin="12.000000" HorizontallyCentered="Yes" ScaleFactor="1.000000" PagesAcross="1" PaperType="na-letter" PagesDown="1" TopMargin="12.000000" Collates="Yes" PaperSize="-1.000000,-1.000000" LeftMargin="12.000000" VerticallyCentered="Yes"/>
+</ScappleDocument>

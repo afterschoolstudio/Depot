@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { getNonce } from './util';
+import { resolveCliPathFromVSCodeExecutablePath } from 'vscode-test';
 
 /**
  * Provider for cat scratch editors.
@@ -101,6 +102,15 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			changeDocumentSubscription.dispose();
 		});
 
+		const fileOptions: vscode.OpenDialogOptions = {
+			canSelectMany: false,
+			openLabel: 'Open',
+			filters: {
+			   'All files': ['*'],
+			   'Text files': ['txt']
+		   }
+	   };
+
 		// Receive message from the webview.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
@@ -112,6 +122,20 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 					return;
 				case 'update':
 					this.updateTextDocument(document, e.data);
+					return;
+				case 'pickFile':
+					vscode.window.showOpenDialog(fileOptions).then(fileUri => {
+						console.log(fileUri);
+						if (fileUri && fileUri[0]) {
+							console.log('Selected file: ' + fileUri[0].path + ' for key: ' + e.fileKey);
+							console.log("relative location from editor to file is: " + path.relative(document.uri.path,fileUri[0].path));
+							webviewPanel.webview.postMessage({
+								type: 'filePicked',
+								filePath:  path.relative(document.uri.path,fileUri[0].path),
+								fileKey: e.fileKey
+							});
+						}
+					});
 					return;
 			}
 		});
