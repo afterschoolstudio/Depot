@@ -1,8 +1,10 @@
 <script>
+    import { getContext } from 'svelte';
     import { createEventDispatcher } from 'svelte';
 
     export let data;
     export let fileKey;
+    const nonce = getContext("nonce");
     const dispatch = createEventDispatcher();
     function pickFile() {
         dispatch('message', {
@@ -22,6 +24,7 @@
 <button on:click={pickFile}>Pick</button>
 <button on:click={clearFile}>Clear</button>
 {data}
+<!-- <img src={data} nonce={nonce} alt={data}> -->
 <img src={data} alt={data}>
 {/if}
 

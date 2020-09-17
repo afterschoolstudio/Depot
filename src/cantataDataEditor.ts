@@ -129,9 +129,13 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 						if (fileUri && fileUri[0]) {
 							console.log('Selected file: ' + fileUri[0].path + ' for key: ' + e.fileKey);
 							console.log("relative location from editor to file is: " + path.relative(document.uri.path,fileUri[0].path));
+							// let uriPath = webviewPanel.webview.asWebviewUri(vscode.Uri.file('/Users/codey/workspace/cat.gif'))
+							let uriPath = webviewPanel.webview.asWebviewUri(fileUri[0]).toString();
+							console.log(uriPath);
 							webviewPanel.webview.postMessage({
 								type: 'filePicked',
-								filePath:  path.relative(document.uri.path,fileUri[0].path),
+								filePath:  path.relative(document.uri.path,fileUri[0].path), //still prob want to send this with uri
+								// filePath:  uriPath,
 								fileKey: e.fileKey
 							});
 						}
@@ -158,26 +162,37 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
 			// path.join(this.context.extensionPath, 'includes', 'bulma.css')
 		));
+		const docUri = webview.asWebviewUri(document.uri);
+		// console.log(document.uri.with({ scheme: 'vscode-resource' }).fsPath);
+		// console.log(document.uri.with({ scheme: 'vscode-resource' }).path);
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
-        
+
+		//maybe this to get in base?
+	
+        //  <!-- <base href="${vscode.Uri.file(path.join(this._extensionPath, 'build')).with({ scheme: 'vscode-resource' })}/"> -->
+		// 	<!-- https://github.com/rebornix/vscode-webview-react  -->
         return /* html */`
         <!DOCTYPE html>
         <html lang="en">
         <head>
-            <meta charset='utf-8'>
+			<meta charset='utf-8'>
+			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+			<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'nonce-${nonce}'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';"> -->
             <meta name='viewport' content='width=device-width,initial-scale=1'>
             <title>Cantata Data Editor</title>
-        
+			<base href="${docUri}/">
             <!-- <link rel='icon' type='image/png' href='/favicon.png'> -->
             <!-- <link rel='stylesheet' href='/global.css'> -->
 			<link rel='stylesheet' href="${styleUri}">
-			<script defer src="${scriptUri}"></script>
+			
+			<script defer nonce="${nonce}" src="${scriptUri}"></script>
 		</head>
 			
 		<body>
-		<script>
+		<script nonce="${nonce}">
+			const nonce = "${nonce}";
 			const vscode = acquireVsCodeApi();
 		</script>
         </body>

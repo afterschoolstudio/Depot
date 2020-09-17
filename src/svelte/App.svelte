@@ -1,13 +1,15 @@
 <script>
 	import InteractableData from './DataTypes/InteractableData.svelte';
 	import TerrainData from './DataTypes/TerrainData.svelte';
-    import { onMount } from 'svelte';
+    import { onMount, setContext  } from 'svelte';
 
 	onMount(() => {
+        setContext("nonce", nonce);
         vscode.postMessage({
             type: 'init-view',
 		});
-	});
+    });
+    
 
 	let dataType = "";
     let jsonData = {};

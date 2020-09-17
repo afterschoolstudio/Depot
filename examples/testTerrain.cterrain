@@ -4,7 +4,9 @@
         "isWater": false,
         "movementCost": "1",
         "testMultipleField": [
-            "first"
+            "first",
+            "second",
+            "third"
         ],
         "visibilityCost": "1"
     },
