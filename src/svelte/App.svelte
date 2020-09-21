@@ -1,6 +1,7 @@
 <script>
 	import InteractableData from './DataTypes/InteractableData.svelte';
-	import TerrainData from './DataTypes/TerrainData.svelte';
+    import TerrainData from './DataTypes/TerrainData.svelte';
+    import Depot from './DataTypes/Depot.svelte'
     import { onMount, setContext  } from 'svelte';
 
 	onMount(() => {
@@ -109,6 +110,8 @@
 	<InteractableData bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "terrain"}
 	<TerrainData bind:data={jsonData} on:message={handleMessage}/>
+{:else if dataType === "depot"}
+	<Depot bind:data={jsonData} on:message={handleMessage}/>
 {:else if dataType === "ruleset"}
 	<p>Ruleset not implemented</p>
 {:else if dataType === "faction"}

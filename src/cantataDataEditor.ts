@@ -74,6 +74,9 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 				case 'cmod':
 					dataType = 'manifest';
 					break;			
+				case 'dpo':
+					dataType = 'depot';
+					break;			
 			}
 			webviewPanel.webview.postMessage({
 				type: 'init',

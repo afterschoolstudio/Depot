@@ -22,7 +22,7 @@
 				"displayName": "Cantata Data",
 				"selector": [
 					{
-						"filenamePattern": "*.{cterrain,cinteractable,cruleset,cfaction,csupply}"
+						"filenamePattern": "*.{cterrain,cinteractable,cruleset,cfaction,csupply,dpo}"
 					}
 				]
 			}
