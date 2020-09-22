@@ -22,13 +22,7 @@ function addLine() {
 
 </script>
 
-<div>
-    Name: <TextField bind:data={data.name} on:message/>
-    <br>
-</div>
 <br>
-
-
 {#if data.columns.length === 0}
     <p>No columns</p>
 {:else}

@@ -1,5 +1,5 @@
 <script>
-import { createEventDispatcher, setContext } from 'svelte';
+import { createEventDispatcher } from 'svelte';
 export let columnEditorsDisabled = false;
 $: disabled = columnEditorsDisabled;
 
@@ -15,8 +15,7 @@ function openColumnEditor(columnType) {
     editorUpdate({
         "active" : true,
         "operation" : "new",
-        "editType" : "column",
-        "dataType" : columnType
+        "editType" : columnType,
     });
 }
 
