@@ -1,7 +1,7 @@
 <script>
 	import InteractableData from './DataTypes/InteractableData.svelte';
     import TerrainData from './DataTypes/TerrainData.svelte';
-    import Depot from './DataTypes/Depot.svelte'
+    import Depot from './Depot/Depot.svelte'
     import { onMount, setContext  } from 'svelte';
 
 	onMount(() => {

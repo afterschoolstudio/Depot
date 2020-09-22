@@ -104,6 +104,40 @@ same fields as cdb</String>
          </Appearance>
          <String>if you open a recgonized type BUT it doesn’t find a sheet, it will as you to create the sheet in the editor</String>
       </Note>
+      <Note Width="74.5605" FontSize="12" ID="12" Position="1077.6,436.3">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>new column</String>
+         <ConnectedNoteIDs>13</ConnectedNoteIDs>
+      </Note>
+      <Note Width="71.7529" FontSize="12" ID="13" Position="1142.1,479.3">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>show editor</String>
+         <ConnectedNoteIDs>12, 14-15</ConnectedNoteIDs>
+      </Note>
+      <Note Width="101.111" FontSize="12" ID="14" Position="1143.8,550.4">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>create
+(creates column, closes editor)</String>
+         <ConnectedNoteIDs>13</ConnectedNoteIDs>
+      </Note>
+      <Note Width="174.502" FontSize="12" ID="15" Position="1254.6,547.1">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>close
+(doesn’t create column, closes editor)</String>
+         <ConnectedNoteIDs>13</ConnectedNoteIDs>
+      </Note>
    </Notes>
    <BackgroundShapes/>
    <NoteStyles>
