@@ -6,6 +6,7 @@ import DepotTable from './DepotTable.svelte';
 import DepotConfigurator from './DepotConfigurator.svelte';
 import { v4 as uuidv4 } from 'uuid';
 export let data;
+let debug = false;
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
@@ -71,19 +72,21 @@ function handleOptions(event) {
         case "sheetUpdate":
             switch (event.detail.data.operation) {
                 case "newLine":
-                    var newLine = {};
-                    newLine["guid"] = uuidv4();
-                    data.sheets[selectedSheet].columns.forEach(column => {
-                        if(column.typeStr == "multiple")
-                        {
-                            newLine[column.name] = column.defaultValue.split(', ');
-                        }
-                        else
-                        {
-                            newLine[column.name] = column.defaultValue;
-                        }
-                    });
-                    data.sheets[selectedSheet].lines.push(newLine);
+                    for (let index = 1; index <= event.detail.data.amount; index++) {
+                        var newLine = {};
+                        newLine["guid"] = uuidv4();
+                        data.sheets[selectedSheet].columns.forEach(column => {
+                            if(column.typeStr == "multiple")
+                            {
+                                newLine[column.name] = column.defaultValue.split(', ');
+                            }
+                            else
+                            {
+                                newLine[column.name] = column.defaultValue;
+                            }
+                        });
+                        data.sheets[selectedSheet].lines.push(newLine);
+                    }
                     sheetsUpdated();
                     break;
             }
@@ -203,6 +206,17 @@ function handleTableAction(event) {
         case "update":
             sheetsUpdated();
             break;
+        case "editLine":
+            switch (event.detail.data.operation) {
+                case "remove":
+                    data.sheets[selectedSheet].lines.splice(event.detail.data.lineIndex,1);
+                    //TODO: need to update any sheets that reference this line?
+                    break;
+                default:
+                    break;
+            }
+            sheetsUpdated();
+            break;
         case "pickFile":
             //forward events from fields
             dispatch('message', {
@@ -224,17 +238,22 @@ function handleTableAction(event) {
     <br>
     Selected: {selectedSheet}
     <br>
-    <DepotOptions on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0 || data.sheets[selectedSheet].columns.length == 0}/>
+    <DepotOptions bind:debug={debug} on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0 || data.sheets[selectedSheet].columns.length == 0}/>
     {#if data.sheets.length === 0}
-       <DepotConfigurator data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
+       <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
     {:else}
         {#each data.sheets as sheet}
             <button on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
         {/each}
-        <DepotConfigurator data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
+        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotTable bind:data={data.sheets[selectedSheet]} on:message={handleTableAction}/>
+            <DepotTable debug={debug} bind:data={data.sheets[selectedSheet]} on:message={handleTableAction}/>
         {/if}
     {/if}
+{/if}
+
+{#if debug}
+<p>Raw Data:</p>
+<pre>{JSON.stringify({data},null,2)}</pre>
 {/if}

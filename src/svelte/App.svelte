@@ -121,7 +121,7 @@
 {:else}
 	<p>Error: Invalid Data Type {dataType}</p>
 {/if}
-<pre>{JSON.stringify({jsonData},null,2)}</pre>
+<!-- <pre>{JSON.stringify({jsonData},null,2)}</pre> -->
 
 <style>
 	main {

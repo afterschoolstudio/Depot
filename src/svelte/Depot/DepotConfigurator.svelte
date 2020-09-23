@@ -17,6 +17,7 @@ function configUpdate(updateType) {
 
 export let data;
 export let config;
+export let debug;
 let configTitle = "";
 $: {
     let first = config.operation === "new" ? "New " : "Edit ";
@@ -104,6 +105,8 @@ $: {
     <button on:click={deleteBlob}>Delete</button>
     {/if}
     <button on:click={closeEditor}>Cancel</button>
+    {#if debug}
     <pre>{JSON.stringify({data},null,2)}</pre>
     <pre>{JSON.stringify({config},null,2)}</pre>
+    {/if}
 {/if}

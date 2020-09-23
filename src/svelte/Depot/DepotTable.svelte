@@ -9,6 +9,7 @@ import NumberField from '../Fields/NumberField.svelte';
 
 import { createEventDispatcher } from 'svelte';
 export let data;
+export let debug;
 const dispatch = createEventDispatcher();
 
 function editColumn(column) {
@@ -22,6 +23,17 @@ function editColumn(column) {
     });
 }
 
+function removeLine(lineIndex, line) {
+    dispatch('message', {
+        "type" : "editLine",
+        "data" : {
+            "operation" : "remove",
+            "lineIndex" : lineIndex,
+            "line" : line
+        }
+    });
+}
+
 </script>
 
 <br>
@@ -30,16 +42,18 @@ function editColumn(column) {
 {:else}
     <table>
     <tr>
-        <th>GUID</th>
+        <th style="width:10px;">    </th>
+        <th style="width:10px;">GUID</th>
         {#each data.columns as column}
-            <th><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
+            <th title="{column.description}"><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
         {/each}
     </tr>
-    {#each data.lines as line}
+    {#each data.lines as line, i}
         <tr>
-            <td>{line.guid}</td>
+            <td><button on:click={() => removeLine(i,line)}>X</button></td>
+            <td title="{line.guid}">...</td>
             {#each data.columns as column}
-                <td>
+                <td title="{column.description}">
                 <div>
                 <!-- message from field updates bubble to Depot.svelte -->
                 {#if column.typeStr === "text"}
@@ -64,5 +78,8 @@ function editColumn(column) {
     {/each}
     </table>
 {/if}
+{#if debug}
+<p>Current Table Data:</p>
 <pre>{JSON.stringify({data},null,2)}</pre>
 <p>----------------------------------------</p>
+{/if}
