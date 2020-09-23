@@ -10,6 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:depot.newDepotFile",
 		"onCommand:cantata-tools.data.newInteractable",
 		"onCommand:cantata-tools.data.newTerrain",
 		"onCustomEditor:cantata-tools.data"
@@ -28,6 +29,11 @@
 			}
 		],
 		"commands": [
+			{
+				"command": "depot.newDepotFile",
+				"title": "Create a new Depot file",
+				"category": "Depot"
+			},
 			{
 				"command": "cantata-tools.data.newInteractable",
 				"title": "Create new Cantata Interactable",

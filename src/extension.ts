@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { posix } from 'path';
 // import { CantataTerrainEditorProvider } from './cantataTerrainEditor';
 // import { CantataInteractableEditorProvider } from './cantataInteractableEditor';
 import { CantataDataEditorProvider } from './cantataDataEditor';
@@ -9,6 +10,18 @@ import { CantataDataEditorProvider } from './cantataDataEditor';
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
+	const command = 'depot.newDepotFile';
+
+	const commandHandler = (name: string = 'world') => {
+		const folderUri = vscode.workspace.workspaceFolders[0].uri;
+		//set these in depot settings config - default file name, default template
+		const fileUri = folderUri.with({ path: posix.join(folderUri.path, 'depot.dpo') });
+		const writeStr = '{ "sheets": []}';
+		const writeData = Buffer.from(writeStr, 'utf8');
+		vscode.workspace.fs.writeFile(fileUri,writeData);
+	};
+
+	context.subscriptions.push(vscode.commands.registerCommand(command, commandHandler));
 	/*
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)

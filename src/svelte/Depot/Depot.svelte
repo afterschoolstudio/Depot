@@ -231,13 +231,11 @@ function handleTableAction(event) {
 
 </script>
  
-<h1>Depot DB</h1>
+<h1>Depot</h1>
 {#if !data.hasOwnProperty("sheets")}
     <p>Invalid Depot File</p>
+    <p>Use Ctrl/Cmd+Shift+P and select "Create new Depot File" to get started</p>
 {:else}
-    <br>
-    Selected: {selectedSheet}
-    <br>
     <DepotOptions bind:debug={debug} on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0 || data.sheets[selectedSheet].columns.length == 0}/>
     {#if data.sheets.length === 0}
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
@@ -254,6 +252,7 @@ function handleTableAction(event) {
 {/if}
 
 {#if debug}
+<p>Selected Sheet: {selectedSheet}</p>
 <p>Raw Data:</p>
 <pre>{JSON.stringify({data},null,2)}</pre>
 {/if}
