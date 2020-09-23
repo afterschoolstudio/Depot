@@ -1,22 +1,24 @@
 <script>
 import TextField from "../Fields/TextField.svelte";
-import { v4 as uuidv4 } from 'uuid';
+import BooleanField from '../Fields/BooleanField.svelte';
+import EnumField from '../Fields/EnumField.svelte';
+import ImageField from '../Fields/ImageField.svelte';
+import LongTextField from '../Fields/LongTextField.svelte';
+import MultipleField from '../Fields/MultipleField.svelte';
+import NumberField from '../Fields/NumberField.svelte';
+
 import { createEventDispatcher } from 'svelte';
 export let data;
-
 const dispatch = createEventDispatcher();
-function openEditor(columnName) {
-    //if we can ever click this we know that this table is the open table
-    dispatch('message', {
-        "type" : "editColumn",
-        "data" : columnName
-    });
-    
-}
 
-function addLine() {
+function editColumn(column) {
     dispatch('message', {
-        "type" : "lineAdd"
+        "type" : "editorUpdate",
+        "data" : {
+            "active" : true,
+            "operation" : "edit",
+            "editType" : column
+        }
     });
 }
 
@@ -28,17 +30,38 @@ function addLine() {
 {:else}
     <table>
     <tr>
-        <th>Record</th>
+        <th>GUID</th>
         {#each data.columns as column}
-            <th><a href={"#"} on:click={()=> openEditor(column.name)}>{column.name}</a></th>
+            <th><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
         {/each}
     </tr>
     {#each data.lines as line}
         <tr>
-            
+            <td>{line.guid}</td>
+            {#each data.columns as column}
+                <td>
+                <div>
+                <!-- message from field updates bubble to Depot.svelte -->
+                {#if column.typeStr === "text"}
+                <TextField bind:data={line[column.name]} on:message/>
+                {:else if column.typeStr === "longtext"}
+                <LongTextField bind:data={line[column.name]} on:message/>
+                {:else if column.typeStr === "image"}
+                <ImageField bind:data={line[column.name]} on:message fileKey={column.name}/>
+                {:else if column.typeStr === "bool"}
+                <BooleanField bind:data={line[column.name]} on:message/>
+                {:else if column.typeStr === "enum"}
+                <EnumField bind:data={line[column.name]} on:message/>
+                {:else if column.typeStr === "multiple"}
+                <MultipleField bind:data={line[column.name]} on:message/>
+                {:else if column.typeStr === "int" || column.typeStr === "float"}
+                <NumberField bind:data={line[column.name]} on:message/>
+                {/if}
+                </div>
+                </td>
+            {/each}
         </tr>
     {/each}
-    <button on:click={addLine}>Add Line</button>
     </table>
 {/if}
 <pre>{JSON.stringify({data},null,2)}</pre>

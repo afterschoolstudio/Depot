@@ -37,7 +37,7 @@ function deleteBlob() {
 }
 
 let validName = true;
-$: disabled = !validName;
+// $: disabled = !validName;
 $: { 
     if(config.active)
     {
@@ -52,6 +52,18 @@ $: {
     }
 }
 
+let configuration = {}
+$: {
+    if(config.operation === "edit")
+    {
+        configuration = data.configurable;
+    }
+    else if(config.operation === "new")
+    {
+        configuration = defaults[config.editType].configurable;
+    }
+}
+
 </script>
 {#if config.active}
     <p>{configTitle}</p>
@@ -60,23 +72,23 @@ $: {
         <td>Field</td>
         <td>Value</td>
     </tr>
-    {#each Object.keys(defaults[config.editType].configurable) as fieldName}
+    {#each Object.keys(configuration) as fieldName}
         <tr>
             <td>{fieldName}</td>
             <td>
-                {#if defaults[config.editType].configurable[fieldName] === "text"}
+                {#if configuration[fieldName] === "text"}
                 <div><TextField bind:data={data[fieldName]}/></div>
-                {:else if defaults[config.editType].configurable[fieldName] === "longtext"}
+                {:else if configuration[fieldName] === "longtext"}
                 <div><LongTextField bind:data={data[fieldName]}/></div>
-                <!-- {:else if defaults[config.editType].configurable[fieldName] === "image"}
+                <!-- {:else if configuration[fieldName] === "image"}
                 <div><ImageField bind:data={data[fieldName]} fileKey={key}/></div> -->
-                {:else if defaults[config.editType].configurable[fieldName] === "bool"}
+                {:else if configuration[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
-                {:else if defaults[config.editType].configurable[fieldName] === "enum"}
+                {:else if configuration[fieldName] === "enum"}
                 <div><EnumField bind:data={data[fieldName]}/></div>
-                {:else if defaults[config.editType].configurable[fieldName] === "multiple"}
+                {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div>
-                {:else if defaults[config.editType].configurable[fieldName] === "int" || defaults[config.editType].configurable[fieldName] === "float"}
+                {:else if configuration[fieldName] === "int" || configuration[fieldName] === "float"}
                 <div><NumberField bind:data={data[fieldName]}/></div>
                 {/if}
             </td>
@@ -85,9 +97,9 @@ $: {
     </table>
     <br>
     {#if config.operation === "new"}
-    <button on:click={createBlob} {disabled}>Create</button>
+    <button on:click={createBlob} disabled={!validName}>Create</button>
     {:else if config.operation === "edit"}
-    <button on:click={saveBlob} {disabled}>Save</button> 
+    <button on:click={saveBlob} disabled={!validName}>Save</button> 
     <button on:click={deleteBlob}>Delete</button>
     {/if}
     <button on:click={closeEditor}>Cancel</button>

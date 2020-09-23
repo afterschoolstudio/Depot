@@ -36,3 +36,5 @@ export let defaults = {
         }
     }
 }
+
+//every new column needs a name, typeStr, and defaultValue field

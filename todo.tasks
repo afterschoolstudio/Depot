@@ -1,7 +1,8 @@
-need to get banned fields for editing to not care about currently open fields
-need to make sure the edit path works for sheets
-need to make sure the edit path works for fields (needs hookup)
-    should just click a field name to open editor
+✔ need to get banned fields for editing to not care about currently open fields @done (9/23/2020, 3:21:21 PM)
+✔ need to make sure the edit path works for sheets @done (9/23/2020, 3:21:23 PM)
+✔ need to make sure the edit path works for fields (needs hookup) @done (9/23/2020, 3:21:25 PM)
+    ✔ should just click a field name to open editor @done (9/23/2020, 3:21:32 PM)
 
-when sheet or field name changes, need to update it where relevant as well
-hook up delete for fields/sheets
+✔ when sheet or field name changes, need to update it where relevant as well @done (9/23/2020, 3:21:35 PM)
+✔ if the configurator is open, prevent clicking any buttons besides config buttons @done (9/23/2020, 3:48:51 PM)
+✔ hook up delete for fields/sheets @done (9/23/2020, 3:48:52 PM)

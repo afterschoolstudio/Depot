@@ -155,7 +155,7 @@
     :global(table td, table th) {
         border:3px solid #252526;
         padding: 0px;
-        width: 50%
+        /* width: 50% */
     } 
     :global(table tbody td) {
         font-size: 13px;
