@@ -37,20 +37,26 @@ function deleteBlob() {
 }
 
 let validName = true;
-$: disabled = validName;
+$: disabled = !validName;
 $: { 
-    switch (config.editType) {
-        case "sheet":
-            
-            break;
-        default:
-            break;
+    if(config.active)
+    {
+        switch (config.editType) {
+            case "sheet":
+                validName = !config.bannedNames.sheetNames.includes(data.name);
+                break;
+            default:
+                validName = !config.bannedNames.columnNames.includes(data.name);
+                break;
+        }
     }
 }
 
 </script>
 {#if config.active}
     <p>{configTitle}</p>
+    <p>Disabled: {disabled}</p>
+    <p>Valid: {validName}</p>
     <table>
     <tr>
         <td>Field</td>
@@ -81,9 +87,9 @@ $: {
     </table>
     <br>
     {#if config.operation === "new"}
-    <button on:click={createBlob}>Create</button>
+    <button on:click={createBlob} {disabled}>Create</button>
     {:else if config.operation === "edit"}
-    <button on:click={saveBlob}>Save</button> 
+    <button on:click={saveBlob} {disabled}>Save</button> 
     <button on:click={deleteBlob}>Delete</button>
     {/if}
     <button on:click={closeEditor}>Cancel</button>
