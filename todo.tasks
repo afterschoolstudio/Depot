@@ -6,3 +6,4 @@
 ✔ when sheet or field name changes, need to update it where relevant as well @done (9/23/2020, 3:21:35 PM)
 ✔ if the configurator is open, prevent clicking any buttons besides config buttons @done (9/23/2020, 3:48:51 PM)
 ✔ hook up delete for fields/sheets @done (9/23/2020, 3:48:52 PM)
+☐ should bar creation of multiple or enum with default value not in array of options OR if not valid array

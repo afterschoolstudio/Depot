@@ -3,6 +3,7 @@ import { createEventDispatcher } from 'svelte';
 export let editSheetDisabled = false;
 export let addLineDisabled = false;
 export let allDisabled = false;
+import {defaults} from './depotDefaults';
 // $: disabled = editSheetDisabled;
 
 const dispatch = createEventDispatcher();
@@ -52,8 +53,12 @@ function newLine() {
 
 </script>
 <button on:click={createSheet} disabled={allDisabled}>New Sheet</button>
-<button on:click={() => createColumn("int")} disabled={editSheetDisabled || allDisabled}>New Int</button>
-<button on:click={() => createColumn("bool")} disabled={editSheetDisabled || allDisabled}>New Bool</button>
+<br>
+{#each Object.keys(defaults) as columnType}
+    {#if columnType !== "sheet"}
+        <button on:click={() => createColumn(columnType)} disabled={editSheetDisabled || allDisabled}>New {columnType}</button>
+    {/if}
+{/each}
 <br>
 <button on:click={editSheet} disabled={editSheetDisabled || allDisabled}>Edit Sheet</button>
 <button on:click={newLine} disabled={addLineDisabled || allDisabled}>New Line</button>

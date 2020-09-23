@@ -76,18 +76,19 @@ $: {
         <tr>
             <td>{fieldName}</td>
             <td>
+                <!-- commented out fields aren't used for field config -->
                 {#if configuration[fieldName] === "text"}
                 <div><TextField bind:data={data[fieldName]}/></div>
                 {:else if configuration[fieldName] === "longtext"}
                 <div><LongTextField bind:data={data[fieldName]}/></div>
                 <!-- {:else if configuration[fieldName] === "image"}
-                <div><ImageField bind:data={data[fieldName]} fileKey={key}/></div> -->
+                <div><ImageField bind:data={data[fieldName]} fileKey={fieldName}/></div> -->
                 {:else if configuration[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
-                {:else if configuration[fieldName] === "enum"}
+                <!-- {:else if configuration[fieldName] === "enum"}
                 <div><EnumField bind:data={data[fieldName]}/></div>
                 {:else if configuration[fieldName] === "multiple"}
-                <div><MultipleField bind:data={data[fieldName]}/></div>
+                <div><MultipleField bind:data={data[fieldName]}/></div> -->
                 {:else if configuration[fieldName] === "int" || configuration[fieldName] === "float"}
                 <div><NumberField bind:data={data[fieldName]}/></div>
                 {/if}

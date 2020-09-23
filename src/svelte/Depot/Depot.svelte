@@ -74,7 +74,14 @@ function handleOptions(event) {
                     var newLine = {};
                     newLine["guid"] = uuidv4();
                     data.sheets[selectedSheet].columns.forEach(column => {
-                        newLine[column.name] = column.defaultValue;
+                        if(column.typeStr == "multiple")
+                        {
+                            newLine[column.name] = column.defaultValue.split(', ');
+                        }
+                        else
+                        {
+                            newLine[column.name] = column.defaultValue;
+                        }
                     });
                     data.sheets[selectedSheet].lines.push(newLine);
                     sheetsUpdated();
@@ -94,8 +101,16 @@ function handleConfigUpdate(event) {
                     break;
                 default: //column
                     data.sheets[selectedSheet].columns.push(editorData);
+                    //if you're creating a column, create a new entry for a column value in every line based off the default value
                     data.sheets[selectedSheet].lines.forEach(line => {
-                        line[editorData.name] = editorData.defaultValue;
+                        if(editorData.typeStr == "multiple")
+                        {
+                            line[editorData.name] = editorData.defaultValue.split(', ');
+                        }
+                        else
+                        {
+                            line[editorData.name] = editorData.defaultValue;
+                        }
                     });
                     break;
             }
@@ -111,7 +126,7 @@ function handleConfigUpdate(event) {
                 default: //column
                     var index = data.sheets[selectedSheet].columns.findIndex(x => x.name === editorConfig.editType); //old name
                     data.sheets[selectedSheet].columns[index] = editorData; //column now has new name maybe
-                    //update line entries if column name changed
+                    //update line entries depending on circumstances - maybe a faster way?
                     if(editorConfig.editType !== editorData.name)
                     {
                         data.sheets[selectedSheet].lines.forEach(line => {
@@ -122,6 +137,25 @@ function handleConfigUpdate(event) {
                         });
                         //TODO: may need to do more here if column name change was referenced by other sheet?
                     }
+                    if(editorData.typeStr == "multiple")
+                    {
+                        data.sheets[selectedSheet].lines.forEach(line => {
+                            //make sure the multiple only has values possible based on config
+                            //this removes old values if config changes
+                            line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
+                        });
+                    }
+                    if(editorData.typeStr == "enum")
+                    {
+                        data.sheets[selectedSheet].lines.forEach(line => {
+                            //make sure the enum only has values possible based on config
+                            if(!editorData.options.includes(line[editorData.name]))
+                            {
+                                line[editorData.name] = editorData.defaultValue
+                            }
+                        });
+                    }
+                    
                     break;
             }
             editorConfig = {"active":false};
@@ -168,6 +202,14 @@ function handleTableAction(event) {
             break;
         case "update":
             sheetsUpdated();
+            break;
+        case "pickFile":
+            //forward events from fields
+            dispatch('message', {
+                "type" : "pickFile",
+                "fileKey" : event.detail.fileKey
+            });
+            break;
         default:
             break;
     }

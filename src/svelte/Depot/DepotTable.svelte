@@ -51,9 +51,9 @@ function editColumn(column) {
                 {:else if column.typeStr === "bool"}
                 <BooleanField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "enum"}
-                <EnumField bind:data={line[column.name]} on:message/>
+                <EnumField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "multiple"}
-                <MultipleField bind:data={line[column.name]} on:message/>
+                <MultipleField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField bind:data={line[column.name]} on:message/>
                 {/if}
