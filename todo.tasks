@@ -1,0 +1,7 @@
+need to get banned fields for editing to not care about currently open fields
+need to make sure the edit path works for sheets
+need to make sure the edit path works for fields (needs hookup)
+    should just click a field name to open editor
+
+when sheet or field name changes, need to update it where relevant as well
+hook up delete for fields/sheets

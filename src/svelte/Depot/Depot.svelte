@@ -36,16 +36,21 @@ let editorConfig = {"active" : false}
 let editorData = {}
 function handleOptions(event) {
     //event.detail.type assumed to be editorUpdate
+    editorConfig = event.detail.data;
+    editorConfig["bannedNames"] = getBannedNames();
     switch (event.detail.data.operation) {
         case "new":
-            editorConfig = event.detail.data;
-            editorConfig["bannedNames"] = getBannedNames();
             editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
             break;
         case "edit":
-            //not implemented
-            // editorConfig = event.detail.data;
-            // editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
+            switch (event.detail.data.editType) {
+                case "sheet":
+                    editorData = JSON.parse(JSON.stringify(data.sheets[selectedSheet]));
+                    break;
+                default: //column
+                    editorData = JSON.parse(JSON.stringify(data.sheets[selectedSheet].columns.find(x => x.name === editorConfig.editType)));
+                    break;
+            }
             break;
         default:
             break;
@@ -57,7 +62,6 @@ function handleConfigUpdate(event) {
         case "create":
             switch (editorConfig.editType) {
                 case "sheet":
-                    console.log(editorData);
                     data.sheets.push(editorData);
                     break;
                 default: //column
@@ -68,7 +72,17 @@ function handleConfigUpdate(event) {
             sheetsUpdated();
             break;
         case "save":
-            
+            switch (editorConfig.editType) {
+                case "sheet":
+                    data.sheets[selectedSheet] = editorData;
+                    //TODO: need to update other sheet columns that reference this?
+                    break;
+                default: //column
+                    var index = data.sheets[selectedSheet].columns.findIndex(x => x.name === editorConfig.editType);
+                    data.sheets[selectedSheet].columns[index] = editorData;
+                    //TODO: need to update whatever lines are here with new name
+                    break;
+            }
             editorConfig = {"active":false};
             sheetsUpdated();
             break;

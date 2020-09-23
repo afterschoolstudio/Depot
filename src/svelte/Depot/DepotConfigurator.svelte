@@ -55,8 +55,6 @@ $: {
 </script>
 {#if config.active}
     <p>{configTitle}</p>
-    <p>Disabled: {disabled}</p>
-    <p>Valid: {validName}</p>
     <table>
     <tr>
         <td>Field</td>

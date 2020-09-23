@@ -11,7 +11,7 @@ function editorUpdate(data) {
     });
 }
 
-function openColumnEditor(columnType) {
+function createColumn(columnType) {
     editorUpdate({
         "active" : true,
         "operation" : "new",
@@ -19,7 +19,7 @@ function openColumnEditor(columnType) {
     });
 }
 
-function openSheetEditor() {
+function createSheet() {
     editorUpdate({
         "active" : true,
         "operation" : "new",
@@ -27,10 +27,19 @@ function openSheetEditor() {
     });
 }
 
+function editSheet() {
+    editorUpdate({
+        "active" : true,
+        "operation" : "edit",
+        "editType" : "sheet"
+    });
+}
+
 </script>
-<button on:click={openSheetEditor}>New Sheet</button>
-<button on:click={() => openColumnEditor("int")} {disabled}>New Int</button>
-<button on:click={() => openColumnEditor("bool")} {disabled}>New Bool</button>
+<button on:click={createSheet}>New Sheet</button>
+<button on:click={editSheet} {disabled}>Edit Sheet</button>
+<button on:click={() => createColumn("int")} {disabled}>New Int</button>
+<button on:click={() => createColumn("bool")} {disabled}>New Bool</button>
 <!-- <button on:click={() => createColumn("float")}>New Float</button>
 <button on:click={() => createColumn("enum")}>New Enum</button>
 <button on:click={() => createColumn("grid")}>New Grid</button> -->
