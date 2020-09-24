@@ -219,6 +219,8 @@ function handleTableAction(event) {
             break;
         case "pickFile":
             //forward events from fields
+            var fileKey = event.detail.fileKey;
+            fileKey["sheet"] = selectedSheet;
             dispatch('message', {
                 "type" : "pickFile",
                 "fileKey" : event.detail.fileKey

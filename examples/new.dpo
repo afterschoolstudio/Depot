@@ -1,5 +1,63 @@
 {
     "sheets": [
-        
+        {
+            "name": "newSheet",
+            "description": "description of what the sheet is",
+            "columns": [
+                {
+                    "typeStr": "image",
+                    "name": "newImage",
+                    "description": "new image field",
+                    "defaultValue": "..\\content\\moses-icon.png",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "4875f1c3-278e-48ab-85c2-f7449f40bfe1",
+                    "newImage": "..\\content\\moses-icon.png"
+                },
+                {
+                    "guid": "c818ccfb-4016-4b5e-b2d3-a7218c209b6a",
+                    "newImage": ""
+                },
+                {
+                    "guid": "f4e07b4c-1df6-48a6-9d85-ab9a2327c6a4",
+                    "newImage": ""
+                },
+                {
+                    "guid": "3df435d9-38f7-4eea-b012-ed2eb110b2ae",
+                    "newImage": ""
+                },
+                {
+                    "guid": "0fc24172-7efd-417f-82ab-0d4f5eec4a97",
+                    "newImage": ""
+                },
+                {
+                    "guid": "4101d61e-a290-46c7-a335-c418a88ea9ad",
+                    "newImage": ""
+                },
+                {
+                    "guid": "7372f9ce-857f-48e3-95e5-31dd5dab55b0",
+                    "newImage": "..\\content\\moses-icon.png"
+                },
+                {
+                    "guid": "d478f337-0fdf-4228-ad81-5fc93c6bde36",
+                    "newImage": "..\\content\\moses-icon.png"
+                },
+                {
+                    "guid": "701ba263-b721-499e-ad24-c59381124a62",
+                    "newImage": "..\\content\\moses-icon.png"
+                }
+            ],
+            "configurable": {
+                "name": "text",
+                "description": "text"
+            }
+        }
     ]
 }

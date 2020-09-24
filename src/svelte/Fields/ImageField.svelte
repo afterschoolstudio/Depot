@@ -14,34 +14,30 @@
     }
     function clearFile() {
         data = "";
+        dispatch('message', {
+            "type" : "update"
+        });
     }
+
+    let hovering = false;
+
 </script>
 
 <!-- <button>Test</button> -->
 {#if data == ""}
-<button on:click={pickFile}>Pick</button>
+    <button on:click={pickFile}>Pick</button>
 {:else}
-<button on:click={pickFile}>Pick</button>
-<button on:click={clearFile}>Clear</button>
-{data}
-<!-- <img src={data} nonce={nonce} alt={data}> -->
-<img src={data} alt={data}>
+    {#if hovering}
+        <div style="width:400px;" on:mouseleave={()=>{hovering=false}}>
+        <button on:click={pickFile}>Change</button>
+        <button on:click={clearFile}>Clear</button>
+        {data}
+        <br>
+        <img src={data} alt={data}>
+        </div>
+    {:else}
+        <div style="width:50px;" on:mouseover={()=>{hovering=true}}>
+        <img src={data} alt={data}>
+        </div>
+    {/if}
 {/if}
-
-<!-- <style>
-    input {
-        padding: 5px 5px 5px 5px;
-        /* margin: 5px; */
-        box-sizing: border-box;
-        -webkit-box-sizing:border-box;
-        -moz-box-sizing: border-box;
-        border: 0px;
-        font-size: 13px;
-        border-width: 0px;
-        background-color: #3c3c3c;
-        color: #f0f0f0;
-        width: 100%;
-        height: 100%;
-        box-sizing: border-box;
-    }
-</style> -->

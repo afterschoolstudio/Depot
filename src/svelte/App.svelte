@@ -51,7 +51,8 @@
 
                 return;
             case 'filePicked':
-                jsonData["spriteInfo"].tilemap = message.filePath; 
+                var dataPath = message.fileKey;
+                jsonData["sheets"][dataPath.sheet].lines[dataPath.lineIndex][dataPath.column.name] = message.filePath;
                 vscode.postMessage({
                     type: 'update',
                     data: jsonData

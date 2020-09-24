@@ -52,7 +52,7 @@ function removeLine(lineIndex, line) {
         <tr>
             <td><button on:click={() => removeLine(i,line)}>X</button></td>
             <td title="{line.guid}">...</td>
-            {#each data.columns as column}
+            {#each data.columns as column, c}
                 <td title="{column.description}">
                 <div>
                 <!-- message from field updates bubble to Depot.svelte -->
@@ -61,7 +61,7 @@ function removeLine(lineIndex, line) {
                 {:else if column.typeStr === "longtext"}
                 <LongTextField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "image"}
-                <ImageField bind:data={line[column.name]} on:message fileKey={column.name}/>
+                <ImageField bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "bool"}
                 <BooleanField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "enum"}
