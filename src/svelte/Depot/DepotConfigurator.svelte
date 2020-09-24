@@ -86,9 +86,9 @@ $: {
                 <div><ImageField bind:data={data[fieldName]} fileKey={fieldName}/></div> -->
                 {:else if configuration[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
-                <!-- {:else if configuration[fieldName] === "enum"}
-                <div><EnumField bind:data={data[fieldName]}/></div>
-                {:else if configuration[fieldName] === "multiple"}
+                {:else if configuration[fieldName] === "sheetSelect"}
+                <div><EnumField bind:data={data[fieldName]} options={config.tableInfo.sheets.guids} aliases={config.tableInfo.sheets.names}/></div>
+                <!-- {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->
                 {:else if configuration[fieldName] === "int" || configuration[fieldName] === "float"}
                 <div><NumberField bind:data={data[fieldName]}/></div>

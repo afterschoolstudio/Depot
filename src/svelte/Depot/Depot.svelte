@@ -44,6 +44,17 @@ function getBannedNames(config) {
     return { "sheetNames" : sheetNames, "columnNames" : columnNames}
 }
 
+let tableInfo = {};
+$: {
+    var sheetNames = [];
+    var sheetGuids = [];
+    for(var o in data.sheets) {
+        sheetNames.push(data.sheets[o].name);
+        sheetGuids.push(data.sheets[o].guid);
+    }
+    tableInfo = {"sheets" : {"names":sheetNames,"guids":sheetGuids}};
+}
+
 let editorConfig = {"active" : false}
 let editorData = {}
 function handleOptions(event) {
@@ -51,9 +62,13 @@ function handleOptions(event) {
         case "editorUpdate":
             editorConfig = event.detail.data;
             editorConfig["bannedNames"] = getBannedNames(editorConfig);
+            editorConfig["tableInfo"] = tableInfo;
             switch (event.detail.data.operation) {
                 case "new":
                     editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
+                    if(editorConfig.editType === "sheet") {
+                        editorData["guid"] = uuidv4();
+                    }
                     break;
                 case "edit":
                     switch (event.detail.data.editType) {
@@ -124,7 +139,6 @@ function handleConfigUpdate(event) {
             switch (editorConfig.editType) {
                 case "sheet":
                     data.sheets[selectedSheet] = editorData;
-                    //TODO: need to update other sheet columns that reference this?
                     break;
                 default: //column
                     var index = data.sheets[selectedSheet].columns.findIndex(x => x.name === editorConfig.editType); //old name
@@ -167,12 +181,32 @@ function handleConfigUpdate(event) {
         case "delete":
             switch (editorConfig.editType) {
                 case "sheet":
+                    const deletedGUID = data.sheets[selectedSheet].guid;
                     data.sheets.splice(selectedSheet,1);
                     if(selectedSheet >= data.sheets.length)
                     {
                         selectedSheet = selectedSheet - 1 < 0 ? 0 : selectedSheet - 1;
                     }
-                    //TODO: need to update other sheet columns that reference this?
+                    //delete any references to this and set to ""
+                    data.sheets.forEach(sheet => {
+                        var sheetRefColumns = sheet.columns.filter(column => column.typeStr === "sheetReference");
+                        if(sheetRefColumns.length > 0) {
+                            sheet.lines.forEach(line => {
+                                sheetRefColumns.forEach(column => {
+                                    if(line[column.name] === deletedGUID)
+                                    {
+                                        line[column.name] = "";
+                                    }
+                                });
+                            });
+                            sheetRefColumns.forEach(column => {
+                                if(column.defaultValue === deletedGUID)
+                                {
+                                    column.defaultValue = "";
+                                }
+                            });
+                        }
+                    });
                     break;
                 default: //column
                     var index = data.sheets[selectedSheet].columns.findIndex(x => x.name === editorConfig.editType); //old name
@@ -248,7 +282,7 @@ function handleTableAction(event) {
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotTable debug={debug} bind:data={data.sheets[selectedSheet]} on:message={handleTableAction}/>
+            <DepotTable debug={debug} bind:data={data.sheets[selectedSheet]} tableInfo={tableInfo} on:message={handleTableAction}/>
         {/if}
     {/if}
 {/if}

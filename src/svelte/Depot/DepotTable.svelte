@@ -10,6 +10,7 @@ import NumberField from '../Fields/NumberField.svelte';
 import { createEventDispatcher } from 'svelte';
 export let data;
 export let debug;
+export let tableInfo;
 const dispatch = createEventDispatcher();
 
 function editColumn(column) {
@@ -66,6 +67,8 @@ function removeLine(lineIndex, line) {
                 <BooleanField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "enum"}
                 <EnumField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                {:else if column.typeStr === "sheetReference"}
+                <EnumField bind:data={line[column.name]} options={tableInfo.sheets.guids} aliases={tableInfo.sheets.names} on:message/>
                 {:else if column.typeStr === "multiple"}
                 <MultipleField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}

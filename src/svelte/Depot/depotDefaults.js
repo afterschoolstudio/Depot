@@ -2,6 +2,7 @@ export let defaults = {
     "sheet" : {
         "name" : "newSheet",
         "description" : "description of what the sheet is",
+        "guid" : "",
         "columns": [],
         "lines": [],
         "configurable" : {
@@ -108,9 +109,36 @@ export let defaults = {
             "defaultValue" : "text",
             "options" : "text"
         }
-    }
-}
+    },
+    "sheetReference" : {
+        "typeStr": "sheetReference",
+        "name": "newSheetReference",
+        "description" : "new sheet reference field",
+        "options" : "",
+        "defaultValue" : "",
+        "configurable" : {
+            "name" : "text",
+            "description" : "text",
+            "defaultValue" : "sheetSelect"
+        }
+    },
+};
 
+// "lineReference" : {
+//     "typeStr": "lineReference",
+//     "name": "newLineReference",
+//     "description" : "new line reference field",
+//     "sheet" : "",
+//     "options" : "",
+//     "defaultValue" : "",
+//     "configurable" : {
+//         "name" : "text",
+//         "description" : "text",
+//         "defaultValue" : "sheetSelect",
+//         "sheet" : "sheetSelect",
+//         "options" : "lineSelect"
+//     }
+// }
 //every new column needs a name, typeStr, and defaultValue field
 //typeStr directly maps to svelte fieldtypes
 //the value in the configurable section also maps to svelte field types
