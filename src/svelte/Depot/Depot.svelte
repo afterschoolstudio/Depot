@@ -7,6 +7,7 @@ import DepotConfigurator from './DepotConfigurator.svelte';
 import { v4 as uuidv4 } from 'uuid';
 export let data;
 let debug = false;
+let showLineGUIDs = false;
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
@@ -48,11 +49,29 @@ let tableInfo = {};
 $: {
     var sheetNames = [];
     var sheetGuids = [];
-    for(var o in data.sheets) {
-        sheetNames.push(data.sheets[o].name);
-        sheetGuids.push(data.sheets[o].guid);
-    }
-    tableInfo = {"sheets" : {"names":sheetNames,"guids":sheetGuids}};
+    var lines = {};
+    var columns = {};
+    data.sheets.forEach(sheet => {
+        sheetNames.push(sheet.name);
+        sheetGuids.push(sheet.guid);
+        lines[sheet.guid] = { "names": [], "guids" : []};
+        columns[sheet.guid] = { "names": [], "guids" : []};
+        sheet.lines.forEach(line => {
+            lines[sheet.guid].names.push(line.id)
+            lines[sheet.guid].guids.push(line.guid)
+        });
+        sheet.columns.forEach(column => {
+            columns[sheet.guid].names.push(column.name)
+            columns[sheet.guid].guids.push(column.guid)
+        });
+    })
+    tableInfo = {"sheets" : {
+                    "names":sheetNames,
+                    "guids":sheetGuids
+                    },
+                "lines" : lines,
+                "columns" : columns,
+                };
 }
 
 let editorConfig = {"active" : false}
@@ -66,9 +85,7 @@ function handleOptions(event) {
             switch (event.detail.data.operation) {
                 case "new":
                     editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
-                    if(editorConfig.editType === "sheet") {
-                        editorData["guid"] = uuidv4();
-                    }
+                    editorData["guid"] = uuidv4(); //assign columns and sheets guids
                     break;
                 case "edit":
                     switch (event.detail.data.editType) {
@@ -87,26 +104,31 @@ function handleOptions(event) {
         case "sheetUpdate":
             switch (event.detail.data.operation) {
                 case "newLine":
-                    for (let index = 1; index <= event.detail.data.amount; index++) {
-                        var newLine = {};
-                        newLine["guid"] = uuidv4();
-                        data.sheets[selectedSheet].columns.forEach(column => {
-                            if(column.typeStr == "multiple")
-                            {
-                                newLine[column.name] = column.defaultValue.split(', ');
-                            }
-                            else
-                            {
-                                newLine[column.name] = column.defaultValue;
-                            }
-                        });
-                        data.sheets[selectedSheet].lines.push(newLine);
-                    }
-                    sheetsUpdated();
+                    createLines(event.detail.data.amount);
                     break;
             }
             break;
     }
+}
+
+function createLines(amount) {
+    for (let index = 1; index <= amount; index++) {
+        var newLine = {};
+        newLine["guid"] = uuidv4();
+        newLine["id"] = data.sheets[selectedSheet].lines.length + "";
+        data.sheets[selectedSheet].columns.forEach(column => {
+            if(column.typeStr == "multiple")
+            {
+                newLine[column.name] = column.defaultValue.split(', ');
+            }
+            else
+            {
+                newLine[column.name] = column.defaultValue;
+            }
+        });
+        data.sheets[selectedSheet].lines.push(newLine);
+    }
+    sheetsUpdated();
 }
 
 function handleConfigUpdate(event) {
@@ -116,6 +138,8 @@ function handleConfigUpdate(event) {
                 case "sheet":
                     data.sheets.push(editorData);
                     selectedSheet = data.sheets.length - 1;
+                    editorConfig = {"active":false};
+                    createLines(1); //calls sheets updated as well
                     break;
                 default: //column
                     data.sheets[selectedSheet].columns.push(editorData);
@@ -130,10 +154,10 @@ function handleConfigUpdate(event) {
                             line[editorData.name] = editorData.defaultValue;
                         }
                     });
+                    editorConfig = {"active":false};
+                    sheetsUpdated();
                     break;
             }
-            editorConfig = {"active":false};
-            sheetsUpdated();
             break;
         case "save":
             switch (editorConfig.editType) {
@@ -272,7 +296,7 @@ function handleTableAction(event) {
     <p>Invalid Depot File</p>
     <p>Use Ctrl/Cmd+Shift+P and select "Create new Depot File" to get started</p>
 {:else}
-    <DepotOptions bind:debug={debug} on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0 || data.sheets[selectedSheet].columns.length == 0}/>
+    <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs} on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0}/>
     {#if data.sheets.length === 0}
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
     {:else}
@@ -282,7 +306,7 @@ function handleTableAction(event) {
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotTable debug={debug} bind:data={data.sheets[selectedSheet]} tableInfo={tableInfo} on:message={handleTableAction}/>
+            <DepotTable debug={debug} showLineGUIDs={showLineGUIDs} bind:data={data.sheets[selectedSheet]} tableInfo={tableInfo} on:message={handleTableAction}/>
         {/if}
     {/if}
 {/if}

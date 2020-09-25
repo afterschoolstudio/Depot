@@ -39,7 +39,7 @@ function deleteBlob() {
 
 let validName = true;
 // $: disabled = !validName;
-$: { 
+$: {
     if(config.active)
     {
         switch (config.editType) {
@@ -73,6 +73,10 @@ $: {
         <td>Field</td>
         <td>Value</td>
     </tr>
+    <tr>
+        <td>GUID</td>
+        <td>{data["guid"]}</td>
+    </tr>
     {#each Object.keys(configuration) as fieldName}
         <tr>
             <td>{fieldName}</td>
@@ -88,10 +92,36 @@ $: {
                 <div><BooleanField bind:data={data[fieldName]}/></div>
                 {:else if configuration[fieldName] === "sheetSelect"}
                 <div><EnumField bind:data={data[fieldName]} options={config.tableInfo.sheets.guids} aliases={config.tableInfo.sheets.names}/></div>
+
                 <!-- {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->
                 {:else if configuration[fieldName] === "int" || configuration[fieldName] === "float"}
                 <div><NumberField bind:data={data[fieldName]}/></div>
+
+                <!-- column and line select assume a sheet field in the editing object -->
+                {:else if configuration[fieldName].split("@")[0] === "lineSelect"}
+                    {#if data[configuration[fieldName].split("@")[1]] !== ""}
+                        <div><EnumField bind:data={data[fieldName]}
+                                        options={config.tableInfo.lines[data[configuration[fieldName].split("@")[1]]].guids}
+                                        aliases={config.tableInfo.lines[data[configuration[fieldName].split("@")[1]]].names}/></div>
+                    <!-- if sheet not assigned  -->
+                    {:else}
+                        <div><EnumField bind:data={data[fieldName]}
+                                        options={[]}
+                                        aliases={[]}/></div>
+                    {/if}
+                {:else if configuration[fieldName].split("@")[0] === "columnSelect"}
+                    {#if data[configuration[fieldName].split("@")[1]] !== ""}
+                        <div><EnumField bind:data={data[fieldName]}
+                                        options={config.tableInfo.columns[data[configuration[fieldName].split("@")[1]]].guids}
+                                        aliases={config.tableInfo.columns[data[configuration[fieldName].split("@")[1]]].names}/></div>
+                        <!-- if sheet not assigned  -->
+                    {:else}
+                        <div><EnumField bind:data={data[fieldName]}
+                                        options={[]}
+                                        aliases={[]}/></div>
+                    {/if}
+                    
                 {/if}
             </td>
         </tr>
@@ -101,7 +131,7 @@ $: {
     {#if config.operation === "new"}
     <button on:click={createBlob} disabled={!validName}>Create</button>
     {:else if config.operation === "edit"}
-    <button on:click={saveBlob} disabled={!validName}>Save</button> 
+    <button on:click={saveBlob} disabled={!validName}>Save</button>
     <button on:click={deleteBlob}>Delete</button>
     {/if}
     <button on:click={closeEditor}>Cancel</button>

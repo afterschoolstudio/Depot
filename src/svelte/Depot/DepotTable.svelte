@@ -10,6 +10,7 @@ import NumberField from '../Fields/NumberField.svelte';
 import { createEventDispatcher } from 'svelte';
 export let data;
 export let debug;
+export let showLineGUIDs;
 export let tableInfo;
 const dispatch = createEventDispatcher();
 
@@ -38,13 +39,13 @@ function removeLine(lineIndex, line) {
 </script>
 
 <br>
-{#if data.columns.length === 0}
-    <p>No columns</p>
-{:else}
     <table>
     <tr>
         <th style="width:10px;">    </th>
-        <th style="width:10px;">GUID</th>
+        {#if showLineGUIDs}
+            <th>GUID</th>
+        {/if}
+        <th>ID</th>
         {#each data.columns as column}
             <th title="{column.description}"><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
         {/each}
@@ -52,7 +53,10 @@ function removeLine(lineIndex, line) {
     {#each data.lines as line, i}
         <tr>
             <td><button on:click={() => removeLine(i,line)}>X</button></td>
-            <td title="{line.guid}">...</td>
+            {#if showLineGUIDs}
+            <td>{line.guid}</td>
+            {/if}
+            <td><TextField bind:data={line["id"]} on:message/></td>
             {#each data.columns as column, c}
                 <td title="{column.description}">
                 <div>
@@ -69,6 +73,16 @@ function removeLine(lineIndex, line) {
                 <EnumField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "sheetReference"}
                 <EnumField bind:data={line[column.name]} options={tableInfo.sheets.guids} aliases={tableInfo.sheets.names} on:message/>
+                {:else if column.typeStr === "lineReference"}
+                    {#if column.sheet !== ""}
+                    <EnumField bind:data={line[column.name]} 
+                                options={tableInfo.lines[column.sheet].guids} 
+                                aliases={tableInfo.lines[column.sheet].names} on:message/>
+                    {:else}
+                    <EnumField bind:data={line[column.name]} 
+                                options={[]} 
+                                aliases={[]} on:message/>
+                    {/if}
                 {:else if column.typeStr === "multiple"}
                 <MultipleField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
@@ -80,7 +94,6 @@ function removeLine(lineIndex, line) {
         </tr>
     {/each}
     </table>
-{/if}
 {#if debug}
 <p>Current Table Data:</p>
 <pre>{JSON.stringify({data},null,2)}</pre>

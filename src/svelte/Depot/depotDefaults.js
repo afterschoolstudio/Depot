@@ -12,6 +12,7 @@ export let defaults = {
     },
     "int" : {
         "typeStr": "int",
+        "guid" : "",
         "description" : "int field",
         "name": "newInt",
         "min" : -10000,
@@ -27,6 +28,7 @@ export let defaults = {
     },
     "float" : {
         "typeStr": "float",
+        "guid" : "",
         "description" : "float field",
         "name": "newFloat",
         "min" : -10000,
@@ -42,6 +44,7 @@ export let defaults = {
     },
     "bool" : {
         "typeStr": "bool",
+        "guid" : "",
         "description" : "bool field",
         "name": "newBool",
         "defaultValue" : true,
@@ -53,6 +56,7 @@ export let defaults = {
     },
     "text" : {
         "typeStr": "text",
+        "guid" : "",
         "name": "newText",
         "description" : "text field",
         "defaultValue" : "",
@@ -64,6 +68,7 @@ export let defaults = {
     },
     "longtext" : {
         "typeStr": "longtext",
+        "guid" : "",
         "name": "newLongText",
         "description" : "long text field",
         "defaultValue" : "",
@@ -75,6 +80,7 @@ export let defaults = {
     },
     "image" : {
         "typeStr": "image",
+        "guid" : "",
         "name": "newImage",
         "description" : "new image field",
         "defaultValue" : "",
@@ -86,6 +92,7 @@ export let defaults = {
     },
     "enum" : {
         "typeStr": "enum",
+        "guid" : "",
         "name": "newEnum",
         "description" : "new enum field",
         "options" : "",
@@ -99,6 +106,7 @@ export let defaults = {
     },
     "multiple" : {
         "typeStr": "multiple",
+        "guid" : "",
         "name": "newMultiple",
         "description" : "new multiple field",
         "options" : "",
@@ -112,9 +120,9 @@ export let defaults = {
     },
     "sheetReference" : {
         "typeStr": "sheetReference",
+        "guid" : "",
         "name": "newSheetReference",
         "description" : "new sheet reference field",
-        "options" : "",
         "defaultValue" : "",
         "configurable" : {
             "name" : "text",
@@ -122,23 +130,23 @@ export let defaults = {
             "defaultValue" : "sheetSelect"
         }
     },
+    "lineReference" : {
+        "typeStr": "lineReference",
+        "guid" : "",
+        "name": "newLineReference",
+        "description" : "new line reference field",
+        "sheet" : "",
+        "defaultValue" : "",
+        "configurable" : {
+            "name" : "text",
+            "description" : "text",
+            "sheet" : "sheetSelect",
+            "defaultValue" : "lineSelect@sheet"
+        }
+    }
 };
 
-// "lineReference" : {
-//     "typeStr": "lineReference",
-//     "name": "newLineReference",
-//     "description" : "new line reference field",
-//     "sheet" : "",
-//     "options" : "",
-//     "defaultValue" : "",
-//     "configurable" : {
-//         "name" : "text",
-//         "description" : "text",
-//         "defaultValue" : "sheetSelect",
-//         "sheet" : "sheetSelect",
-//         "options" : "lineSelect"
-//     }
-// }
-//every new column needs a name, typeStr, and defaultValue field
+//every new column needs a name, guid, typeStr, and defaultValue field
+//the @ for columnSelect and lineSelect indicates the name of the sheet field to look in
 //typeStr directly maps to svelte fieldtypes
 //the value in the configurable section also maps to svelte field types

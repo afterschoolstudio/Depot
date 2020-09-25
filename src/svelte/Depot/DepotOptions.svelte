@@ -4,6 +4,7 @@ export let editSheetDisabled = false;
 export let addLineDisabled = false;
 export let allDisabled = false;
 export let debug;
+export let showLineGUIDs;
 import {defaults} from './depotDefaults';
 // $: disabled = editSheetDisabled;
 
@@ -56,7 +57,8 @@ function newLine(amount) {
 </script>
 <button on:click={createSheet} disabled={allDisabled}>New Sheet</button>
 <button on:click={editSheet} disabled={editSheetDisabled || allDisabled}>Edit Sheet</button>
-<input type=checkbox bind:checked={debug}>
+<input type=checkbox bind:checked={debug}>Debug
+<input type=checkbox bind:checked={showLineGUIDs}>Show Line GUIDs
 <br>
 {#each Object.keys(defaults) as columnType}
     {#if columnType !== "sheet"}
