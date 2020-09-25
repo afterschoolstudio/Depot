@@ -138,6 +138,46 @@ same fields as cdb</String>
 (doesn’t create column, closes editor)</String>
          <ConnectedNoteIDs>13</ConnectedNoteIDs>
       </Note>
+      <Note Width="69.1528" FontSize="12" ID="16" Position="855.5,46.1">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>App.Svelte</String>
+         <ConnectedNoteIDs>17</ConnectedNoteIDs>
+      </Note>
+      <Note Width="77.7954" FontSize="12" ID="17" Position="914.1,115.6">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>Depot.svelte</String>
+         <ConnectedNoteIDs>16, 18-20</ConnectedNoteIDs>
+      </Note>
+      <Note Width="121.594" FontSize="12" ID="18" Position="1056.2,180.5">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>DepotOptions.svelte</String>
+         <ConnectedNoteIDs>17</ConnectedNoteIDs>
+      </Note>
+      <Note Width="146.765" FontSize="12" ID="19" Position="987.5,211.7">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>DepotConfigurator.svelte</String>
+         <ConnectedNoteIDs>17</ConnectedNoteIDs>
+      </Note>
+      <Note Width="108.325" FontSize="12" ID="20" Position="942.2,245.3">
+         <Appearance>
+            <Alignment>Left</Alignment>
+            <Border Weight="0" Style="Rounded"/>
+         </Appearance>
+         <String>DepotTable.svelte</String>
+         <ConnectedNoteIDs>17</ConnectedNoteIDs>
+      </Note>
    </Notes>
    <BackgroundShapes/>
    <NoteStyles>

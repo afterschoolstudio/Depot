@@ -214,6 +214,7 @@ function handleConfigUpdate(event) {
                     //delete any references to this and set to ""
                     data.sheets.forEach(sheet => {
                         var sheetRefColumns = sheet.columns.filter(column => column.typeStr === "sheetReference");
+                        var lineRefColumns = sheet.columns.filter(column => column.typeStr === "lineReference");
                         if(sheetRefColumns.length > 0) {
                             sheet.lines.forEach(line => {
                                 sheetRefColumns.forEach(column => {
@@ -228,6 +229,23 @@ function handleConfigUpdate(event) {
                                 {
                                     column.defaultValue = "";
                                 }
+                            });
+                        }
+                        if(lineRefColumns.length > 0) {
+                            let editedColumns = [];
+                            lineRefColumns.forEach(column => {
+                                if(column.sheet === deletedGUID)
+                                {
+                                    column.sheet = "";
+                                    column.defaultValue = "";
+                                    editedColumns.push(column);
+                                }
+                            });
+                            sheet.lines.forEach(line => {
+                                editedColumns.forEach(column => {
+                                    //clear out previous linked values, as they pointed to a now deleted sheet
+                                    line[column.name] = "";
+                                });
                             });
                         }
                     });
@@ -267,8 +285,27 @@ function handleTableAction(event) {
         case "editLine":
             switch (event.detail.data.operation) {
                 case "remove":
+                    const deletedGUID = event.detail.data.line.guid;
                     data.sheets[selectedSheet].lines.splice(event.detail.data.lineIndex,1);
-                    //TODO: need to update any sheets that reference this line?
+                    data.sheets.forEach(sheet => {
+                        var lineRefColumns = sheet.columns.filter(column => column.typeStr === "lineReference");
+                        if(lineRefColumns.length > 0) {
+                            sheet.lines.forEach(line => {
+                                lineRefColumns.forEach(column => {
+                                    if(line[column.name] === deletedGUID)
+                                    {
+                                        line[column.name] = "";
+                                    }
+                                });
+                            });
+                            lineRefColumns.forEach(column => {
+                                if(column.defaultValue === deletedGUID)
+                                {
+                                    column.defaultValue = "";
+                                }
+                            });
+                        }
+                    });
                     break;
                 default:
                     break;

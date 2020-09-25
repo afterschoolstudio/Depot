@@ -110,18 +110,9 @@ $: {
                                         options={[]}
                                         aliases={[]}/></div>
                     {/if}
-                {:else if configuration[fieldName].split("@")[0] === "columnSelect"}
-                    {#if data[configuration[fieldName].split("@")[1]] !== ""}
-                        <div><EnumField bind:data={data[fieldName]}
-                                        options={config.tableInfo.columns[data[configuration[fieldName].split("@")[1]]].guids}
-                                        aliases={config.tableInfo.columns[data[configuration[fieldName].split("@")[1]]].names}/></div>
-                        <!-- if sheet not assigned  -->
-                    {:else}
-                        <div><EnumField bind:data={data[fieldName]}
-                                        options={[]}
-                                        aliases={[]}/></div>
+                    {#if (data["sheet"] !== "" && data["defaultValue"] !== "") && !config.tableInfo.lines[data["sheet"]].guids.includes(data[fieldName])}
+                        <div>Warning: Selected value with GUID {data[fieldName]} not in selected sheet</div>
                     {/if}
-                    
                 {/if}
             </td>
         </tr>

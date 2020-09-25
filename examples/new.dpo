@@ -1,4 +1,36 @@
 {
     "sheets": [
+        {
+            "name": "newSheet",
+            "description": "description of what the sheet is",
+            "guid": "f69b17dd-6da9-4f2c-b4dd-5bc90e11bc2e",
+            "columns": [],
+            "lines": [
+                {
+                    "guid": "61ee2ddf-d171-4662-9c94-4e16a95c9f00",
+                    "id": "new sheet value"
+                }
+            ],
+            "configurable": {
+                "name": "text",
+                "description": "text"
+            }
+        },
+        {
+            "name": "anotherSheet",
+            "description": "description of what the sheet is",
+            "guid": "157ef324-15a0-467d-b6dc-2af63c6d8746",
+            "columns": [],
+            "lines": [
+                {
+                    "guid": "ea7b861b-e66d-4f7a-a07a-9650455cd126",
+                    "id": "another sheet value"
+                }
+            ],
+            "configurable": {
+                "name": "text",
+                "description": "text"
+            }
+        }
     ]
 }

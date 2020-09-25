@@ -83,6 +83,9 @@ function removeLine(lineIndex, line) {
                                 options={[]} 
                                 aliases={[]} on:message/>
                     {/if}
+                    {#if line[column.name] !== "" && !tableInfo.lines[column.sheet].guids.includes(line[column.name])}
+                        <div title="Selected value with GUID {line[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
+                    {/if}
                 {:else if column.typeStr === "multiple"}
                 <MultipleField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}

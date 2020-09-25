@@ -49,17 +49,8 @@ Added features X, Y, and Z.
 
 -----------------------------------------------------------------------------------------------------------
 
-## Working with Markdown
+For linked line refernce fields:
 
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+When a sheet they reference is deleted, the line value goes to "" and default values are cleared and sheet is reset to ""
+When a line is delected, the lines that pointed to that line get their linked value set to "". Defaults that pointed to that get pointed to ""
+If the sheet column is modified, the defaults and values stay but display an error that they link to an unreachable value
