@@ -325,6 +325,17 @@ function handleTableAction(event) {
             break;
     }
 }
+function createSheet() {
+    editorConfig = {
+        "active" : true,
+        "operation" : "new",
+        "editType" : "sheet",
+    }
+    editorConfig["bannedNames"] = getBannedNames(editorConfig);
+    editorConfig["tableInfo"] = tableInfo;
+    editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
+    editorData["guid"] = uuidv4(); //assign columns and sheets guids
+}
 
 </script>
  
@@ -336,10 +347,12 @@ function handleTableAction(event) {
     <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs} on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0}/>
     {#if data.sheets.length === 0}
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
+       <button on:click={createSheet} disabled={editorConfig.active}>New Sheet</button>
     {:else}
         {#each data.sheets as sheet}
             <button on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
         {/each}
+        <button on:click={createSheet} disabled={editorConfig.active}>+</button> 
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->

@@ -21,18 +21,6 @@ function createColumn(columnType) {
     });
 }
 
-function createSheet() {
-    dispatch('message', {
-        "type" : "editorUpdate",
-        "data" :{
-                "active" : true,
-                "operation" : "new",
-                "editType" : "sheet"
-                }
-    });
-
-}
-
 function editSheet() {
     dispatch('message', {
         "type" : "editorUpdate",
@@ -55,7 +43,6 @@ function newLine(amount) {
 }
 
 </script>
-<button on:click={createSheet} disabled={allDisabled}>New Sheet</button>
 <button on:click={editSheet} disabled={editSheetDisabled || allDisabled}>Edit Sheet</button>
 <input type=checkbox bind:checked={debug}>Debug
 <input type=checkbox bind:checked={showLineGUIDs}>Show Line GUIDs
