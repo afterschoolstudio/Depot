@@ -6,6 +6,7 @@ import ImageField from '../Fields/ImageField.svelte';
 import LongTextField from '../Fields/LongTextField.svelte';
 import MultipleField from '../Fields/MultipleField.svelte';
 import NumberField from '../Fields/NumberField.svelte';
+import {defaults} from './depotDefaults';
 
 import { createEventDispatcher } from 'svelte';
 export let data;
@@ -27,7 +28,7 @@ function editColumn(column) {
 
 function removeLine(lineIndex, line) {
     dispatch('message', {
-        "type" : "editLine",
+        "type" : "lineEdit",
         "data" : {
             "operation" : "remove",
             "lineIndex" : lineIndex,
@@ -36,10 +37,56 @@ function removeLine(lineIndex, line) {
     });
 }
 
+function addLines(amount) {
+    dispatch('message', {
+        "type" : "lineEdit",
+        "data" : {
+            "operation" : "add",
+            "amount" : amount
+        }
+    });
+}
+
+function createColumn(columnType) {
+    dispatch('message', {
+        "type" : "editorUpdate",
+        "data" :{
+                "active" : true,
+                "operation" : "new",
+                "editType" : columnType
+                }
+    });
+}
+
+function editSheet() {
+    dispatch('message', {
+        "type" : "editorUpdate",
+        "data" :{
+                "active" : true,
+                "operation" : "edit",
+                "editType" : "sheet"
+                }
+    });
+}
+
+$: totalColumns = showLineGUIDs ? data.columns.length + 3 : data.columns.length + 2;
+
 </script>
 
 <br>
     <table>
+    <tr>
+        <td>
+            <button on:click={editSheet}>Edit Sheet</button>
+        </td>
+        <td colspan="{totalColumns -  1}">
+            {#each Object.keys(defaults) as columnType}
+                {#if columnType !== "sheet"}
+                    <button on:click={() => createColumn(columnType)}>New {columnType}</button>
+                {/if}
+            {/each}
+        </td>
+    </tr>
     <tr>
         <th style="width:10px;">    </th>
         {#if showLineGUIDs}
@@ -96,6 +143,14 @@ function removeLine(lineIndex, line) {
             {/each}
         </tr>
     {/each}
+    <tr>
+        <td></td>
+        <td colspan="{totalColumns -  1}">
+            <button on:click={() => addLines(1)}>New Line</button>
+            <button on:click={() => addLines(5)}>New Line x5</button>
+            <button on:click={() => addLines(10)}>New Line x20</button>
+        </td>
+    </tr>
     </table>
 {#if debug}
 <p>Current Table Data:</p>

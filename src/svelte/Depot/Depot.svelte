@@ -101,13 +101,6 @@ function handleOptions(event) {
                     break;
             }
             break;
-        case "sheetUpdate":
-            switch (event.detail.data.operation) {
-                case "newLine":
-                    createLines(event.detail.data.amount);
-                    break;
-            }
-            break;
     }
 }
 
@@ -282,7 +275,7 @@ function handleTableAction(event) {
         case "update":
             sheetsUpdated();
             break;
-        case "editLine":
+        case "lineEdit":
             switch (event.detail.data.operation) {
                 case "remove":
                     const deletedGUID = event.detail.data.line.guid;
@@ -307,6 +300,9 @@ function handleTableAction(event) {
                         }
                     });
                     break;
+                case "add":
+                    createLines(event.detail.data.amount);
+                break;
                 default:
                     break;
             }

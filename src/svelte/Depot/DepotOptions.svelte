@@ -10,52 +10,13 @@ import {defaults} from './depotDefaults';
 
 const dispatch = createEventDispatcher();
 
-function createColumn(columnType) {
-    dispatch('message', {
-        "type" : "editorUpdate",
-        "data" :{
-                "active" : true,
-                "operation" : "new",
-                "editType" : columnType
-                }
-    });
-}
 
-function editSheet() {
-    dispatch('message', {
-        "type" : "editorUpdate",
-        "data" :{
-                "active" : true,
-                "operation" : "edit",
-                "editType" : "sheet"
-                }
-    });
-}
-
-function newLine(amount) {
-    dispatch('message', {
-        "type" : "sheetUpdate",
-        "data" :{
-                "operation" : "newLine",
-                "amount" : amount
-                }
-    });
-}
 
 </script>
-<button on:click={editSheet} disabled={editSheetDisabled || allDisabled}>Edit Sheet</button>
 <input type=checkbox bind:checked={debug}>Debug
 <input type=checkbox bind:checked={showLineGUIDs}>Show Line GUIDs
 <br>
-{#each Object.keys(defaults) as columnType}
-    {#if columnType !== "sheet"}
-        <button on:click={() => createColumn(columnType)} disabled={editSheetDisabled || allDisabled}>New {columnType}</button>
-    {/if}
-{/each}
 <br>
-<button on:click={() => newLine(1)} disabled={addLineDisabled || allDisabled}>New Line</button>
-<button on:click={() => newLine(5)} disabled={addLineDisabled || allDisabled}>New Line x5</button>
-<button on:click={() => newLine(10)} disabled={addLineDisabled || allDisabled}>New Line x20</button>
 <!-- <button on:click={() => createColumn("float")}>New Float</button>
 <button on:click={() => createColumn("enum")}>New Enum</button>
 <button on:click={() => createColumn("grid")}>New Grid</button> -->
