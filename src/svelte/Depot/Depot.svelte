@@ -52,21 +52,24 @@ $: {
     var lines = {};
     var columns = {};
     data.sheets.forEach(sheet => {
-        sheetNames.push(sheet.name);
-        sheetGuids.push(sheet.guid);
-        lines[sheet.guid] = { "names": [], "ids": [], "guids" : []};
-        columns[sheet.guid] = { "names": [], "guids" : []};
-        sheet.lines.forEach(line => {
-            lines[sheet.guid].names.push(line[sheet.displayColumn])
-            lines[sheet.guid].ids.push(line.id)
-            lines[sheet.guid].guids.push(line.guid)
-        });
-        sheet.columns.forEach(column => {
-            columns[sheet.guid].names.push(column.name)
-            columns[sheet.guid].guids.push(column.guid)
-        });
-        columns[sheet.guid].names.push("id");
-        columns[sheet.guid].names.push("guid");
+        if(sheet.hidden !== true)
+        {
+            sheetNames.push(sheet.name);
+            sheetGuids.push(sheet.guid);
+            lines[sheet.guid] = { "names": [], "ids": [], "guids" : []};
+            columns[sheet.guid] = { "names": [], "guids" : []};
+            sheet.lines.forEach(line => {
+                lines[sheet.guid].names.push(line[sheet.displayColumn])
+                lines[sheet.guid].ids.push(line.id)
+                lines[sheet.guid].guids.push(line.guid)
+            });
+            sheet.columns.forEach(column => {
+                columns[sheet.guid].names.push(column.name)
+                columns[sheet.guid].guids.push(column.guid)
+            });
+            columns[sheet.guid].names.push("id");
+            columns[sheet.guid].names.push("guid");
+        }
     });
     tableInfo = {"sheets" : {
                     "names":sheetNames,
@@ -146,7 +149,7 @@ function handleConfigUpdate(event) {
                     data.sheets[selectedSheet].columns.push(editorData);
                     //if you're creating a column, create a new entry for a column value in every line based off the default value
                     data.sheets[selectedSheet].lines.forEach(line => {
-                        if(editorData.typeStr == "multiple")
+                        if(editorData.typeStr === "multiple")
                         {
                             line[editorData.name] = editorData.defaultValue.split(', ');
                         }
@@ -155,6 +158,16 @@ function handleConfigUpdate(event) {
                             line[editorData.name] = editorData.defaultValue;
                         }
                     });
+                    if(editorData.typeStr === "list") {
+                        let newList = defaults.sheet;
+                        newList["hidden"] = true;
+                        newList["description"] = "list@"+data.sheets[selectedSheet].guid;
+                        let guid = uuidv4();
+                        newList["guid"] = guid;
+                        newList["name"] = guid+"@"+data.sheets[selectedSheet].guid;
+                        delete newList.configurable.displayColumn;
+                        data.sheets.push(newList)
+                    }
                     editorConfig = {"active":false};
                     sheetsUpdated();
                     break;
@@ -353,7 +366,9 @@ function createSheet() {
        <button on:click={createSheet} disabled={editorConfig.active}>New Sheet</button>
     {:else}
         {#each data.sheets as sheet}
+            {#if !sheet.hidden}
             <button on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
+            {/if}
         {/each}
         <button on:click={createSheet} disabled={editorConfig.active}>+</button> 
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>

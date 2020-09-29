@@ -71,6 +71,61 @@ function editSheet() {
 
 $: totalColumns = showLineGUIDs ? data.columns.length + 3 : data.columns.length + 2;
 
+
+function setListVisible(line,column,visible) {
+    //set the context here?
+    console.log("start");
+    console.log(listVisibility);
+    //make sure all values are false so we aren't trying to show two things at once
+    Object.keys(listVisibility[line.guid]).forEach(key => {
+        listVisibility[line.guid]["visible"] = false;
+        listVisibility[line.guid][key] = false;
+    });
+    listVisibility[line.guid][column.guid] = visible;
+    if(visible) {
+        listVisibility[line.guid]["visible"] = true;
+    }
+    console.log("end");
+    console.log(listVisibility);
+    console.log(lineHasVisibleList(line));
+} 
+
+let listVisibility = {};
+$: {
+    data.lines.forEach(line => {
+        //get context here?
+        listVisibility = {};
+        data.columns.forEach(col => {
+            if(col.typeStr === "list")
+            {
+                listVisibility[line.guid] = {
+                    [col.guid] : false
+                }
+                listVisibility[line.guid]["visible"] = false;
+            }
+        });
+    });
+}
+
+function lineHasVisibleList(line) {
+    let isVisible = false;
+    if(line.guid in listVisibility)
+    {
+        console.log("found line in vis")
+        console.log(listVisibility[line.guid])
+        Object.keys(listVisibility[line.guid]).forEach(key => {
+            console.log("checking",key)
+            console.log(listVisibility[line.guid][key])
+            if(listVisibility[line.guid][key] === true)
+            {
+                console.log("returning true");
+                isVisible = true;
+            }
+        });
+    }
+    return isVisible;
+}
+
 </script>
 
 <br>
@@ -137,11 +192,20 @@ $: totalColumns = showLineGUIDs ? data.columns.length + 3 : data.columns.length 
                 <MultipleField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField bind:data={line[column.name]} on:message/>
+                {:else if column.typeStr === "list"}
+                <button on:click={()=>setListVisible(line,column,true)}>Show</button>
+                <button on:click={()=>setListVisible(line,column,false)}>Hide</button>
                 {/if}
                 </div>
                 </td>
             {/each}
         </tr>
+        {#if line.guid in listVisibility && listVisibility[line.guid]["visible"]}
+        <div>TEST</div>
+        <tr>
+            HELLO {line.guid}
+        </tr>
+        {/if}
     {/each}
     <tr>
         <td></td>

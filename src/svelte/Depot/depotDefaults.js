@@ -6,6 +6,7 @@ export let defaults = {
         "guid" : "",
         "columns": [],
         "lines": [],
+        "hidden":false,
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -147,6 +148,18 @@ export let defaults = {
             "description" : "text",
             "sheet" : "sheetSelect",
             "defaultValue" : "lineSelect@sheet"
+        }
+    },
+    "list" : {
+        "typeStr":"list",
+        "guid":"",
+        "name":"new list",
+        "description":"new list field",
+        "sheet":"",
+        "defaultValue":[],
+        "configurable" : {
+            "name" : "text",
+            "description" : "text",
         }
     }
 };
