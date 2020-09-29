@@ -21,24 +21,25 @@ function focusSheet(index) {
     selectedSheet = index;
 }
 
-function getBannedNames(config) {
+function getBannedNames(referenceSheetGUID, config) {
     var sheetNames = [];
     for(var o in data.sheets) {
         if(config.operation === "new" || 
-          (config.operation === "edit" && (data.sheets[o].name !== data.sheets[selectedSheet].name)))
+          (config.operation === "edit" && referenceSheetGUID in data.sheets && (data.sheets[o].name !== data.sheets[data.sheets.indexOf(sheet => sheet.guid === referenceSheetGUID)].name)))
         {
             //this means its the currently open sheet, we dont add our name to the banned list, only others
             sheetNames.push(data.sheets[o].name);
         }
     }
     var columnNames = [];
-    if (data.sheets.length !== 0 && data.sheets[selectedSheet].columns.length !== 0) {
-        for(var o in data.sheets[selectedSheet].columns) {
+    if (data.sheets.length !== 0 && referenceSheetGUID in data.sheets && data.sheets[data.sheets.indexOf(sheet => sheet.guid === referenceSheetGUID)].columns.length !== 0) {
+        let sheetIndex = data.sheets.indexOf(sheet => sheet.guid === referenceSheetGUID);
+        for(var o in data.sheets[sheetIndex].columns) {
             if(config.operation === "new" || 
-              (config.operation === "edit" && (data.sheets[selectedSheet].columns[o].name !== config.editType)))
+              (config.operation === "edit" && (data.sheets[sheetIndex].columns[o].name !== config.editType)))
             {
                 //this means its the currently open column, we dont add our name to the banned list, only others
-                columnNames.push(data.sheets[selectedSheet].columns[o].name);
+                columnNames.push(data.sheets[sheetIndex].columns[o].name);
             }
         }
     }
@@ -49,78 +50,52 @@ let tableInfo = {};
 $: {
     var sheetNames = [];
     var sheetGuids = [];
+    var sheetNamesFiltered = [];
+    var sheetGuidsFiltered = [];
     var lines = {};
     var columns = {};
     data.sheets.forEach(sheet => {
-        if(sheet.hidden !== true)
+        sheetNames.push(sheet.name);
+        sheetGuids.push(sheet.guid);
+        if(!sheet.hidden)
         {
-            sheetNames.push(sheet.name);
-            sheetGuids.push(sheet.guid);
-            lines[sheet.guid] = { "names": [], "ids": [], "guids" : []};
-            columns[sheet.guid] = { "names": [], "guids" : []};
-            sheet.lines.forEach(line => {
-                lines[sheet.guid].names.push(line[sheet.displayColumn])
-                lines[sheet.guid].ids.push(line.id)
-                lines[sheet.guid].guids.push(line.guid)
-            });
-            sheet.columns.forEach(column => {
-                columns[sheet.guid].names.push(column.name)
-                columns[sheet.guid].guids.push(column.guid)
-            });
-            columns[sheet.guid].names.push("id");
-            columns[sheet.guid].names.push("guid");
+            sheetNamesFiltered.push(sheet.name);
+            sheetGuidsFiltered.push(sheet.guid);
         }
+        lines[sheet.guid] = { "names": [], "ids": [], "guids" : []};
+        columns[sheet.guid] = { "names": [], "guids" : []};
+        sheet.lines.forEach(line => {
+            lines[sheet.guid].names.push(line[sheet.displayColumn])
+            lines[sheet.guid].ids.push(line.id)
+            lines[sheet.guid].guids.push(line.guid)
+        });
+        sheet.columns.forEach(column => {
+            columns[sheet.guid].names.push(column.name)
+            columns[sheet.guid].guids.push(column.guid)
+        });
+        columns[sheet.guid].names.push("id");
+        columns[sheet.guid].names.push("guid");
     });
     tableInfo = {"sheets" : {
                     "names":sheetNames,
-                    "guids":sheetGuids
+                    "guids":sheetGuids,
+                    },
+                "sheetsFiltered" : {
+                    "names":sheetNamesFiltered,
+                    "guids":sheetGuidsFiltered,
                     },
                 "lines" : lines,
                 "columns" : columns,
                 };
 }
 
-let editorConfig = {"active" : false}
-let editorData = {}
-function handleOptions(event) {
-    switch (event.detail.type) {
-        case "editorUpdate":
-            editorConfig = event.detail.data;
-            editorConfig["bannedNames"] = getBannedNames(editorConfig);
-            editorConfig["tableInfo"] = tableInfo;
-            switch (event.detail.data.operation) {
-                case "new":
-                    editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
-                    editorData["guid"] = uuidv4(); //assign columns and sheets guids
-                    if(event.detail.data.editType === "lineReference")
-                    {
-                        //not sure why enum value not setting to default in the configurator, so set a default here
-                        editorData["sheet"] = data.sheets[selectedSheet].guid;
-                    }
-                    break;
-                case "edit":
-                    switch (event.detail.data.editType) {
-                        case "sheet":
-                            editorData = JSON.parse(JSON.stringify(data.sheets[selectedSheet]));
-                            break;
-                        default: //column
-                            editorData = JSON.parse(JSON.stringify(data.sheets[selectedSheet].columns.find(x => x.name === editorConfig.editType)));
-                            break;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            break;
-    }
-}
-
-function createLines(amount) {
+function createLines(sheetGUID, amount) {
+    let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === sheetGUID);
     for (let index = 1; index <= amount; index++) {
         var newLine = {};
         newLine["guid"] = uuidv4();
-        newLine["id"] = data.sheets[selectedSheet].lines.length + "";
-        data.sheets[selectedSheet].columns.forEach(column => {
+        newLine["id"] = data.sheets[sheetIndex].lines.length + "";
+        data.sheets[sheetIndex].columns.forEach(column => {
             if(column.typeStr == "multiple")
             {
                 newLine[column.name] = column.defaultValue.split(', ');
@@ -130,7 +105,7 @@ function createLines(amount) {
                 newLine[column.name] = column.defaultValue;
             }
         });
-        data.sheets[selectedSheet].lines.push(newLine);
+        data.sheets[sheetIndex].lines.push(newLine);
     }
     sheetsUpdated();
 }
@@ -143,12 +118,13 @@ function handleConfigUpdate(event) {
                     data.sheets.push(editorData);
                     selectedSheet = data.sheets.length - 1;
                     editorConfig = {"active":false};
-                    createLines(1); //calls sheets updated as well
+                    createLines(editorData.guid,1); //calls sheets updated as well
                     break;
                 default: //column
-                    data.sheets[selectedSheet].columns.push(editorData);
+                    let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
+                    data.sheets[sheetIndex].columns.push(editorData);
                     //if you're creating a column, create a new entry for a column value in every line based off the default value
-                    data.sheets[selectedSheet].lines.forEach(line => {
+                    data.sheets[sheetIndex].lines.forEach(line => {
                         if(editorData.typeStr === "multiple")
                         {
                             line[editorData.name] = editorData.defaultValue.split(', ');
@@ -159,14 +135,16 @@ function handleConfigUpdate(event) {
                         }
                     });
                     if(editorData.typeStr === "list") {
-                        let newList = defaults.sheet;
+                        // make a new sheet that this list will reference
+                        let newList = JSON.parse(JSON.stringify(defaults["sheet"]));
                         newList["hidden"] = true;
-                        newList["description"] = "list@"+data.sheets[selectedSheet].guid;
+                        newList["description"] = "list@"+data.sheets[sheetIndex].guid;
                         let guid = uuidv4();
                         newList["guid"] = guid;
-                        newList["name"] = guid+"@"+data.sheets[selectedSheet].guid;
+                        data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
+                        newList["name"] = guid+"@"+data.sheets[sheetIndex].guid;
                         delete newList.configurable.displayColumn;
-                        data.sheets.push(newList)
+                        data.sheets.push(newList);
                     }
                     editorConfig = {"active":false};
                     sheetsUpdated();
@@ -179,12 +157,13 @@ function handleConfigUpdate(event) {
                     data.sheets[selectedSheet] = editorData;
                     break;
                 default: //column
-                    var index = data.sheets[selectedSheet].columns.findIndex(x => x.name === editorConfig.editType); //old name
-                    data.sheets[selectedSheet].columns[index] = editorData; //column now has new name maybe
+                    let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
+                    var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
+                    data.sheets[sheetIndex].columns[index] = editorData; //column now has new name maybe
                     //update line entries depending on circumstances - maybe a faster way?
                     if(editorConfig.editType !== editorData.name)
                     {
-                        data.sheets[selectedSheet].lines.forEach(line => {
+                        data.sheets[sheetIndex].lines.forEach(line => {
                             //assing the new key the old value
                             line[editorData.name] = line[editorConfig.editType];
                             //delete the old entry
@@ -194,7 +173,7 @@ function handleConfigUpdate(event) {
                     }
                     if(editorData.typeStr == "multiple")
                     {
-                        data.sheets[selectedSheet].lines.forEach(line => {
+                        data.sheets[sheetIndex].lines.forEach(line => {
                             //make sure the multiple only has values possible based on config
                             //this removes old values if config changes
                             line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
@@ -202,7 +181,7 @@ function handleConfigUpdate(event) {
                     }
                     if(editorData.typeStr == "enum")
                     {
-                        data.sheets[selectedSheet].lines.forEach(line => {
+                        data.sheets[sheetIndex].lines.forEach(line => {
                             //make sure the enum only has values possible based on config
                             if(!editorData.options.includes(line[editorData.name]))
                             {
@@ -265,13 +244,14 @@ function handleConfigUpdate(event) {
                     });
                     break;
                 default: //column
-                    var index = data.sheets[selectedSheet].columns.findIndex(x => x.name === editorConfig.editType); //old name
-                    data.sheets[selectedSheet].lines.forEach(line => {
+                    let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
+                    var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
+                    data.sheets[sheetIndex].lines.forEach(line => {
                         //delete the entry for this column
                         delete line[editorConfig.editType];
                     });
                     //delete the column
-                    data.sheets[selectedSheet].columns.splice(index,1);
+                    data.sheets[sheetIndex].columns.splice(index,1);
                     //TODO: may need to do more here if column name change was referenced by other sheet?
                     break;
             }
@@ -287,11 +267,38 @@ function handleConfigUpdate(event) {
     }
 }
 
+let editorConfig = {"active" : false}
+let editorData = {}
 function handleTableAction(event) {
+    let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === event.detail.data.sheetGUID);
     switch (event.detail.type) {
         case "editorUpdate":
-            //pass the editor update to the editor update handler
-            handleOptions(event);
+            editorConfig = event.detail.data;
+            editorConfig["bannedNames"] = getBannedNames(event.detail.data.sheetGUID,editorConfig);
+            editorConfig["tableInfo"] = tableInfo;
+            switch (event.detail.data.operation) {
+                case "new":
+                    editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
+                    editorData["guid"] = uuidv4(); //assign columns and sheets guids
+                    if(event.detail.data.editType === "lineReference")
+                    {
+                        //not sure why enum value not setting to default in the configurator, so set a default here
+                        editorData["sheet"] = data.sheets[sheetIndex].guid;
+                    }
+                    break;
+                case "edit":
+                    switch (event.detail.data.editType) {
+                        case "sheet":
+                            editorData = JSON.parse(JSON.stringify(data.sheets[sheetIndex]));
+                            break;
+                        default: //column
+                            editorData = JSON.parse(JSON.stringify(data.sheets[sheetIndex].columns.find(x => x.name === editorConfig.editType)));
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
             break;
         case "update":
             sheetsUpdated();
@@ -300,7 +307,7 @@ function handleTableAction(event) {
             switch (event.detail.data.operation) {
                 case "remove":
                     const deletedGUID = event.detail.data.line.guid;
-                    data.sheets[selectedSheet].lines.splice(event.detail.data.lineIndex,1);
+                    data.sheets[sheetIndex].lines.splice(event.detail.data.lineIndex,1);
                     data.sheets.forEach(sheet => {
                         var lineRefColumns = sheet.columns.filter(column => column.typeStr === "lineReference");
                         if(lineRefColumns.length > 0) {
@@ -322,7 +329,13 @@ function handleTableAction(event) {
                     });
                     break;
                 case "add":
-                    createLines(event.detail.data.amount);
+                    if(!data.sheets[sheetIndex].hidden) {
+                        createLines(event.detail.data.sheetGUID,event.detail.data.amount);
+                    }
+                    else {
+                        //lines added in through hidden sheets are added as data values on the line entry at the column value
+                        //TODO:
+                    }
                 break;
                 default:
                     break;
@@ -332,7 +345,7 @@ function handleTableAction(event) {
         case "pickFile":
             //forward events from fields
             var fileKey = event.detail.fileKey;
-            fileKey["sheet"] = selectedSheet;
+            fileKey["sheet"] = sheetIndex;
             dispatch('message', {
                 "type" : "pickFile",
                 "fileKey" : event.detail.fileKey
@@ -348,10 +361,11 @@ function createSheet() {
         "operation" : "new",
         "editType" : "sheet",
     }
-    editorConfig["bannedNames"] = getBannedNames(editorConfig);
-    editorConfig["tableInfo"] = tableInfo;
     editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
-    editorData["guid"] = uuidv4(); //assign columns and sheets guids
+    let sheetGUID = uuidv4();
+    editorData["guid"] = sheetGUID; //assign columns and sheets guids
+    editorConfig["bannedNames"] = getBannedNames(sheetGUID,editorConfig);
+    editorConfig["tableInfo"] = tableInfo;
 }
 
 </script>
@@ -360,7 +374,7 @@ function createSheet() {
     <p>Invalid Depot File</p>
     <p>Use Ctrl/Cmd+Shift+P and select "Create new Depot File" to get started</p>
 {:else}
-    <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs} on:message={handleOptions} allDisabled={editorConfig.active} editSheetDisabled={data.sheets.length == 0} addLineDisabled={data.sheets.length == 0}/>
+    <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs}/>
     {#if data.sheets.length === 0}
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
        <button on:click={createSheet} disabled={editorConfig.active}>New Sheet</button>
@@ -374,7 +388,7 @@ function createSheet() {
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotTable debug={debug} showLineGUIDs={showLineGUIDs} bind:data={data.sheets[selectedSheet]} tableInfo={tableInfo} on:message={handleTableAction}/>
+            <DepotTable debug={debug} showLineGUIDs={showLineGUIDs} bind:fullData={data} bind:data={data.sheets[selectedSheet]} tableInfo={tableInfo} on:message={handleTableAction}/>
         {/if}
     {/if}
 {/if}

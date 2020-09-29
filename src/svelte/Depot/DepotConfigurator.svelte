@@ -92,7 +92,7 @@ $: {
                 {:else if configuration[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
                 {:else if configuration[fieldName] === "sheetSelect"}
-                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in configuration && configuration[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.tableInfo.sheets.guids} aliases={config.tableInfo.sheets.names}/></div>
+                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in configuration && configuration[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.tableInfo.sheetsFiltered.guids} aliases={config.tableInfo.sheetsFiltered.names}/></div>
 
                 <!-- {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->

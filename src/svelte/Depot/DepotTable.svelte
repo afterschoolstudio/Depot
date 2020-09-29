@@ -9,6 +9,7 @@ import NumberField from '../Fields/NumberField.svelte';
 import {defaults} from './depotDefaults';
 
 import { createEventDispatcher } from 'svelte';
+export let fullData;
 export let data;
 export let debug;
 export let showLineGUIDs;
@@ -21,7 +22,8 @@ function editColumn(column) {
         "data" : {
             "active" : true,
             "operation" : "edit",
-            "editType" : column
+            "editType" : column,
+            "sheetGUID" : data.guid
         }
     });
 }
@@ -32,7 +34,8 @@ function removeLine(lineIndex, line) {
         "data" : {
             "operation" : "remove",
             "lineIndex" : lineIndex,
-            "line" : line
+            "line" : line,
+            "sheetGUID" : data.guid
         }
     });
 }
@@ -42,7 +45,8 @@ function addLines(amount) {
         "type" : "lineEdit",
         "data" : {
             "operation" : "add",
-            "amount" : amount
+            "amount" : amount,
+            "sheetGUID" : data.guid
         }
     });
 }
@@ -53,7 +57,8 @@ function createColumn(columnType) {
         "data" :{
                 "active" : true,
                 "operation" : "new",
-                "editType" : columnType
+                "editType" : columnType,
+                "sheetGUID" : data.guid
                 }
     });
 }
@@ -64,77 +69,56 @@ function editSheet() {
         "data" :{
                 "active" : true,
                 "operation" : "edit",
-                "editType" : "sheet"
+                "editType" : "sheet",
+                "sheetGUID" : data.guid
                 }
     });
 }
 
 $: totalColumns = showLineGUIDs ? data.columns.length + 3 : data.columns.length + 2;
 
-
-function setListVisible(line,column,visible) {
-    //set the context here?
-    console.log("start");
-    console.log(listVisibility);
-    //make sure all values are false so we aren't trying to show two things at once
-    Object.keys(listVisibility[line.guid]).forEach(key => {
-        listVisibility[line.guid]["visible"] = false;
-        listVisibility[line.guid][key] = false;
-    });
-    listVisibility[line.guid][column.guid] = visible;
-    if(visible) {
-        listVisibility[line.guid]["visible"] = true;
-    }
-    console.log("end");
-    console.log(listVisibility);
-    console.log(lineHasVisibleList(line));
-} 
-
 let listVisibility = {};
 $: {
-    data.lines.forEach(line => {
-        //get context here?
-        listVisibility = {};
-        data.columns.forEach(col => {
-            if(col.typeStr === "list")
-            {
-                listVisibility[line.guid] = {
-                    [col.guid] : false
-                }
-                listVisibility[line.guid]["visible"] = false;
-            }
-        });
-    });
+    // data.lines.forEach(line => {
+    //     //get context here?
+    //     listVisibility = {};
+    //     data.columns.forEach(col => {
+    //         if(col.typeStr === "list")
+    //         {
+    //             listVisibility[line.guid] = {
+    //                 [col.guid] : false
+    //             }
+    //             listVisibility[line.guid]["visible"] = false;
+    //             listVisibility[line.guid]["column"] = "";
+    //         }
+    //     });
+    // });
 }
 
-function lineHasVisibleList(line) {
-    let isVisible = false;
-    if(line.guid in listVisibility)
-    {
-        console.log("found line in vis")
-        console.log(listVisibility[line.guid])
-        Object.keys(listVisibility[line.guid]).forEach(key => {
-            console.log("checking",key)
-            console.log(listVisibility[line.guid][key])
-            if(listVisibility[line.guid][key] === true)
-            {
-                console.log("returning true");
-                isVisible = true;
-            }
-        });
+function setListVisible(line,column,visible) {
+    //set the context here? 
+    if(visible) {
+        listVisibility[line.guid] = {
+            "colName" : column.name,
+            "colGuid" : column.guid,
+            "colSheetGuid" : column.sheet,
+        }
     }
-    return isVisible;
+    else {
+        delete listVisibility[line.guid];
+        //https://svelte.dev/tutorial/updating-arrays-and-objects
+        listVisibility = listVisibility;
+    }
 }
 
 </script>
 
-<br>
     <table>
     <tr>
-        <td>
-            <button on:click={editSheet}>Edit Sheet</button>
-        </td>
-        <td colspan="{totalColumns -  1}">
+        <td colspan="{totalColumns}">
+            {#if !data.hidden}
+                <button on:click={editSheet}>Edit Sheet</button>
+            {/if}
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
                     <button on:click={() => createColumn(columnType)}>New {columnType}</button>
@@ -174,7 +158,7 @@ function lineHasVisibleList(line) {
                 {:else if column.typeStr === "enum"}
                 <EnumField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "sheetReference"}
-                <EnumField bind:data={line[column.name]} options={tableInfo.sheets.guids} aliases={tableInfo.sheets.names} on:message/>
+                <EnumField bind:data={line[column.name]} options={tableInfo.sheetsFiltered.guids} aliases={tableInfo.sheetsFiltered.names} on:message/>
                 {:else if column.typeStr === "lineReference"}
                     {#if column.sheet !== ""}
                     <EnumField bind:data={line[column.name]} 
@@ -193,17 +177,28 @@ function lineHasVisibleList(line) {
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "list"}
-                <button on:click={()=>setListVisible(line,column,true)}>Show</button>
-                <button on:click={()=>setListVisible(line,column,false)}>Hide</button>
+                    {#if line.guid in listVisibility && listVisibility[line.guid].colGuid === column.guid}
+                        <button on:click={()=>setListVisible(line,column,false)}>Hide</button>
+                    {:else}
+                        <button on:click={()=>setListVisible(line,column,true)}>Show</button>
+                    {/if}
                 {/if}
                 </div>
                 </td>
             {/each}
         </tr>
-        {#if line.guid in listVisibility && listVisibility[line.guid]["visible"]}
-        <div>TEST</div>
+        {#if line.guid in listVisibility}
+        <!-- maybe pull this out of the tr and just use a div? -->
         <tr>
-            HELLO {line.guid}
+            <td></td>
+            <td colspan="{totalColumns -  1}">
+                <svelte:self    debug={debug} 
+                                showLineGUIDs={showLineGUIDs} 
+                                bind:fullData={fullData} 
+                                bind:data={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].colSheetGuid)]} 
+                                tableInfo={tableInfo} 
+                                on:message/>
+            </td>
         </tr>
         {/if}
     {/each}
