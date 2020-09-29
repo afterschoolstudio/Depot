@@ -2,12 +2,16 @@
     import { createEventDispatcher } from 'svelte';
 
     export let data;
+    export let sheetGUID;
     export let min;
     export let max;
     const dispatch = createEventDispatcher();
     function fieldUpdated() {
         dispatch('message', {
-            "type" : "update"
+            "type" : "update",
+            "data" : {
+                "sheetGUID" : sheetGUID
+            }
         });
     }
 </script>

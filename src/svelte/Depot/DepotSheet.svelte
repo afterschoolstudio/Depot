@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createEventDispatcher } from 'svelte';
 export let fullData;
 export let sheetData;
+export let lineData;
 export let debug;
 export let showLineGUIDs;
 export let depotInfo;
@@ -87,7 +88,7 @@ function handleSubTableEvent(event) {
             let nestedSheetGUID = event.detail.data.sheetGUID;
             let nestedSheetIndex = fullData.sheets.findIndex(sheet => sheet.guid === nestedSheetGUID);
             //this is the line in the parent sheet that caught the event from the subsheet
-            var refLineIndex = sheetData.lines.findIndex(line => line.guid === event.detail.data.originLineGUID);
+            var refLineIndex = lineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
             var refLineColumn = listVisibility[event.detail.data.originLineGUID];
             switch (event.detail.data.operation) {
                 case "add":
@@ -95,7 +96,7 @@ function handleSubTableEvent(event) {
                     for (let index = 1; index <= event.detail.data.amount; index++) {
                         var newLine = {};
                         newLine["guid"] = uuidv4();
-                        newLine["id"] = sheetData.lines[refLineIndex][refLineColumn.name].length + "";
+                        newLine["id"] = lineData[refLineIndex][refLineColumn.name].length + "";
                         fullData.sheets[nestedSheetIndex].columns.forEach(column => {
                             if(column.typeStr == "multiple")
                             {
@@ -106,7 +107,7 @@ function handleSubTableEvent(event) {
                                 newLine[column.name] = column.defaultValue;
                             }
                         });
-                        sheetData.lines[refLineIndex][refLineColumn.name].push(newLine);
+                        lineData[refLineIndex][refLineColumn.name].push(newLine);
                     }
                     break;
                 case "delete":
@@ -170,36 +171,36 @@ function setListVisible(line,column,visible) {
             <th title="{column.description}"><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
         {/each}
     </tr>
-    {#each sheetData.lines as line, i}
+    {#each lineData as line, i}
         <tr>
             <td><button on:click={() => removeLine(i,line)}>X</button></td>
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}
-            <td><TextField bind:data={line["id"]} on:message/></td>
+            <td><TextField sheetGUID={sheetData.guid} bind:data={line["id"]} on:message/></td>
             {#each sheetData.columns as column, c}
                 <td title="{column.description}">
                 <div>
                 <!-- message from field updates bubble to Depot.svelte -->
                 {#if column.typeStr === "text"}
-                <TextField bind:data={line[column.name]} on:message/>
+                <TextField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "longtext"}
-                <LongTextField bind:data={line[column.name]} on:message/>
+                <LongTextField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "image"}
-                <ImageField bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
+                <ImageField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "bool"}
-                <BooleanField bind:data={line[column.name]} on:message/>
+                <BooleanField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "enum"}
-                <EnumField bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "sheetReference"}
-                <EnumField bind:data={line[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names} on:message/>
+                <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names} on:message/>
                 {:else if column.typeStr === "lineReference"}
                     {#if column.sheet !== ""}
-                    <EnumField bind:data={line[column.name]} 
+                    <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} 
                                 options={depotInfo.lines[column.sheet].guids} 
                                 aliases={depotInfo.lines[column.sheet].names} on:message/>
                     {:else}
-                    <EnumField bind:data={line[column.name]} 
+                    <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} 
                                 options={[]} 
                                 aliases={[]} on:message/>
                     {/if}
@@ -207,9 +208,9 @@ function setListVisible(line,column,visible) {
                         <div title="Selected value with GUID {line[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
                     {/if}
                 {:else if column.typeStr === "multiple"}
-                <MultipleField bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <MultipleField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
-                <NumberField bind:data={line[column.name]} on:message/>
+                <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "list"}
                     {#if line.guid in listVisibility && listVisibility[line.guid].guid === column.guid}
                         <button on:click={()=>setListVisible(line,column,false)}>Hide</button>
@@ -231,6 +232,7 @@ function setListVisible(line,column,visible) {
                                 originLineGUID={line.guid}
                                 bind:fullData={fullData} 
                                 bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
+                                bind:lineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)][listVisibility[line.guid].name]} 
                                 depotInfo={depotInfo} 
                                 on:message={handleSubTableEvent}/>
             </td>

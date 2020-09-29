@@ -388,7 +388,13 @@ function createSheet() {
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotSheet debug={debug} showLineGUIDs={showLineGUIDs} bind:fullData={data} bind:sheetData={data.sheets[selectedSheet]} depotInfo={depotFileInfo} on:message={handleTableAction}/>
+            <DepotSheet debug={debug} 
+                        showLineGUIDs={showLineGUIDs} 
+                        bind:fullData={data} 
+                        bind:sheetData={data.sheets[selectedSheet]} 
+                        bind:lineData={data.sheets[selectedSheet].lines} 
+                        depotInfo={depotFileInfo} 
+                        on:message={handleTableAction}/>
         {/if}
     {/if}
 {/if}

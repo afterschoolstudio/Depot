@@ -3,6 +3,7 @@
     import { createEventDispatcher } from 'svelte';
 
     export let data;
+    export let sheetGUID;
     export let fileKey;
     const nonce = getContext("nonce");
     const dispatch = createEventDispatcher();
@@ -15,7 +16,10 @@
     function clearFile() {
         data = "";
         dispatch('message', {
-            "type" : "update"
+            "type" : "update",
+            "data" : {
+                "sheetGUID" : sheetGUID
+            }
         });
     }
 
