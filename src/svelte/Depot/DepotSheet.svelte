@@ -11,10 +11,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { createEventDispatcher } from 'svelte';
 export let fullData;
-export let data;
+export let sheetData;
 export let debug;
 export let showLineGUIDs;
-export let tableInfo;
+export let depotInfo;
 export let originLineGUID = "";
 const dispatch = createEventDispatcher();
 
@@ -25,7 +25,7 @@ function editColumn(column) {
             "active" : true,
             "operation" : "edit",
             "editType" : column,
-            "sheetGUID" : data.guid
+            "sheetGUID" : sheetData.guid
         }
     });
 }
@@ -37,7 +37,7 @@ function removeLine(lineIndex, line) {
             "operation" : "remove",
             "lineIndex" : lineIndex,
             "line" : line,
-            "sheetGUID" : data.guid
+            "sheetGUID" : sheetData.guid
         }
     });
 }
@@ -49,7 +49,7 @@ function addLines(amount,originGUID) {
             "operation" : "add",
             "amount" : amount,
             "originLineGUID" : originGUID,
-            "sheetGUID" : data.guid
+            "sheetGUID" : sheetData.guid
         }
     });
 }
@@ -61,7 +61,7 @@ function createColumn(columnType) {
                 "active" : true,
                 "operation" : "new",
                 "editType" : columnType,
-                "sheetGUID" : data.guid
+                "sheetGUID" : sheetData.guid
                 }
     });
 }
@@ -73,7 +73,7 @@ function editSheet() {
                 "active" : true,
                 "operation" : "edit",
                 "editType" : "sheet",
-                "sheetGUID" : data.guid
+                "sheetGUID" : sheetData.guid
                 }
     });
 }
@@ -87,7 +87,7 @@ function handleSubTableEvent(event) {
             let nestedSheetGUID = event.detail.data.sheetGUID;
             let nestedSheetIndex = fullData.sheets.findIndex(sheet => sheet.guid === nestedSheetGUID);
             //this is the line in the parent sheet that caught the event from the subsheet
-            var refLineIndex = data.lines.findIndex(line => line.guid === event.detail.data.originLineGUID);
+            var refLineIndex = sheetData.lines.findIndex(line => line.guid === event.detail.data.originLineGUID);
             var refLineColumn = listVisibility[event.detail.data.originLineGUID];
             switch (event.detail.data.operation) {
                 case "add":
@@ -95,7 +95,7 @@ function handleSubTableEvent(event) {
                     for (let index = 1; index <= event.detail.data.amount; index++) {
                         var newLine = {};
                         newLine["guid"] = uuidv4();
-                        newLine["id"] = data.lines[refLineIndex][refLineColumn.name].length + "";
+                        newLine["id"] = sheetData.lines[refLineIndex][refLineColumn.name].length + "";
                         fullData.sheets[nestedSheetIndex].columns.forEach(column => {
                             if(column.typeStr == "multiple")
                             {
@@ -106,7 +106,7 @@ function handleSubTableEvent(event) {
                                 newLine[column.name] = column.defaultValue;
                             }
                         });
-                        data.lines[refLineIndex][refLineColumn.name].push(newLine);
+                        sheetData.lines[refLineIndex][refLineColumn.name].push(newLine);
                     }
                     break;
                 case "delete":
@@ -129,7 +129,7 @@ function handleSubTableEvent(event) {
     }
 }
 
-$: totalColumns = showLineGUIDs ? data.columns.length + 3 : data.columns.length + 2;
+$: totalColumns = showLineGUIDs ? sheetData.columns.length + 3 : sheetData.columns.length + 2;
 
 let listVisibility = {};
 
@@ -150,7 +150,7 @@ function setListVisible(line,column,visible) {
     <table>
     <tr>
         <td colspan="{totalColumns}">
-            {#if !data.hidden}
+            {#if !sheetData.hidden}
                 <button on:click={editSheet}>Edit Sheet</button>
             {/if}
             {#each Object.keys(defaults) as columnType}
@@ -166,18 +166,18 @@ function setListVisible(line,column,visible) {
             <th>GUID</th>
         {/if}
         <th>ID</th>
-        {#each data.columns as column}
+        {#each sheetData.columns as column}
             <th title="{column.description}"><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
         {/each}
     </tr>
-    {#each data.lines as line, i}
+    {#each sheetData.lines as line, i}
         <tr>
             <td><button on:click={() => removeLine(i,line)}>X</button></td>
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}
             <td><TextField bind:data={line["id"]} on:message/></td>
-            {#each data.columns as column, c}
+            {#each sheetData.columns as column, c}
                 <td title="{column.description}">
                 <div>
                 <!-- message from field updates bubble to Depot.svelte -->
@@ -190,24 +190,24 @@ function setListVisible(line,column,visible) {
                 {:else if column.typeStr === "bool"}
                 <BooleanField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "enum"}
-                <EnumField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <EnumField bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "sheetReference"}
-                <EnumField bind:data={line[column.name]} options={tableInfo.sheetsFiltered.guids} aliases={tableInfo.sheetsFiltered.names} on:message/>
+                <EnumField bind:data={line[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names} on:message/>
                 {:else if column.typeStr === "lineReference"}
                     {#if column.sheet !== ""}
                     <EnumField bind:data={line[column.name]} 
-                                options={tableInfo.lines[column.sheet].guids} 
-                                aliases={tableInfo.lines[column.sheet].names} on:message/>
+                                options={depotInfo.lines[column.sheet].guids} 
+                                aliases={depotInfo.lines[column.sheet].names} on:message/>
                     {:else}
                     <EnumField bind:data={line[column.name]} 
                                 options={[]} 
                                 aliases={[]} on:message/>
                     {/if}
-                    {#if line[column.name] !== "" && !tableInfo.lines[column.sheet].guids.includes(line[column.name])}
+                    {#if line[column.name] !== "" && !depotInfo.lines[column.sheet].guids.includes(line[column.name])}
                         <div title="Selected value with GUID {line[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
                     {/if}
                 {:else if column.typeStr === "multiple"}
-                <MultipleField bind:data={line[column.name]} options={data.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <MultipleField bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "list"}
@@ -230,8 +230,8 @@ function setListVisible(line,column,visible) {
                                 showLineGUIDs={showLineGUIDs} 
                                 originLineGUID={line.guid}
                                 bind:fullData={fullData} 
-                                bind:data={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
-                                tableInfo={tableInfo} 
+                                bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
+                                depotInfo={depotInfo} 
                                 on:message={handleSubTableEvent}/>
             </td>
         </tr>
@@ -248,6 +248,6 @@ function setListVisible(line,column,visible) {
     </table>
 {#if debug}
 <p>Current Table Data:</p>
-<pre>{JSON.stringify({data},null,2)}</pre>
+<pre>{JSON.stringify({sheetData},null,2)}</pre>
 <p>----------------------------------------</p>
 {/if}

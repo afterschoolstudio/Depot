@@ -2,7 +2,7 @@
 import { createEventDispatcher } from 'svelte';
 import {defaults} from './depotDefaults';
 import DepotOptions from './DepotOptions.svelte';
-import DepotTable from './DepotTable.svelte';
+import DepotSheet from './DepotSheet.svelte';
 import DepotConfigurator from './DepotConfigurator.svelte';
 import { v4 as uuidv4 } from 'uuid';
 export let data;
@@ -46,7 +46,7 @@ function getBannedNames(referenceSheetGUID, config) {
     return { "sheetNames" : sheetNames, "columnNames" : columnNames}
 }
 
-let tableInfo = {};
+let depotFileInfo = {};
 $: {
     var sheetNames = [];
     var sheetGuids = [];
@@ -76,7 +76,7 @@ $: {
         columns[sheet.guid].names.push("id");
         columns[sheet.guid].names.push("guid");
     });
-    tableInfo = {"sheets" : {
+    depotFileInfo = {"sheets" : {
                     "names":sheetNames,
                     "guids":sheetGuids,
                     },
@@ -275,7 +275,7 @@ function handleTableAction(event) {
         case "editorUpdate":
             editorConfig = event.detail.data;
             editorConfig["bannedNames"] = getBannedNames(event.detail.data.sheetGUID,editorConfig);
-            editorConfig["tableInfo"] = tableInfo;
+            editorConfig["depotInfo"] = depotFileInfo;
             switch (event.detail.data.operation) {
                 case "new":
                     editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
@@ -365,7 +365,7 @@ function createSheet() {
     let sheetGUID = uuidv4();
     editorData["guid"] = sheetGUID; //assign columns and sheets guids
     editorConfig["bannedNames"] = getBannedNames(sheetGUID,editorConfig);
-    editorConfig["tableInfo"] = tableInfo;
+    editorConfig["depotInfo"] = depotFileInfo;
 }
 
 </script>
@@ -388,7 +388,7 @@ function createSheet() {
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotTable debug={debug} showLineGUIDs={showLineGUIDs} bind:fullData={data} bind:data={data.sheets[selectedSheet]} tableInfo={tableInfo} on:message={handleTableAction}/>
+            <DepotSheet debug={debug} showLineGUIDs={showLineGUIDs} bind:fullData={data} bind:sheetData={data.sheets[selectedSheet]} depotInfo={depotFileInfo} on:message={handleTableAction}/>
         {/if}
     {/if}
 {/if}

@@ -92,7 +92,7 @@ $: {
                 {:else if configuration[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
                 {:else if configuration[fieldName] === "sheetSelect"}
-                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in configuration && configuration[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.tableInfo.sheetsFiltered.guids} aliases={config.tableInfo.sheetsFiltered.names}/></div>
+                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in configuration && configuration[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.depotInfo.sheetsFiltered.guids} aliases={config.depotInfo.sheetsFiltered.names}/></div>
 
                 <!-- {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->
@@ -103,15 +103,15 @@ $: {
                 {:else if configuration[fieldName].split("@")[0] === "lineSelect"}
                     {#if data[configuration[fieldName].split("@")[1]] !== ""}
                         <div><EnumField bind:data={data[fieldName]}
-                                        options={config.tableInfo.lines[data[configuration[fieldName].split("@")[1]]].guids}
-                                        aliases={config.tableInfo.lines[data[configuration[fieldName].split("@")[1]]].names}/></div>
+                                        options={config.depotInfo.lines[data[configuration[fieldName].split("@")[1]]].guids}
+                                        aliases={config.depotInfo.lines[data[configuration[fieldName].split("@")[1]]].names}/></div>
                     <!-- if sheet not assigned  -->
                     {:else}
                         <div><EnumField bind:data={data[fieldName]}
                                         options={[]}
                                         aliases={[]}/></div>
                     {/if}
-                    {#if (data["sheet"] !== "" && data["defaultValue"] !== "") && !config.tableInfo.lines[data["sheet"]].guids.includes(data[fieldName])}
+                    {#if (data["sheet"] !== "" && data["defaultValue"] !== "") && !config.depotInfo.lines[data["sheet"]].guids.includes(data[fieldName])}
                         <div>Warning: Selected value with GUID {data[fieldName]} not in selected sheet</div>
                     {/if}
 
@@ -127,9 +127,9 @@ $: {
                         {:else}
                             <div><EnumField allowEmpty={false}
                                             bind:data={data[fieldName]}
-                                            options={config.tableInfo.columns[
-                                                        config.tableInfo.sheets.guids[
-                                                            config.tableInfo.sheets.names.indexOf(data[configuration[fieldName].split("@")[1]])
+                                            options={config.depotInfo.columns[
+                                                        config.depotInfo.sheets.guids[
+                                                            config.depotInfo.sheets.names.indexOf(data[configuration[fieldName].split("@")[1]])
                                                         ]
                                                     ].names}/>
                             </div>
