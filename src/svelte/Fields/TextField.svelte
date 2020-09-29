@@ -12,8 +12,13 @@
             }
         });
     }
+    function validateText() {
+        dispatch('message', {
+            "type" : "validate"
+        });
+    }
 </script>
-<input bind:value={data} on:input={fieldUpdated}>
+<input bind:value={data} on:blur={validateText} on:input={fieldUpdated}>
 
 <style>
     input {

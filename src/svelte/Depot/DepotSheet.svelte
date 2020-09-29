@@ -149,6 +149,30 @@ function setListVisible(line,column,visible) {
     }
 }
 
+function validateID(event,line) {
+    switch (event.detail.type) {
+        case "validate":
+            lineData.forEach(ld => {
+                if(line.guid !== ld.guid && line.id === ld.id)
+                {
+                   let index = lineData.findIndex(l => l.guid === line.guid);
+                   lineData[index].id = "DUPLICATE("+line.id+")";
+                }
+            });
+            dispatch('message', {
+                "type" : "update",
+                "data" : {
+                    "sheetGUID" : sheetData.guid
+                }
+            });
+            break;
+        default:
+            //forward messages otherwise from nested table
+            dispatch('message',event.detail);
+            break;
+    }
+}
+
 </script>
 
     <table>
@@ -180,7 +204,7 @@ function setListVisible(line,column,visible) {
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}
-            <td><TextField sheetGUID={sheetData.guid} bind:data={line["id"]} on:message/></td>
+            <td><TextField sheetGUID={sheetData.guid} bind:data={line["id"]} on:message={(event) => validateID(event,line)}/></td>
             {#each sheetData.columns as column, c}
                 <td title="{column.description}">
                 <div>
