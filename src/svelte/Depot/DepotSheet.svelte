@@ -31,13 +31,14 @@ function editColumn(column) {
     });
 }
 
-function removeLine(lineIndex, line) {
+function removeLine(lineIndex, line, originGUID) {
     dispatch('message', {
         "type" : "lineEdit",
         "data" : {
             "operation" : "remove",
             "lineIndex" : lineIndex,
             "line" : line,
+            "originLineGUID" : originGUID,
             "sheetGUID" : sheetData.guid
         }
     });
@@ -110,8 +111,9 @@ function handleSubTableEvent(event) {
                         lineData[refLineIndex][refLineColumn.name].push(newLine);
                     }
                     break;
-                case "delete":
-                    
+                case "remove":
+                    lineData[refLineIndex][refLineColumn.name].splice(event.detail.data.lineIndex,1);
+                    //nested sheet lines cannot be referened so we can just delete this from the list
                     break;
                 default:
                     break;
@@ -125,6 +127,7 @@ function handleSubTableEvent(event) {
             });
             break;
         default:
+            //forward messages otherwise from nested table
             dispatch('message',event.detail);
             break;
     }
@@ -173,7 +176,7 @@ function setListVisible(line,column,visible) {
     </tr>
     {#each lineData as line, i}
         <tr>
-            <td><button on:click={() => removeLine(i,line)}>X</button></td>
+            <td><button on:click={() => removeLine(i,line,originLineGUID)}>X</button></td>
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}

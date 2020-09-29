@@ -32,14 +32,17 @@ function getBannedNames(referenceSheetGUID, config) {
         }
     }
     var columnNames = [];
-    if (data.sheets.length !== 0 && referenceSheetGUID in data.sheets && data.sheets[data.sheets.indexOf(sheet => sheet.guid === referenceSheetGUID)].columns.length !== 0) {
-        let sheetIndex = data.sheets.indexOf(sheet => sheet.guid === referenceSheetGUID);
-        for(var o in data.sheets[sheetIndex].columns) {
-            if(config.operation === "new" || 
-              (config.operation === "edit" && (data.sheets[sheetIndex].columns[o].name !== config.editType)))
-            {
-                //this means its the currently open column, we dont add our name to the banned list, only others
-                columnNames.push(data.sheets[sheetIndex].columns[o].name);
+    if(data.sheets.length > 0)
+    {
+        var sheetIndex = data.sheets.findIndex(sheet => sheet.guid === referenceSheetGUID);
+        if (sheetIndex >= 0 && data.sheets[sheetIndex].columns.length !== 0) {
+            for(var o in data.sheets[sheetIndex].columns) {
+                if(config.operation === "new" || 
+                  (config.operation === "edit" && (data.sheets[sheetIndex].columns[o].name !== config.editType)))
+                {
+                    //this means its the currently open column, we dont add our name to the banned list, only others
+                    columnNames.push(data.sheets[sheetIndex].columns[o].name);
+                }
             }
         }
     }
@@ -142,7 +145,7 @@ function handleConfigUpdate(event) {
                         let guid = uuidv4();
                         newList["guid"] = guid;
                         data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
-                        newList["name"] = guid+"@"+data.sheets[sheetIndex].guid;
+                        newList["name"] = editorData.name; //worth noting that invisible sheet names are also checked against for name creation
                         delete newList.configurable.displayColumn;
                         data.sheets.push(newList);
                     }
@@ -189,6 +192,11 @@ function handleConfigUpdate(event) {
                             }
                         });
                     }
+                    if(editorData.typeStr == "list")
+                    {
+                        let refIndex = data.sheets.findIndex(s => s.guid === editorData.sheet);
+                        data.sheets[refIndex].name = editorData.name;
+                    }
                     
                     break;
             }
@@ -199,6 +207,12 @@ function handleConfigUpdate(event) {
             switch (editorConfig.editType) {
                 case "sheet":
                     const deletedGUID = data.sheets[selectedSheet].guid;
+                    //recursively delete any list fields on this sheet
+                    data.sheets[selectedSheet].columns.forEach(column => {
+                        if(column.typeStr === "list") {
+                            deleteListColumn(column);
+                        }
+                    });
                     data.sheets.splice(selectedSheet,1);
                     if(selectedSheet >= data.sheets.length)
                     {
@@ -250,6 +264,10 @@ function handleConfigUpdate(event) {
                         //delete the entry for this column
                         delete line[editorConfig.editType];
                     });
+                    if(data.sheets[sheetIndex].columns[index].typeStr === "list")
+                    {
+                        deleteListColumn(data.sheets[sheetIndex].columns[index]);
+                    }
                     //delete the column
                     data.sheets[sheetIndex].columns.splice(index,1);
                     //TODO: may need to do more here if column name change was referenced by other sheet?
@@ -265,6 +283,16 @@ function handleConfigUpdate(event) {
             editorConfig = {"active":false};
             break;
     }
+}
+
+function deleteListColumn(col) {
+    let delSheetIndex = data.sheets.findIndex(sheet => sheet.guid === col.sheet);
+    data.sheets[delSheetIndex].columns.forEach(column => {
+        if(column.typeStr === "list") {
+            deleteListColumn(column);
+        }
+    });
+    data.sheets.splice(delSheetIndex,1);
 }
 
 let editorConfig = {"active" : false}
