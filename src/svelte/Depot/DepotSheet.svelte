@@ -180,6 +180,8 @@ function validateID(event,line) {
         <td colspan="{totalColumns}">
             {#if !sheetData.hidden}
                 <button on:click={editSheet}>Edit Sheet</button>
+            {:else}
+                <div>{sheetData.name}</div>
             {/if}
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}

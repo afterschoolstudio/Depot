@@ -14,6 +14,9 @@
 ☐ line references for default value getting "undefined" option if the display column for the referenced sheet is deleted
 ☐ need to set line list visibilty context in Depot.svelte and pass down to tables so context isn't lost between switching sheets or editing fields
 ☐ line reference fields in lists aren't displaying line options
+☐ image fields arent working in nested sheets
+☐ add in ability for sheet edit menu and line add to only be shown if that sheet is being hovered
+☐ add in line removal icon to only show if line is being hovered
 ✔ add in ability to remove a nested line @done (9/29/2020, 5:43:18 PM)
 ✔ when you delete a list field it needs to delete its sheet and any nested sheets its fields had @done (9/29/2020, 6:23:58 PM)
 ✔ when you delete a sheet with list fields it needs to delete the list fields sheets and any nested lists it had @done (9/29/2020, 6:23:59 PM)
