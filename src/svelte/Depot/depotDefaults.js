@@ -2,12 +2,14 @@ export let defaults = {
     "sheet" : {
         "name" : "newSheet",
         "description" : "description of what the sheet is",
+        "displayColumn" : "id",
         "guid" : "",
         "columns": [],
         "lines": [],
         "configurable" : {
             "name" : "text",
-            "description" : "text"
+            "description" : "text",
+            "displayColumn" : "columnSelect@name"
         }
     },
     "int" : {
@@ -127,7 +129,10 @@ export let defaults = {
         "configurable" : {
             "name" : "text",
             "description" : "text",
-            "defaultValue" : "sheetSelect"
+            "defaultValue" : "sheetSelect",
+            "sheetSelect@defaultValue" : {
+                "allowEmpty" : true
+            }
         }
     },
     "lineReference" : {

@@ -54,17 +54,20 @@ $: {
     data.sheets.forEach(sheet => {
         sheetNames.push(sheet.name);
         sheetGuids.push(sheet.guid);
-        lines[sheet.guid] = { "names": [], "guids" : []};
+        lines[sheet.guid] = { "names": [], "ids": [], "guids" : []};
         columns[sheet.guid] = { "names": [], "guids" : []};
         sheet.lines.forEach(line => {
-            lines[sheet.guid].names.push(line.id)
+            lines[sheet.guid].names.push(line[sheet.displayColumn])
+            lines[sheet.guid].ids.push(line.id)
             lines[sheet.guid].guids.push(line.guid)
         });
         sheet.columns.forEach(column => {
             columns[sheet.guid].names.push(column.name)
             columns[sheet.guid].guids.push(column.guid)
         });
-    })
+        columns[sheet.guid].names.push("id");
+        columns[sheet.guid].names.push("guid");
+    });
     tableInfo = {"sheets" : {
                     "names":sheetNames,
                     "guids":sheetGuids
@@ -86,6 +89,11 @@ function handleOptions(event) {
                 case "new":
                     editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
                     editorData["guid"] = uuidv4(); //assign columns and sheets guids
+                    if(event.detail.data.editType === "lineReference")
+                    {
+                        //not sure why enum value not setting to default in the configurator, so set a default here
+                        editorData["sheet"] = data.sheets[selectedSheet].guid;
+                    }
                     break;
                 case "edit":
                     switch (event.detail.data.editType) {
@@ -334,7 +342,6 @@ function createSheet() {
 }
 
 </script>
- 
 <h1>Depot</h1>
 {#if !data.hasOwnProperty("sheets")}
     <p>Invalid Depot File</p>

@@ -78,6 +78,7 @@ $: {
         <td>{data["guid"]}</td>
     </tr>
     {#each Object.keys(configuration) as fieldName}
+        {#if typeof configuration[fieldName] !== 'object'}
         <tr>
             <td>{fieldName}</td>
             <td>
@@ -91,7 +92,7 @@ $: {
                 {:else if configuration[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
                 {:else if configuration[fieldName] === "sheetSelect"}
-                <div><EnumField bind:data={data[fieldName]} options={config.tableInfo.sheets.guids} aliases={config.tableInfo.sheets.names}/></div>
+                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in configuration && configuration[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.tableInfo.sheets.guids} aliases={config.tableInfo.sheets.names}/></div>
 
                 <!-- {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->
@@ -113,9 +114,37 @@ $: {
                     {#if (data["sheet"] !== "" && data["defaultValue"] !== "") && !config.tableInfo.lines[data["sheet"]].guids.includes(data[fieldName])}
                         <div>Warning: Selected value with GUID {data[fieldName]} not in selected sheet</div>
                     {/if}
+
+                <!-- column names are inherently unique, so just bind off name instead of needing guid -->
+                {:else if configuration[fieldName].split("@")[0] === "columnSelect"}
+                    {#if data[configuration[fieldName].split("@")[1]] !== ""}
+                        {#if config.operation === "new" && config.editType === "sheet"}
+                            <!-- sheet isnt created yet so no columns would appear in table info, just add defaults -->
+                            <div><EnumField allowEmpty={false}
+                                            bind:data={data[fieldName]}
+                                            options={["id","guid"]}/>
+                            </div>
+                        {:else}
+                            <div><EnumField allowEmpty={false}
+                                            bind:data={data[fieldName]}
+                                            options={config.tableInfo.columns[
+                                                        config.tableInfo.sheets.guids[
+                                                            config.tableInfo.sheets.names.indexOf(data[configuration[fieldName].split("@")[1]])
+                                                        ]
+                                                    ].names}/>
+                            </div>
+                        {/if}
+                    <!-- if sheet not assigned  -->
+                    {:else}
+                        <div><EnumField allowEmpty={false}
+                                        bind:data={data[fieldName]}
+                                        options={[]}
+                        /></div>
+                    {/if}
                 {/if}
             </td>
         </tr>
+        {/if}
     {/each}
     </table>
     <br>

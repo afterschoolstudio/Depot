@@ -4,6 +4,7 @@
     export let data;
     export let options = [];
     export let aliases = [];
+    export let allowEmpty = true;
     const dispatch = createEventDispatcher();
     function fieldUpdated() {
         dispatch('message', {
@@ -13,11 +14,12 @@
 </script>
 <!-- svelte-ignore a11y-no-onchange -->
 <select bind:value={data} on:change={fieldUpdated}>
-    <option value="">
-        <!-- always have an empy option -->
-    </option>
+    {#if allowEmpty}
+        <option value="">
+        </option>
+    {/if}
     {#each options as option, i}
-    <option value={option}>
+    <option value={option} selected={data === option}>
         {#if aliases.length == options.length && aliases.length > 0}
             {aliases[i]}
         {:else}
