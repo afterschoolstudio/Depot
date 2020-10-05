@@ -264,6 +264,11 @@ function handleConfigUpdate(event) {
                         //delete the entry for this column
                         delete line[editorConfig.editType];
                     });
+                    if(data.sheets[sheetIndex].displayColumn === data.sheets[sheetIndex].columns[index].name)
+                    {
+                        //we deleted the display column, update to default
+                        data.sheets[sheetIndex].displayColumn = defaults["sheet"].displayColumn;
+                    }
                     if(data.sheets[sheetIndex].columns[index].typeStr === "list")
                     {
                         deleteListColumn(data.sheets[sheetIndex].columns[index]);
