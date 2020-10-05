@@ -316,7 +316,8 @@ function handleTableAction(event) {
                     if(event.detail.data.editType === "lineReference")
                     {
                         //not sure why enum value not setting to default in the configurator, so set a default here
-                        editorData["sheet"] = data.sheets[sheetIndex].guid;
+                        let defSheet = data.sheets.find(s => s.hidden !== true).guid; //get first unhidden sheet
+                        editorData["sheet"] = defSheet;
                     }
                     break;
                 case "edit":

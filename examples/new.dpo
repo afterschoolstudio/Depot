@@ -1,5 +1,174 @@
 {
     "sheets": [
-        
+        {
+            "name": "animals",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "66958174-2177-49f1-863a-4b6a461b95a4",
+            "columns": [],
+            "lines": [
+                {
+                    "guid": "fd42bdef-5b58-4697-9151-07fc86c92b5f",
+                    "id": "tiger"
+                },
+                {
+                    "guid": "2a529f79-672d-4852-9521-54e92e30ee2f",
+                    "id": "lion"
+                },
+                {
+                    "guid": "813b6e26-9c14-4d94-bf06-47a94ff9831f",
+                    "id": "bear"
+                },
+                {
+                    "guid": "5a9937ef-5573-47bd-8c61-bf319de4911d",
+                    "id": "squid"
+                }
+            ],
+            "hidden": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "barns",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "a1db8210-57a2-4713-89f4-7f6163c39bf7",
+            "columns": [
+                {
+                    "typeStr": "list",
+                    "guid": "621978b2-1507-4802-b60d-612706add67f",
+                    "name": "barn animals",
+                    "description": "new list field",
+                    "sheet": "0c8a02a9-bd0b-427a-aebc-2896ef30b468",
+                    "defaultValue": [],
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "43610b73-8c38-4f6d-80e5-fec6a8254120",
+                    "id": "cool barn",
+                    "barn animals": [
+                        {
+                            "guid": "1f33cd10-6131-46e8-b74e-7bed70ceed66",
+                            "id": "0",
+                            "newLineReference": "2a529f79-672d-4852-9521-54e92e30ee2f"
+                        },
+                        {
+                            "guid": "826db949-66ec-45dd-b1a0-f560918a0b9e",
+                            "id": "1",
+                            "newLineReference": "fd42bdef-5b58-4697-9151-07fc86c92b5f"
+                        },
+                        {
+                            "guid": "7a4dc9e0-2c37-47ea-81ee-023d1a4569a3",
+                            "id": "2",
+                            "newLineReference": "813b6e26-9c14-4d94-bf06-47a94ff9831f"
+                        },
+                        {
+                            "guid": "7c425ded-5180-4674-b11c-d04c3afde9c6",
+                            "id": "3",
+                            "newLineReference": "5a9937ef-5573-47bd-8c61-bf319de4911d"
+                        }
+                    ]
+                }
+            ],
+            "hidden": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "barn animals",
+            "description": "list@a1db8210-57a2-4713-89f4-7f6163c39bf7",
+            "displayColumn": "id",
+            "guid": "0c8a02a9-bd0b-427a-aebc-2896ef30b468",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "051c28c5-e5c0-4c9a-97cd-401cec7bda26",
+                    "name": "newLineReference",
+                    "description": "new line reference field",
+                    "sheet": "66958174-2177-49f1-863a-4b6a461b95a4",
+                    "defaultValue": "fd42bdef-5b58-4697-9151-07fc86c92b5f",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "list",
+                    "guid": "6e9daec8-344f-498c-8fdf-caf15cde4317",
+                    "name": "cousins",
+                    "description": "new list field",
+                    "sheet": "7a250a34-55cb-4d75-b7b5-d32b0e3eafa4",
+                    "defaultValue": [],
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "cousins",
+            "description": "list@0c8a02a9-bd0b-427a-aebc-2896ef30b468",
+            "displayColumn": "id",
+            "guid": "7a250a34-55cb-4d75-b7b5-d32b0e3eafa4",
+            "columns": [],
+            "lines": [],
+            "hidden": true,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        }
     ]
 }
