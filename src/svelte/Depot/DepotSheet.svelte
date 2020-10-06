@@ -17,6 +17,7 @@ export let debug;
 export let showLineGUIDs;
 export let depotInfo;
 export let originLineGUID = "";
+export let listVisibility = {};
 const dispatch = createEventDispatcher();
 
 function editColumn(column) {
@@ -113,6 +114,13 @@ function handleSubTableEvent(event) {
                     break;
                 case "remove":
                     lineData[refLineIndex][refLineColumn.name].splice(event.detail.data.lineIndex,1);
+                    //delete this from visibility
+                    //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
+                    //this doesn't happen right now so creates some garbage in listVisibility
+                    if(lineData[refLineIndex].guid in listVisibility)
+                    {
+                        delete listVisibility[refLineIndex];
+                    }
                     //nested sheet lines cannot be referened so we can just delete this from the list
                     break;
                 default:
@@ -133,20 +141,28 @@ function handleSubTableEvent(event) {
     }
 }
 
-$: totalColumns = showLineGUIDs ? sheetData.columns.length + 3 : sheetData.columns.length + 2;
+let totalColumns = 0;
+$: {
+    if(showLineGUIDs)
+    {
+        totalColumns = sheetData.columns.length + 3;
+    }
+    else
+    {
+        totalColumns = sheetData.columns.length + 2; 
+    }
+} 
 
-let listVisibility = {};
 
 function setListVisible(line,column,visible) {
-    //set the context here? 
     if(visible) {
         listVisibility[line.guid] = column;
     }
     else {
         delete listVisibility[line.guid];
-        //https://svelte.dev/tutorial/updating-arrays-and-objects
-        listVisibility = listVisibility;
     }
+    //https://svelte.dev/tutorial/updating-arrays-and-objects
+    listVisibility = listVisibility;
 }
 
 function validateID(event,line) {
@@ -180,8 +196,8 @@ function validateID(event,line) {
         <td colspan="{totalColumns}">
             {#if !sheetData.hidden}
                 <button on:click={editSheet}>Edit Sheet</button>
-            {:else}
-                <div>{sheetData.name}</div>
+            <!-- {:else}
+                <div>{sheetData.name}</div> -->
             {/if}
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
@@ -256,14 +272,18 @@ function validateID(event,line) {
         <tr>
             <td></td>
             <td colspan="{totalColumns -  1}">
+                <!--    lineData grabs itself from the values in the lineData in this sheet
+                        this is because lines store their nested values inside of themsevles instead of inside the sheet -->
                 <svelte:self    debug={debug} 
                                 showLineGUIDs={showLineGUIDs} 
                                 originLineGUID={line.guid}
                                 bind:fullData={fullData} 
                                 bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
-                                bind:lineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)][listVisibility[line.guid].name]} 
+                                bind:lineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)] 
+                                                       [listVisibility[line.guid].name]} 
                                 depotInfo={depotInfo} 
-                                on:message={handleSubTableEvent}/>
+                                on:message={handleSubTableEvent}
+                                bind:listVisibility={listVisibility}/>
             </td>
         </tr>
         {/if}

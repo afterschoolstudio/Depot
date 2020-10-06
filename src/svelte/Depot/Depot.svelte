@@ -11,6 +11,8 @@ let showLineGUIDs = false;
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
+    selectedSheetlineData = data.sheets[selectedSheet].lines;
+    selectedSheetData = data.sheets[selectedSheet];
     dispatch('message', {
         "type" : "update"
     });
@@ -19,6 +21,15 @@ function sheetsUpdated() {
 let selectedSheet = 0;
 function focusSheet(index) {
     selectedSheet = index;
+}
+
+let listVisibility = {};
+let selectedSheetlineData = {};
+let selectedSheetData = {};
+
+$: {
+    selectedSheetlineData = data.sheets[selectedSheet].lines;
+    selectedSheetData = data.sheets[selectedSheet];
 }
 
 function getBannedNames(referenceSheetGUID, config) {
@@ -119,7 +130,7 @@ function handleConfigUpdate(event) {
             switch (editorConfig.editType) {
                 case "sheet":
                     data.sheets.push(editorData);
-                    selectedSheet = data.sheets.length - 1;
+                    focusSheet(data.sheets.length - 1);
                     editorConfig = {"active":false};
                     createLines(editorData.guid,1); //calls sheets updated as well
                     break;
@@ -145,8 +156,9 @@ function handleConfigUpdate(event) {
                         let guid = uuidv4();
                         newList["guid"] = guid;
                         data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
-                        newList["name"] = editorData.name; //worth noting that invisible sheet names are also checked against for name creation
-                        delete newList.configurable.displayColumn;
+                        newList["name"] = editorData.name;
+                        //the list sheet is not configurable
+                        delete newList.configurable;
                         data.sheets.push(newList);
                     }
                     editorConfig = {"active":false};
@@ -167,9 +179,9 @@ function handleConfigUpdate(event) {
                     if(editorConfig.editType !== editorData.name)
                     {
                         data.sheets[sheetIndex].lines.forEach(line => {
-                            //assing the new key the old value
+                            //make a new key and assign it the the old value
                             line[editorData.name] = line[editorConfig.editType];
-                            //delete the old entry
+                            //delete the old key
                             delete line[editorConfig.editType];
                         });
                         //TODO: may need to do more here if column name change was referenced by other sheet?
@@ -194,8 +206,16 @@ function handleConfigUpdate(event) {
                     }
                     if(editorData.typeStr == "list")
                     {
-                        let refIndex = data.sheets.findIndex(s => s.guid === editorData.sheet);
-                        data.sheets[refIndex].name = editorData.name;
+                        // let refIndex = data.sheets.findIndex(s => s.guid === editorData.sheet);
+                        // data.sheets[refIndex].name = editorData.name;
+                        //also update the name in list visibility
+                        Object.keys(listVisibility).forEach(key => {
+                            // update column name references if we changed a column name here
+                            if(listVisibility[key].guid === editorData.guid)
+                            {
+                                listVisibility[key].name = editorData.name;
+                            }
+                        });
                     }
                     
                     break;
@@ -216,7 +236,7 @@ function handleConfigUpdate(event) {
                     data.sheets.splice(selectedSheet,1);
                     if(selectedSheet >= data.sheets.length)
                     {
-                        selectedSheet = selectedSheet - 1 < 0 ? 0 : selectedSheet - 1;
+                        focusSheet(selectedSheet - 1 < 0 ? 0 : selectedSheet - 1);
                     }
                     //delete any references to this and set to ""
                     data.sheets.forEach(sheet => {
@@ -292,6 +312,13 @@ function handleConfigUpdate(event) {
 
 function deleteListColumn(col) {
     let delSheetIndex = data.sheets.findIndex(sheet => sheet.guid === col.sheet);
+    Object.keys(listVisibility).forEach(key => {
+        if(listVisibility[key].guid === col.guid)
+        {
+            //if the column is deleted, we can remove this entry from visibility
+            delete listVisibility[key];
+        }
+    });
     data.sheets[delSheetIndex].columns.forEach(column => {
         if(column.typeStr === "list") {
             deleteListColumn(column);
@@ -361,6 +388,10 @@ function handleTableAction(event) {
                             });
                         }
                     });
+                    if(deletedGUID in listVisibility)
+                    {
+                        delete listVisibility[deletedGUID];
+                    }
                     break;
                 case "add":
                     if(!data.sheets[sheetIndex].hidden) {
@@ -425,10 +456,11 @@ function createSheet() {
             <DepotSheet debug={debug} 
                         showLineGUIDs={showLineGUIDs} 
                         bind:fullData={data} 
-                        bind:sheetData={data.sheets[selectedSheet]} 
-                        bind:lineData={data.sheets[selectedSheet].lines} 
+                        bind:sheetData={selectedSheetData} 
+                        bind:lineData={selectedSheetlineData} 
                         depotInfo={depotFileInfo} 
-                        on:message={handleTableAction}/>
+                        on:message={handleTableAction}
+                        bind:listVisibility={listVisibility}/>
         {/if}
     {/if}
 {/if}
