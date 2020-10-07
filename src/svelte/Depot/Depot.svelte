@@ -172,6 +172,23 @@ Object.byString = function(o, s) {
     return o;
 }
 
+function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
+    let paths = [];
+    lines.forEach((line,lineIndex) => {
+        if(line[pathTrail[trailIndex]].length > 0)
+        {
+            // [0].listVarName
+            var validPath = basePath + `[${lineIndex}].${pathTrail[trailIndex]}`;
+            // paths.push(validPath);
+            if(trailIndex + 1 < pathTrail.length) {
+                paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+            } else {
+                paths.push(validPath);
+            }
+        }
+    });
+    return {"paths":paths};
+}
 
 function handleConfigUpdate(event) {
     switch (event.detail.type) {
@@ -204,26 +221,15 @@ function handleConfigUpdate(event) {
                     {
                         let parentInfo = getSubsheetParentInfo(sheetIndex)
                         console.log(parentInfo);
+                        parentInfo.path.reverse();
 
-                        //getValidLinesWithListPath(line,path,0)
-                        function getValidLinesWithListPath(lines,path,startingPathIndex) {
-                            lines.forEach(line => {
-                                
-                            })
-                            let indexpath = "";
-                            for (let index = 0; index < path.length; index++) {
-                                indexpath += `[path[${index}]]`;
-                                if(Object.byString(line, indexpath).length == 0) {
-                                    return false;
-                                }
-                                else {
-                                    let nextPath = Object.byString(line, indexpath);
-                                }
-                            }
-                            return {"paths":paths};
-                        }
+                        //getValidLinesWithListPath(line,path,0,"")
+                        
                         //TODO: THIS IS NOT WORKING FOR SUB SUBSHEETS BECAUSE THE PARENT HAS NO LINES
                         //NEED TO LOOKUP OFF OF COLUMNS UNTIL YOU FIND A PARENT??
+                        console.log(getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,""));
+                        //TODO: need to iterate through paths from above to update vs. just lines
+                        // and also do this where other items mention needing to be hidden!!!! check first branch commit
                         data.sheets[parentInfo.parentIndex].lines.forEach(line => {
                             line[parentInfo.columnName].forEach(nestedLine => {
                                 if(editorData.typeStr === "multiple")
