@@ -18,6 +18,7 @@
 ☐ add in ability for sheet edit menu and line add to only be shown if that sheet is being hovered
 ☐ add in line removal icon to only show if line is being hovered
 ☐ finish implementing allowedTypes for columnSelect field types
+☐ renaming 2+ level deep nested list values not updating list values
 ✔ add in ability to remove a nested line @done (9/29/2020, 5:43:18 PM)
 ✔ when you delete a list field it needs to delete its sheet and any nested sheets its fields had @done (9/29/2020, 6:23:58 PM)
 ✔ when you delete a sheet with list fields it needs to delete the list fields sheets and any nested lists it had @done (9/29/2020, 6:23:59 PM)
