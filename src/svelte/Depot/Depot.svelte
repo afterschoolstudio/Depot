@@ -190,34 +190,31 @@ function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
     return {"paths":paths};
 }
 
-// function iterateNestedLines(subsheetIndex,iteratorFunction) {
-//     //find the topmost sheet - this is because nested sheet info is stored inside the top level line values
-//     let parentInfo = getSubsheetParentInfo(subsheetIndex)
-//     //reverse the path because it comes it from the perspective of the affected entry, not the sheet itself
-//     parentInfo.path.reverse();
-//     //grab the paths to the affected lines
-//     let affectedLines = getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,"");
-//     /*
-//         affectedLines is an array of paths from the parent sheet lines down to the affected values
-//         [0].level1[0].level2
-//         [6].level1[0].level2
-//         etc.
-//     */
-//     console.log(getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,""));
-//     //TODO: need to iterate through paths from above to update vs. just lines
-//     // and also do this where other items mention needing to be hidden!!!! check first branch commit
-//     // find places where !data.sheets[sheetIndex].hidden is used
-//     affectedLines.paths.forEach(linePath => {
-//         /* linePath comes in like [0].level1[0].level2 */
-//         // subsheetLines is the array of lines nested inside this line entry
-//         let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
-//         subsheetLines.forEach(line => {
-//             console.log("destination line:");
-//             console.log(line);
-//             iteratorFunction(line);
-//         });
-//     });
-// }
+function iterateNestedLines(subsheetIndex,iteratorFunction) {
+    //find the topmost sheet - this is because nested sheet info is stored inside the top level line values
+    let parentInfo = getSubsheetParentInfo(subsheetIndex)
+    //reverse the path because it comes it from the perspective of the affected entry, not the sheet itself
+    parentInfo.path.reverse();
+    //grab the paths to the affected lines
+    let affectedLines = getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,"");
+    /*
+        affectedLines is an array of paths from the parent sheet lines down to the affected values
+        [0].level1[0].level2
+        [6].level1[0].level2
+        etc.
+    */
+    console.log(getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,""));
+    affectedLines.paths.forEach(linePath => {
+        /* linePath comes in like [0].level1[0].level2 */
+        // subsheetLines is the array of lines nested inside this line entry
+        let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
+        subsheetLines.forEach(line => {
+            console.log("destination line:");
+            console.log(line);
+            iteratorFunction(line);
+        });
+    });
+}
 
 function handleConfigUpdate(event) {
     switch (event.detail.type) {
@@ -248,52 +245,16 @@ function handleConfigUpdate(event) {
                     }
                     else
                     {
-                        //find the topmost sheet - this is because nested sheet info is stored inside the top level line values
-                        let parentInfo = getSubsheetParentInfo(sheetIndex)
-                        //reverse the path because it comes it from the perspective of the affected entry, not the sheet itself
-                        parentInfo.path.reverse();
-                        //grab the paths to the affected lines
-                        let affectedLines = getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,"");
-                        /*
-                            affectedLines is an array of paths from the parent sheet lines down to the affected values
-                            [0].level1[0].level2
-                            [6].level1[0].level2
-                            etc.
-                        */
-                        console.log(getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,""));
-                        //TODO: need to iterate through paths from above to update vs. just lines
-                        // and also do this where other items mention needing to be hidden!!!! check first branch commit
-                        // find places where !data.sheets[sheetIndex].hidden is used
-                        affectedLines.paths.forEach(linePath => {
-                            /* linePath comes in like [0].level1[0].level2 */
-                            // subsheetLines is the array of lines nested inside this line entry
-                            let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
-                            subsheetLines.forEach(line => {
-                                console.log("destination line:");
-                                console.log(line);
-                                if(editorData.typeStr === "multiple")
-                                {
-                                    line[editorData.name] = editorData.defaultValue.split(', ');
-                                }
-                                else
-                                {
-                                    line[editorData.name] = editorData.defaultValue;
-                                }
-                            });
+                        iterateNestedLines(sheetIndex,(line) => {
+                            if(editorData.typeStr === "multiple")
+                            {
+                                line[editorData.name] = editorData.defaultValue.split(', ');
+                            }
+                            else
+                            {
+                                line[editorData.name] = editorData.defaultValue;
+                            }
                         });
-
-                        // data.sheets[parentInfo.parentIndex].lines.forEach(line => {
-                        //     line[parentInfo.columnName].forEach(nestedLine => {
-                        //         if(editorData.typeStr === "multiple")
-                        //         {
-                        //             nestedLine[editorData.name] = editorData.defaultValue.split(', ');
-                        //         }
-                        //         else
-                        //         {
-                        //             nestedLine[editorData.name] = editorData.defaultValue;
-                        //         }
-                        //     })
-                        // })
                     }
                     if(editorData.typeStr === "list") {
                         // make a new sheet that this list will reference
@@ -337,14 +298,11 @@ function handleConfigUpdate(event) {
                         }
                         else
                         {
-                            let parentInfo = getSubsheetParentInfo(sheetIndex)
-                            data.sheets[parentInfo.parentIndex].lines.forEach(line => {
-                                line[parentInfo.columnName].forEach(nestedLine => {
-                                    //make a new key and assign it the the old value
-                                    nestedLine[editorData.name] = nestedLine[editorConfig.editType];
-                                    //delete the old key
-                                    delete nestedLine[editorConfig.editType];
-                                });
+                            iterateNestedLines(sheetIndex,(line) => {
+                                //make a new key and assign it the the old value
+                                line[editorData.name] = line[editorConfig.editType];
+                                //delete the old key
+                                delete line[editorConfig.editType];
                             });
                         }
                         //TODO: may need to do more here if column name change was referenced by other sheet?
@@ -360,13 +318,8 @@ function handleConfigUpdate(event) {
                         }
                         else
                         {
-                            let parentInfo = getSubsheetParentInfo(sheetIndex)
-                            data.sheets[parentInfo.parentIndex].lines.forEach(line => {
-                                line[parentInfo.columnName].forEach(nestedLine => {
-                                    //make sure the multiple only has values possible based on config
-                                    //this removes old values if config changes
-                                    nestedLine[editorData.name] = nestedLine[editorData.name].filter(value => editorData.options.includes(value));
-                                });
+                            iterateNestedLines(sheetIndex,(line) => {
+                                line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
                             });
                         }
                     }
@@ -383,15 +336,12 @@ function handleConfigUpdate(event) {
                         }
                         else
                         {
-                            let parentInfo = getSubsheetParentInfo(sheetIndex)
-                            data.sheets[parentInfo.parentIndex].lines.forEach(line => {
-                                line[parentInfo.columnName].forEach(nestedLine => {
-                                    ///make sure the enum only has values possible based on config
-                                    if(!editorData.options.includes(nestedLine[editorData.name]))
-                                    {
-                                        nestedLine[editorData.name] = editorData.defaultValue
-                                    }
-                                });
+                            iterateNestedLines(sheetIndex,(line) => {
+                                ///make sure the enum only has values possible based on config
+                                if(!editorData.options.includes(line[editorData.name]))
+                                {
+                                    line[editorData.name] = editorData.defaultValue
+                                }
                             });
                         }
                     }
@@ -478,12 +428,9 @@ function handleConfigUpdate(event) {
                         });
                     }
                     else {
-                        let parentInfo = getSubsheetParentInfo(sheetIndex)
-                        data.sheets[parentInfo.parentIndex].lines.forEach(line => {
-                            line[parentInfo.columnName].forEach(nestedLine => {
-                                //delete the entry for this column
-                                delete nestedLine[editorConfig.editType];
-                            });
+                        iterateNestedLines(sheetIndex,(line) => {
+                            //delete the entry for this column
+                            delete line[editorConfig.editType];
                         });
                     }
                     if(data.sheets[sheetIndex].displayColumn === data.sheets[sheetIndex].columns[index].name)
@@ -600,8 +547,7 @@ function handleTableAction(event) {
                         createLines(event.detail.data.sheetGUID,event.detail.data.amount);
                     }
                     else {
-                        //lines added in through hidden sheets are added as data values on the line entry at the column value
-                        //TODO:
+                        //line additions to subsheets are handled in DepotSheet
                     }
                 break;
                 default:
