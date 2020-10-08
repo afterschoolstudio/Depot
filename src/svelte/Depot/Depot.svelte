@@ -11,8 +11,8 @@ let showLineGUIDs = false;
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
-    selectedSheetlineData = data.sheets[selectedSheet].lines;
-    selectedSheetData = data.sheets[selectedSheet];
+    // selectedSheetlineData = data.sheets[selectedSheet].lines;
+    // selectedSheetData = data.sheets[selectedSheet];
     dispatch('message', {
         "type" : "update"
     });
@@ -24,13 +24,6 @@ function focusSheet(index) {
 }
 
 let listVisibility = {};
-let selectedSheetlineData = {};
-let selectedSheetData = {};
-
-$: {
-    selectedSheetlineData = data.sheets[selectedSheet].lines;
-    selectedSheetData = data.sheets[selectedSheet];
-}
 
 function getBannedNames(referenceSheetGUID, config) {
     var sheetNames = [];
@@ -124,6 +117,83 @@ function createLines(sheetGUID, amount) {
     sheetsUpdated();
 }
 
+function getSubsheetParentInfo(subsheetIndex) {
+    var colGUID = data.sheets[subsheetIndex].columnGUID;
+    let parent = {};
+    let parentSheetIndex = data.sheets.findIndex(sheet => sheet.guid === data.sheets[subsheetIndex].parentSheetGUID);
+    parent["parentIndex"] = parentSheetIndex;
+    let refColumnIndex = data.sheets[parentSheetIndex].columns.findIndex(sheet => sheet.guid === colGUID);
+    let refColumn = data.sheets[parentSheetIndex].columns[refColumnIndex];
+    let columnNamePath = [refColumn.name];
+    if(data.sheets[parentSheetIndex].hidden)
+    {
+        parent = getSubsheetParentInfo(parentSheetIndex);
+        columnNamePath = columnNamePath.concat(parent.path);
+    }
+    parent["path"] = columnNamePath;
+    return parent;
+}
+
+//https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-and-arays-by-string-path/6491621#6491621
+Object.byString = function(o, s) {
+    s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+    s = s.replace(/^\./, '');           // strip a leading dot
+    var a = s.split('.');
+    for (var i = 0, n = a.length; i < n; ++i) {
+        var k = a[i];
+        if (k in o) {
+            o = o[k];
+        } else {
+            return;
+        }
+    }
+    return o;
+}
+
+function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
+    let paths = [];
+    lines.forEach((line,lineIndex) => {
+        if(line[pathTrail[trailIndex]].length > 0)
+        {
+            // [0].listVarName
+            var validPath = basePath + `[${lineIndex}].${pathTrail[trailIndex]}`;
+            // paths.push(validPath);
+            if(trailIndex + 1 < pathTrail.length) {
+                paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+            } else {
+                paths.push(validPath);
+            }
+        }
+    });
+    return {"paths":paths};
+}
+
+function iterateNestedLines(subsheetIndex,iteratorFunction) {
+    //find the topmost sheet - this is because nested sheet info is stored inside the top level line values
+    let parentInfo = getSubsheetParentInfo(subsheetIndex)
+    //reverse the path because it comes it from the perspective of the affected entry, not the sheet itself
+    parentInfo.path.reverse();
+    //grab the paths to the affected lines
+    let affectedLines = getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,"");
+    /*
+        affectedLines is an array of paths from the parent sheet lines down to the affected values
+        [0].level1[0].level2
+        [6].level1[0].level2
+        etc.
+    */
+    console.log(getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,""));
+    affectedLines.paths.forEach(linePath => {
+        /* linePath comes in like [0].level1[0].level2 */
+        // subsheetLines is the array of lines nested inside this line entry
+        let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
+        subsheetLines.forEach(line => {
+            console.log("destination line:");
+            console.log(line);
+            iteratorFunction(line);
+        });
+    });
+}
+
 function handleConfigUpdate(event) {
     switch (event.detail.type) {
         case "create":
@@ -138,21 +208,39 @@ function handleConfigUpdate(event) {
                     let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
                     data.sheets[sheetIndex].columns.push(editorData);
                     //if you're creating a column, create a new entry for a column value in every line based off the default value
-                    data.sheets[sheetIndex].lines.forEach(line => {
-                        if(editorData.typeStr === "multiple")
-                        {
-                            line[editorData.name] = editorData.defaultValue.split(', ');
-                        }
-                        else
-                        {
-                            line[editorData.name] = editorData.defaultValue;
-                        }
-                    });
+                    if(!data.sheets[sheetIndex].hidden)
+                    {
+                        data.sheets[sheetIndex].lines.forEach(line => {
+                            if(editorData.typeStr === "multiple")
+                            {
+                                line[editorData.name] = editorData.defaultValue.split(', ');
+                            }
+                            else
+                            {
+                                line[editorData.name] = editorData.defaultValue;
+                            }
+                        });
+                    }
+                    else
+                    {
+                        iterateNestedLines(sheetIndex,(line) => {
+                            if(editorData.typeStr === "multiple")
+                            {
+                                line[editorData.name] = editorData.defaultValue.split(', ');
+                            }
+                            else
+                            {
+                                line[editorData.name] = editorData.defaultValue;
+                            }
+                        });
+                    }
                     if(editorData.typeStr === "list") {
                         // make a new sheet that this list will reference
                         let newList = JSON.parse(JSON.stringify(defaults["sheet"]));
                         newList["hidden"] = true;
                         newList["description"] = "list@"+data.sheets[sheetIndex].guid;
+                        newList["parentSheetGUID"] = data.sheets[sheetIndex].guid;
+                        newList["columnGUID"] = editorData.guid;
                         let guid = uuidv4();
                         newList["guid"] = guid;
                         data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
@@ -178,31 +266,62 @@ function handleConfigUpdate(event) {
                     //update line entries depending on circumstances - maybe a faster way?
                     if(editorConfig.editType !== editorData.name)
                     {
-                        data.sheets[sheetIndex].lines.forEach(line => {
-                            //make a new key and assign it the the old value
-                            line[editorData.name] = line[editorConfig.editType];
-                            //delete the old key
-                            delete line[editorConfig.editType];
-                        });
+                        if(!data.sheets[sheetIndex].hidden) {
+                            data.sheets[sheetIndex].lines.forEach(line => {
+                                //make a new key and assign it the the old value
+                                line[editorData.name] = line[editorConfig.editType];
+                                //delete the old key
+                                delete line[editorConfig.editType];
+                            });
+                        }
+                        else
+                        {
+                            iterateNestedLines(sheetIndex,(line) => {
+                                //make a new key and assign it the the old value
+                                line[editorData.name] = line[editorConfig.editType];
+                                //delete the old key
+                                delete line[editorConfig.editType];
+                            });
+                        }
                         //TODO: may need to do more here if column name change was referenced by other sheet?
                     }
                     if(editorData.typeStr == "multiple")
                     {
-                        data.sheets[sheetIndex].lines.forEach(line => {
-                            //make sure the multiple only has values possible based on config
-                            //this removes old values if config changes
-                            line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
-                        });
+                        if(!data.sheets[sheetIndex].hidden) {
+                            data.sheets[sheetIndex].lines.forEach(line => {
+                                //make sure the multiple only has values possible based on config
+                                //this removes old values if config changes
+                                line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
+                            });
+                        }
+                        else
+                        {
+                            iterateNestedLines(sheetIndex,(line) => {
+                                line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
+                            });
+                        }
                     }
                     if(editorData.typeStr == "enum")
                     {
-                        data.sheets[sheetIndex].lines.forEach(line => {
-                            //make sure the enum only has values possible based on config
-                            if(!editorData.options.includes(line[editorData.name]))
-                            {
-                                line[editorData.name] = editorData.defaultValue
-                            }
-                        });
+                        if(!data.sheets[sheetIndex].hidden) {
+                            data.sheets[sheetIndex].lines.forEach(line => {
+                                //make sure the enum only has values possible based on config
+                                if(!editorData.options.includes(line[editorData.name]))
+                                {
+                                    line[editorData.name] = editorData.defaultValue
+                                }
+                            });
+                        }
+                        else
+                        {
+                            iterateNestedLines(sheetIndex,(line) => {
+                                ///make sure the enum only has values possible based on config
+                                if(!editorData.options.includes(line[editorData.name]))
+                                {
+                                    line[editorData.name] = editorData.defaultValue
+                                }
+                            });
+                        }
                     }
                     if(editorData.typeStr == "list")
                     {
@@ -280,10 +399,18 @@ function handleConfigUpdate(event) {
                 default: //column
                     let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
                     var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
-                    data.sheets[sheetIndex].lines.forEach(line => {
-                        //delete the entry for this column
-                        delete line[editorConfig.editType];
-                    });
+                    if(!data.sheets[sheetIndex].hidden) {
+                        data.sheets[sheetIndex].lines.forEach(line => {
+                            //delete the entry for this column
+                            delete line[editorConfig.editType];
+                        });
+                    }
+                    else {
+                        iterateNestedLines(sheetIndex,(line) => {
+                            //delete the entry for this column
+                            delete line[editorConfig.editType];
+                        });
+                    }
                     if(data.sheets[sheetIndex].displayColumn === data.sheets[sheetIndex].columns[index].name)
                     {
                         //we deleted the display column, update to default
@@ -398,8 +525,7 @@ function handleTableAction(event) {
                         createLines(event.detail.data.sheetGUID,event.detail.data.amount);
                     }
                     else {
-                        //lines added in through hidden sheets are added as data values on the line entry at the column value
-                        //TODO:
+                        //line additions to subsheets are handled in DepotSheet
                     }
                 break;
                 default:
@@ -456,8 +582,8 @@ function createSheet() {
             <DepotSheet debug={debug} 
                         showLineGUIDs={showLineGUIDs} 
                         bind:fullData={data} 
-                        bind:sheetData={selectedSheetData} 
-                        bind:lineData={selectedSheetlineData} 
+                        bind:sheetData={data.sheets[selectedSheet]} 
+                        bind:lineData={data.sheets[selectedSheet].lines} 
                         depotInfo={depotFileInfo} 
                         on:message={handleTableAction}
                         bind:listVisibility={listVisibility}/>
