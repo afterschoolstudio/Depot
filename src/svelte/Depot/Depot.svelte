@@ -11,29 +11,19 @@ let showLineGUIDs = false;
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
-    selectedSheetlineData = data.sheets[selectedSheet].lines;
-    selectedSheetData = data.sheets[selectedSheet];
+    // selectedSheetlineData = data.sheets[selectedSheet].lines;
+    // selectedSheetData = data.sheets[selectedSheet];
     dispatch('message', {
         "type" : "update"
     });
 }
 
-let selectedSheet = -1;
+let selectedSheet = 0;
 function focusSheet(index) {
     selectedSheet = index;
 }
 
 let listVisibility = {};
-let selectedSheetlineData = {};
-let selectedSheetData = {};
-
-$: {
-    if(data.sheets.length > 0 && selectedSheet >= 0)
-    {
-        selectedSheetlineData = data.sheets[selectedSheet].lines;
-        selectedSheetData = data.sheets[selectedSheet];
-    }
-}
 
 function getBannedNames(referenceSheetGUID, config) {
     var sheetNames = [];
@@ -128,24 +118,12 @@ function createLines(sheetGUID, amount) {
 }
 
 function getSubsheetParentInfo(subsheetIndex) {
-    // var colGUID = data.sheets[subsheetIndex].columnGUID;
-    // let parentSheetIndex = data.sheets.findIndex(sheet => sheet.guid === data.sheets[subsheetIndex].parentSheetGUID);
-    // let refColumnIndex = data.sheets[parentSheetIndex].columns.findIndex(sheet => sheet.guid === colGUID);
-    // let refColumn = data.sheets[parentSheetIndex].columns[refColumnIndex];
-    // let columnNamePath = [refColumn.name];
-    // if(data.sheets[parentSheetIndex].hidden)
-    // {
-    //     let columnAppend = getSubsheetParentInfo(parentSheetIndex).path;
-    //     columnNamePath = columnNamePath.concat(columnAppend);
-    // }
-    // return {"parentIndex":parentSheetIndex,"columnName":refColumn.name,"path":columnNamePath}
     var colGUID = data.sheets[subsheetIndex].columnGUID;
     let parent = {};
     let parentSheetIndex = data.sheets.findIndex(sheet => sheet.guid === data.sheets[subsheetIndex].parentSheetGUID);
     parent["parentIndex"] = parentSheetIndex;
     let refColumnIndex = data.sheets[parentSheetIndex].columns.findIndex(sheet => sheet.guid === colGUID);
     let refColumn = data.sheets[parentSheetIndex].columns[refColumnIndex];
-    parent["columnName"] = refColumn.name;
     let columnNamePath = [refColumn.name];
     if(data.sheets[parentSheetIndex].hidden)
     {
@@ -604,8 +582,8 @@ function createSheet() {
             <DepotSheet debug={debug} 
                         showLineGUIDs={showLineGUIDs} 
                         bind:fullData={data} 
-                        bind:sheetData={selectedSheetData} 
-                        bind:lineData={selectedSheetlineData} 
+                        bind:sheetData={data.sheets[selectedSheet]} 
+                        bind:lineData={data.sheets[selectedSheet].lines} 
                         depotInfo={depotFileInfo} 
                         on:message={handleTableAction}
                         bind:listVisibility={listVisibility}/>

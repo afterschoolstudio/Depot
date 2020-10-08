@@ -143,6 +143,7 @@ function handleSubTableEvent(event) {
 
 let totalColumns = 0;
 $: {
+    console.log(sheetData);
     if(showLineGUIDs)
     {
         totalColumns = sheetData.columns.length + 3;
