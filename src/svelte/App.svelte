@@ -173,19 +173,4 @@
         text-align: left;
     }
 
-    :global(.buttonIcon) button{
-        background-color: #3A3A3A;
-        border: none;
-        color: white;
-        display: inline-block;
-        cursor: pointer;
-    }
-
-    /* button {
-        background-color: #3A3A3A;
-        border: none;
-        color: white;
-        display: inline-block;
-        cursor: pointer;
-    } */
 </style>

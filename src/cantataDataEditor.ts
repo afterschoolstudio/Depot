@@ -167,25 +167,25 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 		));
 
 		const iconPaths = [
-			"addFiveLines.png",
-			"addOneLine.png",
-			"addSheet.png",
-			"addTenLines.png",
-			"editSheet.png",
-			"newBool.png",
-			"newEnum.png",
-			"newFloat.png",
-			"newImage.png",
-			"newInt.png",
-			"newLineLink.png",
-			"newList.png",
-			"newLongText.png",
-			"newMulti.png",
-			"newSheetLink.png",
-			"newText.png",
-			"removeLine.png",
-			"showList.png",
-			"hideList.png"
+			"addFiveLines.svg",
+			"addOneLine.svg",
+			"addSheet.svg",
+			"addTenLines.svg",
+			"editSheet.svg",
+			"newBool.svg",
+			"newEnum.svg",
+			"newFloat.svg",
+			"newImage.svg",
+			"newInt.svg",
+			"newLineLink.svg",
+			"newList.svg",
+			"newLongText.svg",
+			"newMulti.svg",
+			"newSheetLink.svg",
+			"newText.svg",
+			"removeLine.svg",
+			"showList.svg",
+			"hideList.svg"
 		];
 
 		const icons:any = {};

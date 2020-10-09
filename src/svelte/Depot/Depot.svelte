@@ -562,7 +562,6 @@ function createSheet() {
 
 </script>
 <h1>Depot</h1>
-<button class="buttonIcon">test</button>
 {#if !data.hasOwnProperty("sheets")}
     <p>Invalid Depot File</p>
     <p>Use Ctrl/Cmd+Shift+P and select "Create new Depot File" to get started</p>
@@ -572,14 +571,16 @@ function createSheet() {
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
        <button on:click={createSheet} disabled={editorConfig.active}>New Sheet</button>
     {:else}
+        <div>
         {#each data.sheets as sheet}
             {#if !sheet.hidden}
-            <button on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
+            <button class="sheetButton {data.sheets.indexOf(sheet) == selectedSheet ? "selected" : ""}"on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
             {/if}
         {/each}
         <button class="buttonIcon" on:click={createSheet} disabled={editorConfig.active}>
-            <img src={iconPaths["addSheet"].path} alt="Add new sheet" width="17" height="17">
+            <img src={iconPaths["addSheet"].path} alt="Add new sheet">
         </button> 
+        </div>
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
@@ -600,3 +601,50 @@ function createSheet() {
 <p>Raw Data:</p>
 <pre>{JSON.stringify({data},null,2)}</pre>
 {/if}
+
+<style>
+    .buttonIcon {
+        background-color: #3A3A3A;
+        border: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .buttonIcon:hover {
+        background-color: #2A2D2E;
+    }
+
+    .buttonIcon:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .buttonIcon:active:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .sheetButton {
+        background-color: #3A3A3A;
+        border: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+        margin: 0px 5px 0px 0px;
+        padding: 8px 8px 8px 8px;
+    }
+    .sheetButton:hover {
+        background-color: #252526;
+    }
+    .sheetButton.selected {
+        background-color: #252526;
+    }
+    .sheetButton:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .sheetButton:active:focus {
+        outline: none;
+        box-shadow: none;
+    }
+</style>

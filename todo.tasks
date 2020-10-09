@@ -24,3 +24,4 @@
 ✔ when you delete a sheet with list fields it needs to delete the list fields sheets and any nested lists it had @done (9/29/2020, 6:23:59 PM)
 ☐ line reference fields with default value not set getting set to undefinied instead of ""
 ☐ maybe add more persistence if view is exited and returned with https://code.visualstudio.com/api/extension-guides/webview#persistence
+☐ better css lol

@@ -197,26 +197,23 @@ function validateID(event,line) {
     <tr>
         <td colspan="{totalColumns}">
             {#if !sheetData.hidden}
-                <button on:click={editSheet}>
-                    <img src={iconPaths["editSheet"].path} alt="Edit Sheet" width="40" height="40">
+                <button class="buttonIcon padded" on:click={editSheet}>
+                    <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
                 </button>
-            <!-- {:else}
-                <div>{sheetData.name}</div> -->
             {/if}
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
-                <button on:click={() => createColumn(columnType)}>
-                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column" width="40" height="40">
-                    <!-- New {columnType} -->
+                <button class="buttonIcon padded" on:click={() => createColumn(columnType)}>
+                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
                 </button>
                 {/if}
             {/each}
         </td>
     </tr>
     <tr>
-        <th style="width:10px;">    </th>
+        <th style="width:17px;">    </th>
         {#if showLineGUIDs}
-            <th>GUID</th>
+        <th>GUID</th>
         {/if}
         <th>ID</th>
         {#each sheetData.columns as column}
@@ -225,9 +222,9 @@ function validateID(event,line) {
     </tr>
     {#each lineData as line, i}
         <tr>
-            <td>
-            <button width="17" on:click={() => removeLine(i,line,originLineGUID)}>
-                <img src={iconPaths["removeLine"].path} alt="Remove Line" width="17" height="17">
+            <td style="width:17px;">
+            <button class="buttonIcon" on:click={() => removeLine(i,line,originLineGUID)}>
+                <img src={iconPaths["removeLine"].path} alt="Remove Line">
             </button>
             </td>
             {#if showLineGUIDs}
@@ -269,12 +266,12 @@ function validateID(event,line) {
                 <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "list"}
                     {#if line.guid in listVisibility && listVisibility[line.guid].guid === column.guid}
-                        <button on:click={()=>setListVisible(line,column,false)}>
-                            <img src={iconPaths["showList"].path} alt="Hide list" width="40" height="40">
+                        <button class="buttonIcon" on:click={()=>setListVisible(line,column,false)}>
+                            <img src={iconPaths["showList"].path} alt="Hide list">
                         </button>
                     {:else}
-                        <button on:click={()=>setListVisible(line,column,true)}>
-                            <img src={iconPaths["hideList"].path} alt="Show list" width="40" height="40">
+                        <button class="buttonIcon" on:click={()=>setListVisible(line,column,true)}>
+                            <img src={iconPaths["hideList"].path} alt="Show list">
                         </button>
                     {/if}
                 {/if}
@@ -306,13 +303,13 @@ function validateID(event,line) {
     <tr>
         <td></td>
         <td colspan="{totalColumns -  1}">
-            <button on:click={() => addLines(1,originLineGUID)}>
+            <button class="buttonIcon padded" on:click={() => addLines(1,originLineGUID)}>
                 <img src={iconPaths["addOneLine"].path} alt="Add one line" width="40" height="40">
             </button>
-            <button on:click={() => addLines(5,originLineGUID)}>
+            <button class="buttonIcon padded" on:click={() => addLines(5,originLineGUID)}>
                 <img src={iconPaths["addFiveLines"].path} alt="Add five lines" width="40" height="40">
             </button>
-            <button on:click={() => addLines(10,originLineGUID)}>
+            <button class="buttonIcon padded" on:click={() => addLines(10,originLineGUID)}>
                 <img src={iconPaths["addTenLines"].path} alt="Add ten lines" width="40" height="40">
             </button>
         </td>
@@ -323,3 +320,29 @@ function validateID(event,line) {
 <pre>{JSON.stringify({sheetData},null,2)}</pre>
 <p>----------------------------------------</p>
 {/if}
+
+<style>
+    .buttonIcon {
+        background-color: #3A3A3A;
+        border: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .buttonIcon:hover {
+        background-color: #2A2D2E;
+    }
+    .buttonIcon:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .buttonIcon:active:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .buttonIcon.padded {
+        margin: 5px 5px 5px 0px;
+        width: 45px;
+        height: 45px;
+    }
+</style>
