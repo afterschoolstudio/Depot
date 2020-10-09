@@ -71,17 +71,17 @@ function createColumn(columnType) {
     });
 }
 
-function editSheet() {
-    dispatch('message', {
-        "type" : "editorUpdate",
-        "data" :{
-                "active" : true,
-                "operation" : "edit",
-                "editType" : "sheet",
-                "sheetGUID" : sheetData.guid
-                }
-    });
-}
+// function editSheet() {
+//     dispatch('message', {
+//         "type" : "editorUpdate",
+//         "data" :{
+//                 "active" : true,
+//                 "operation" : "edit",
+//                 "editType" : "sheet",
+//                 "sheetGUID" : sheetData.guid
+//                 }
+//     });
+// }
 
 function handleSubTableEvent(event) {
     console.log("handing subtable event");
@@ -194,13 +194,9 @@ function validateID(event,line) {
 
 </script>
     <table>
+    {#if sheetData.hidden}
     <tr>
         <td colspan="{totalColumns}">
-            {#if !sheetData.hidden}
-                <button class="buttonIcon padded" on:click={editSheet}>
-                    <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
-                </button>
-            {/if}
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
                 <button class="buttonIcon padded" on:click={() => createColumn(columnType)}>
@@ -210,6 +206,7 @@ function validateID(event,line) {
             {/each}
         </td>
     </tr>
+    {/if}
     <tr>
         <th style="width:17px;">    </th>
         {#if showLineGUIDs}

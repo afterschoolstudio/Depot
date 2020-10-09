@@ -560,6 +560,30 @@ function createSheet() {
     editorConfig["depotInfo"] = depotFileInfo;
 }
 
+function selectedSheetColumnCreate(columnType) {
+    handleTableAction({"detail":{
+        "type" : "editorUpdate",
+        "data" :{
+                "active" : true,
+                "operation" : "new",
+                "editType" : columnType,
+                "sheetGUID" : data.sheets[selectedSheet].guid
+                }
+    }});
+}
+
+function selectedSheetEdit() {
+    handleTableAction({"detail":{
+        "type" : "editorUpdate",
+        "data" :{
+                "active" : true,
+                "operation" : "edit",
+                "editType" : "sheet",
+                "sheetGUID" : data.sheets[selectedSheet].guid
+                }
+    }});
+}
+
 </script>
 <h1>Depot</h1>
 {#if !data.hasOwnProperty("sheets")}
@@ -571,6 +595,16 @@ function createSheet() {
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
        <button on:click={createSheet} disabled={editorConfig.active}>New Sheet</button>
     {:else}
+        <button class="buttonIcon padded" on:click={selectedSheetEdit}>
+            <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
+        </button>
+        {#each Object.keys(defaults) as columnType}
+            {#if columnType !== "sheet"}
+                <button class="buttonIcon padded" on:click={() => selectedSheetColumnCreate(columnType)}>
+                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
+                </button>
+            {/if}
+        {/each}
         <div>
         {#each data.sheets as sheet}
             {#if !sheet.hidden}
@@ -622,6 +656,11 @@ function createSheet() {
     .buttonIcon:active:focus {
         outline: none;
         box-shadow: none;
+    }
+    .buttonIcon.padded {
+        margin: 5px 5px 5px 0px;
+        width: 45px;
+        height: 45px;
     }
 
     .sheetButton {
