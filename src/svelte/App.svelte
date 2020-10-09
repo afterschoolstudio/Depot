@@ -2,10 +2,11 @@
 	import InteractableData from './DataTypes/InteractableData.svelte';
     import TerrainData from './DataTypes/TerrainData.svelte';
     import Depot from './Depot/Depot.svelte'
-    import { onMount, setContext  } from 'svelte';
+    import { onMount, setContext } from 'svelte';
 
 	onMount(() => {
         setContext("nonce", nonce);
+        setContext("iconPaths", icons);
         vscode.postMessage({
             type: 'init-view',
 		});
@@ -171,4 +172,20 @@
         font-weight: bold;
         text-align: left;
     }
+
+    :global(.buttonIcon) button{
+        background-color: #3A3A3A;
+        border: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    /* button {
+        background-color: #3A3A3A;
+        border: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+    } */
 </style>

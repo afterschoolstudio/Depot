@@ -24,6 +24,7 @@ export let defaults = {
         "min" : -10000,
         "max" : 100000,
         "defaultValue" : 0,
+        "iconName" : "newInt",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -40,6 +41,7 @@ export let defaults = {
         "min" : -10000,
         "max" : 100000,
         "defaultValue" : 0,
+        "iconName" : "newFloat",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -54,6 +56,7 @@ export let defaults = {
         "description" : "bool field",
         "name": "newBool",
         "defaultValue" : true,
+        "iconName" : "newBool",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -66,6 +69,7 @@ export let defaults = {
         "name": "newText",
         "description" : "text field",
         "defaultValue" : "",
+        "iconName" : "newText",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -78,6 +82,7 @@ export let defaults = {
         "name": "newLongText",
         "description" : "long text field",
         "defaultValue" : "",
+        "iconName" : "newLongText",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -90,6 +95,7 @@ export let defaults = {
         "name": "newImage",
         "description" : "new image field",
         "defaultValue" : "",
+        "iconName" : "newImage",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -103,6 +109,7 @@ export let defaults = {
         "description" : "new enum field",
         "options" : "",
         "defaultValue" : "",
+        "iconName" : "newEnum",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -117,6 +124,7 @@ export let defaults = {
         "description" : "new multiple field",
         "options" : "",
         "defaultValue" : "",
+        "iconName" : "newMulti",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -130,6 +138,7 @@ export let defaults = {
         "name": "newSheetReference",
         "description" : "new sheet reference field",
         "defaultValue" : "",
+        "iconName" : "newSheetLink",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -146,6 +155,7 @@ export let defaults = {
         "description" : "new line reference field",
         "sheet" : "",
         "defaultValue" : "",
+        "iconName" : "newLineLink",
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -160,6 +170,7 @@ export let defaults = {
         "description":"new list field",
         "sheet":"",
         "defaultValue":[],
+        "iconName" : "newList",
         "configurable" : {
             "name" : "text",
             "description" : "text",

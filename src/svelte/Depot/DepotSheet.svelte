@@ -1,4 +1,5 @@
 <script>
+import { getContext } from 'svelte';
 import TextField from "../Fields/TextField.svelte";
 import BooleanField from '../Fields/BooleanField.svelte';
 import EnumField from '../Fields/EnumField.svelte';
@@ -19,6 +20,7 @@ export let depotInfo;
 export let originLineGUID = "";
 export let listVisibility = {};
 const dispatch = createEventDispatcher();
+let iconPaths = getContext("iconPaths");
 
 function editColumn(column) {
     dispatch('message', {
@@ -191,18 +193,22 @@ function validateID(event,line) {
 }
 
 </script>
-
     <table>
     <tr>
         <td colspan="{totalColumns}">
             {#if !sheetData.hidden}
-                <button on:click={editSheet}>Edit Sheet</button>
+                <button on:click={editSheet}>
+                    <img src={iconPaths["editSheet"].path} alt="Edit Sheet" width="40" height="40">
+                </button>
             <!-- {:else}
                 <div>{sheetData.name}</div> -->
             {/if}
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
-                    <button on:click={() => createColumn(columnType)}>New {columnType}</button>
+                <button on:click={() => createColumn(columnType)}>
+                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column" width="40" height="40">
+                    <!-- New {columnType} -->
+                </button>
                 {/if}
             {/each}
         </td>
@@ -219,7 +225,11 @@ function validateID(event,line) {
     </tr>
     {#each lineData as line, i}
         <tr>
-            <td><button on:click={() => removeLine(i,line,originLineGUID)}>X</button></td>
+            <td>
+            <button width="17" on:click={() => removeLine(i,line,originLineGUID)}>
+                <img src={iconPaths["removeLine"].path} alt="Remove Line" width="17" height="17">
+            </button>
+            </td>
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}
@@ -259,9 +269,13 @@ function validateID(event,line) {
                 <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "list"}
                     {#if line.guid in listVisibility && listVisibility[line.guid].guid === column.guid}
-                        <button on:click={()=>setListVisible(line,column,false)}>Hide</button>
+                        <button on:click={()=>setListVisible(line,column,false)}>
+                            <img src={iconPaths["showList"].path} alt="Hide list" width="40" height="40">
+                        </button>
                     {:else}
-                        <button on:click={()=>setListVisible(line,column,true)}>Show</button>
+                        <button on:click={()=>setListVisible(line,column,true)}>
+                            <img src={iconPaths["hideList"].path} alt="Show list" width="40" height="40">
+                        </button>
                     {/if}
                 {/if}
                 </div>
@@ -292,9 +306,15 @@ function validateID(event,line) {
     <tr>
         <td></td>
         <td colspan="{totalColumns -  1}">
-            <button on:click={() => addLines(1,originLineGUID)}>New Line</button>
-            <button on:click={() => addLines(5,originLineGUID)}>New Line x5</button>
-            <button on:click={() => addLines(10,originLineGUID)}>New Line x20</button>
+            <button on:click={() => addLines(1,originLineGUID)}>
+                <img src={iconPaths["addOneLine"].path} alt="Add one line" width="40" height="40">
+            </button>
+            <button on:click={() => addLines(5,originLineGUID)}>
+                <img src={iconPaths["addFiveLines"].path} alt="Add five lines" width="40" height="40">
+            </button>
+            <button on:click={() => addLines(10,originLineGUID)}>
+                <img src={iconPaths["addTenLines"].path} alt="Add ten lines" width="40" height="40">
+            </button>
         </td>
     </tr>
     </table>

@@ -1,5 +1,5 @@
 <script>
-import { createEventDispatcher } from 'svelte';
+import { createEventDispatcher, getContext } from 'svelte';
 import {defaults} from './depotDefaults';
 import DepotOptions from './DepotOptions.svelte';
 import DepotSheet from './DepotSheet.svelte';
@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 export let data;
 let debug = false;
 let showLineGUIDs = false;
+let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
@@ -561,6 +562,7 @@ function createSheet() {
 
 </script>
 <h1>Depot</h1>
+<button class="buttonIcon">test</button>
 {#if !data.hasOwnProperty("sheets")}
     <p>Invalid Depot File</p>
     <p>Use Ctrl/Cmd+Shift+P and select "Create new Depot File" to get started</p>
@@ -575,7 +577,9 @@ function createSheet() {
             <button on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
             {/if}
         {/each}
-        <button on:click={createSheet} disabled={editorConfig.active}>+</button> 
+        <button class="buttonIcon" on:click={createSheet} disabled={editorConfig.active}>
+            <img src={iconPaths["addSheet"].path} alt="Add new sheet" width="17" height="17">
+        </button> 
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->

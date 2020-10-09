@@ -165,6 +165,39 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
 			// path.join(this.context.extensionPath, 'includes', 'bulma.css')
 		));
+
+		const iconPaths = [
+			"addFiveLines.png",
+			"addOneLine.png",
+			"addSheet.png",
+			"addTenLines.png",
+			"editSheet.png",
+			"newBool.png",
+			"newEnum.png",
+			"newFloat.png",
+			"newImage.png",
+			"newInt.png",
+			"newLineLink.png",
+			"newList.png",
+			"newLongText.png",
+			"newMulti.png",
+			"newSheetLink.png",
+			"newText.png",
+			"removeLine.png",
+			"showList.png",
+			"hideList.png"
+		];
+
+		const icons:any = {};
+		iconPaths.forEach(iconPath => {
+			let filename = iconPath.split(".")[0];
+			icons[filename] = vscode.Uri.file(
+				path.join(this.context.extensionPath, 'icons', iconPath)
+			);
+		});
+		const strung = JSON.stringify(icons);
+		console.log(strung);
+		
 		const docUri = webview.asWebviewUri(document.uri);
 		// console.log(document.uri.with({ scheme: 'vscode-resource' }).fsPath);
 		// console.log(document.uri.with({ scheme: 'vscode-resource' }).path);
@@ -195,7 +228,10 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			
 		<body>
 		<script nonce="${nonce}">
+			// console.log("${nonce}");
+			// console.log(${strung});
 			const nonce = "${nonce}";
+			const icons = ${strung};
 			const vscode = acquireVsCodeApi();
 		</script>
         </body>
