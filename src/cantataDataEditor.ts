@@ -169,7 +169,7 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 		const iconPaths = [
 			"addFiveLines.svg",
 			"addOneLine.svg",
-			"addSheet.svg",
+			"newSheet.svg",
 			"addTenLines.svg",
 			"editSheet.svg",
 			"newBool.svg",
@@ -191,9 +191,10 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 		const icons:any = {};
 		iconPaths.forEach(iconPath => {
 			let filename = iconPath.split(".")[0];
-			icons[filename] = vscode.Uri.file(
+			let diskPath = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'icons', iconPath)
 			);
+			icons[filename] = webview.asWebviewUri(diskPath);
 		});
 		const strung = JSON.stringify(icons);
 		console.log(strung);

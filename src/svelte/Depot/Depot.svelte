@@ -593,14 +593,21 @@ function selectedSheetEdit() {
     <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs}/>
     {#if data.sheets.length === 0}
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
-       <button on:click={createSheet} disabled={editorConfig.active}>New Sheet</button>
+       {#if !editorConfig.active}
+       <button class="buttonIcon padded" title="New sheet" on:click={createSheet}>
+            <img src={iconPaths["newSheet"].path} alt="New Sheet">
+        </button>
+        {/if}
     {:else}
-        <button class="buttonIcon padded" on:click={selectedSheetEdit}>
+        <button class="buttonIcon padded" disabled={editorConfig.active} on:click={createSheet}>
+            <img src={iconPaths["newSheet"].path} alt="New Sheet">
+        </button>
+        <button class="buttonIcon padded" disabled={editorConfig.active} on:click={selectedSheetEdit}>
             <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
         </button>
         {#each Object.keys(defaults) as columnType}
             {#if columnType !== "sheet"}
-                <button class="buttonIcon padded" on:click={() => selectedSheetColumnCreate(columnType)}>
+                <button class="buttonIcon padded" disabled={editorConfig.active} on:click={() => selectedSheetColumnCreate(columnType)}>
                     <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
                 </button>
             {/if}
@@ -611,9 +618,6 @@ function selectedSheetEdit() {
             <button class="sheetButton {data.sheets.indexOf(sheet) == selectedSheet ? "selected" : ""}"on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
             {/if}
         {/each}
-        <button class="buttonIcon" on:click={createSheet} disabled={editorConfig.active}>
-            <img src={iconPaths["addSheet"].path} alt="Add new sheet">
-        </button> 
         </div>
         <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
         {#if !editorConfig.active}

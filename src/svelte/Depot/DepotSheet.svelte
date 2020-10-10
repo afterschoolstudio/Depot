@@ -208,7 +208,7 @@ function validateID(event,line) {
     </tr>
     {/if}
     <tr>
-        <th style="width:17px;">    </th>
+        <th>    </th>
         {#if showLineGUIDs}
         <th>GUID</th>
         {/if}
@@ -219,9 +219,9 @@ function validateID(event,line) {
     </tr>
     {#each lineData as line, i}
         <tr>
-            <td style="width:17px;">
+            <td style="width:17px">
             <button class="buttonIcon" on:click={() => removeLine(i,line,originLineGUID)}>
-                <img src={iconPaths["removeLine"].path} alt="Remove Line">
+                <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Remove Line">
             </button>
             </td>
             {#if showLineGUIDs}
@@ -300,14 +300,14 @@ function validateID(event,line) {
     <tr>
         <td></td>
         <td colspan="{totalColumns -  1}">
-            <button class="buttonIcon padded" on:click={() => addLines(1,originLineGUID)}>
-                <img src={iconPaths["addOneLine"].path} alt="Add one line" width="40" height="40">
+            <button class="buttonIcon addLine" on:click={() => addLines(1,originLineGUID)}>
+                <img src={iconPaths["addOneLine"].path} alt="Add one line">
             </button>
-            <button class="buttonIcon padded" on:click={() => addLines(5,originLineGUID)}>
-                <img src={iconPaths["addFiveLines"].path} alt="Add five lines" width="40" height="40">
+            <button class="buttonIcon addLine" on:click={() => addLines(5,originLineGUID)}>
+                <img src={iconPaths["addFiveLines"].path} alt="Add five lines">
             </button>
-            <button class="buttonIcon padded" on:click={() => addLines(10,originLineGUID)}>
-                <img src={iconPaths["addTenLines"].path} alt="Add ten lines" width="40" height="40">
+            <button class="buttonIcon addLine" on:click={() => addLines(10,originLineGUID)}>
+                <img src={iconPaths["addTenLines"].path} alt="Add ten lines">
             </button>
         </td>
     </tr>
@@ -341,5 +341,9 @@ function validateID(event,line) {
         margin: 5px 5px 5px 0px;
         width: 45px;
         height: 45px;
+    }
+    .buttonIcon.addLine {
+        margin: 5px 0px 5px 0px;
+        padding: 0px 0px 0px 0px;
     }
 </style>
