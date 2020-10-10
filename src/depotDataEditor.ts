@@ -1,29 +1,16 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { getNonce } from './util';
-import { resolveCliPathFromVSCodeExecutablePath } from 'vscode-test';
 
-/**
- * Provider for cat scratch editors.
- * 
- * Cat scratch editors are used for `.cscratch` files, which are just json files.
- * To get started, run this extension and open an empty `.cscratch` file in VS Code.
- * 
- * This provider demonstrates:
- * 
- * - Setting up the initial webview for a custom editor.
- * - Loading scripts and styles in a custom editor.
- * - Synchronizing changes between a text document and a custom editor.
- */
-export class CantataDataEditorProvider implements vscode.CustomTextEditorProvider {
+export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 
 	public static register(context: vscode.ExtensionContext): vscode.Disposable { 
-		const provider = new CantataDataEditorProvider(context);
-		const providerRegistration = vscode.window.registerCustomEditorProvider(CantataDataEditorProvider.viewType, provider);
+		const provider = new DepotEditorProvider(context);
+		const providerRegistration = vscode.window.registerCustomEditorProvider(DepotEditorProvider.viewType, provider);
 		return providerRegistration;
 	}
 
-	private static readonly viewType = 'cantata-tools.data';
+	private static readonly viewType = 'depot.data';
 
 
 	constructor(
@@ -32,8 +19,6 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 
 	/**
 	 * Called when our custom editor is opened.
-	 * 
-	 * 
 	 */
 	public async resolveCustomTextEditor(
 		document: vscode.TextDocument,
@@ -56,24 +41,8 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			let dataType = "";
 			switch (document.fileName.split('.').pop()) 
 			{
-				case 'cterrain':
-					dataType = 'terrain';
-					break;
-				case 'cinteractable':
-					dataType = 'interactable';
-					break;
-				case 'cruleset':
-					dataType = 'ruleset';
-					break;
-				case 'cfaction':
-					dataType = 'faction';
-					break;
-				case 'csupply':
-					dataType = 'supply';
-					break;			
-				case 'cmod':
-					dataType = 'manifest';
-					break;			
+				// This is sketched in here for people to easily extend Depot by providing their own extensions
+				// That allow a different route through the scaffolded code
 				case 'dpo':
 					dataType = 'depot';
 					break;			
@@ -99,7 +68,6 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			}
 		});
 
-
 		// Make sure we get rid of the listener when our editor is closed.
 		webviewPanel.onDidDispose(() => {
 			changeDocumentSubscription.dispose();
@@ -118,7 +86,7 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
                 // case 'validate':
-                //     this.validateInteractable(document);
+                //     this.validateFile(document);
 				//     return;
 				case 'init-view':
 					initWebview();
@@ -132,13 +100,11 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 						if (fileUri && fileUri[0]) {
 							console.log('Selected file: ' + fileUri[0].path + ' for key: ' + e.fileKey);
 							console.log("relative location from editor to file is: " + path.relative(document.uri.path,fileUri[0].path));
-							// let uriPath = webviewPanel.webview.asWebviewUri(vscode.Uri.file('/Users/codey/workspace/cat.gif'))
 							let uriPath = webviewPanel.webview.asWebviewUri(fileUri[0]).toString();
 							console.log(uriPath);
 							webviewPanel.webview.postMessage({
 								type: 'filePicked',
 								filePath:  path.relative(document.uri.path,fileUri[0].path), //still prob want to send this with uri
-								// filePath:  uriPath,
 								fileKey: e.fileKey
 							});
 						}
@@ -163,7 +129,6 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 		));
 		const styleUri = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
-			// path.join(this.context.extensionPath, 'includes', 'bulma.css')
 		));
 
 		const iconPaths = [
@@ -197,19 +162,12 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			icons[filename] = webview.asWebviewUri(diskPath);
 		});
 		const strung = JSON.stringify(icons);
-		console.log(strung);
 		
 		const docUri = webview.asWebviewUri(document.uri);
-		// console.log(document.uri.with({ scheme: 'vscode-resource' }).fsPath);
-		// console.log(document.uri.with({ scheme: 'vscode-resource' }).path);
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
-		//maybe this to get in base?
-	
-        //  <!-- <base href="${vscode.Uri.file(path.join(this._extensionPath, 'build')).with({ scheme: 'vscode-resource' })}/"> -->
-		// 	<!-- https://github.com/rebornix/vscode-webview-react  -->
         return /* html */`
         <!DOCTYPE html>
         <html lang="en">
@@ -218,7 +176,7 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
 			<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 			<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'nonce-${nonce}'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';"> -->
             <meta name='viewport' content='width=device-width,initial-scale=1'>
-            <title>Cantata Data Editor</title>
+            <title>Depot Data Editor</title>
 			<base href="${docUri}/">
             <!-- <link rel='icon' type='image/png' href='/favicon.png'> -->
             <!-- <link rel='stylesheet' href='/global.css'> -->
@@ -238,23 +196,13 @@ export class CantataDataEditorProvider implements vscode.CustomTextEditorProvide
         </body>
         </html>`;
 	}
-    
-    private validateInteractable(document: vscode.TextDocument) {
-        const json = this.getDocumentAsJson(document);
-        //TODO: run validation code
-		// const character = CantataDataEditorProvider.scratchCharacters[Math.floor(Math.random() * CantataDataEditorProvider.scratchCharacters.length)];
-		// json.scratches = [
-		// 	...(Array.isArray(json.scratches) ? json.scratches : []),
-		// 	{
-		// 		id: getNonce(),
-		// 		text: character,
-		// 		created: Date.now(),
-		// 	}
-		// ];
-
-        // return this.updateTextDocument(document, json);
-        return true;
-    }
+	
+	// Could implment validation
+    // private validateFile(document: vscode.TextDocument) {
+	// 	const json = this.getDocumentAsJson(document);
+	// 	// Validate, update doc with new json
+    //     return this.updateTextDocument(document, json);
+    // }
 
 	/**
 	 * Try to get a current document as json text.

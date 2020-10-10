@@ -11,9 +11,7 @@
 	],
 	"activationEvents": [
 		"onCommand:depot.newDepotFile",
-		"onCommand:cantata-tools.data.newInteractable",
-		"onCommand:cantata-tools.data.newTerrain",
-		"onCustomEditor:cantata-tools.data"
+		"onCustomEditor:depot.data"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -34,11 +32,11 @@
 		},
 		"customEditors": [
 			{
-				"viewType": "cantata-tools.data",
-				"displayName": "Cantata Data",
+				"viewType": "depot.data",
+				"displayName": "Depot Data",
 				"selector": [
 					{
-						"filenamePattern": "*.{cterrain,cinteractable,cruleset,cfaction,csupply,dpo}"
+						"filenamePattern": "*.{dpo,depot}"
 					}
 				]
 			}
@@ -48,16 +46,6 @@
 				"command": "depot.newDepotFile",
 				"title": "Create a new Depot file",
 				"category": "Depot"
-			},
-			{
-				"command": "cantata-tools.data.newInteractable",
-				"title": "Create new Cantata Interactable",
-				"category": "Cantata Tools"
-			},
-			{
-				"command": "cantata-tools.data.newTerrain",
-				"title": "Create new Cantata Terrain",
-				"category": "Cantata Tools"
 			}
 		]
 	},
