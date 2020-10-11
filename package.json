@@ -99,7 +99,7 @@
 		"svelte-build": "rollup -c",
 		"svelte-dev": "rollup -c -w",
 		"start": "sirv public",
-		"vscode:prepublish": "npm run compile",
+		"vscode:prepublish": "rollup -c && tsc -p ./",
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",

@@ -10,3 +10,5 @@ vsc-extension-quickstart.md
 **/*.ts
 examples/**
 images/**
+rollup.config.js
+todo.tasks
