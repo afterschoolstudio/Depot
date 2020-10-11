@@ -7,12 +7,14 @@
 	"contributors": [
 		"Kyle Kukshtel"
 	],
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"engines": {
 		"vscode": "^1.48.0"
 	},
 	"categories": [
-		"Other"
+		"Data Science",
+		"Other",
+		"Visualization"
 	],
 	"repository": {
 		"type": "git",
@@ -50,11 +52,6 @@
 		"xlsx",
 		"xlsm",
 		"xml"
-	],
-	"categories": [
-		"Data Science",
-		"Other",
-		"Visualization"
 	],
 	"galleryBanner": {
 		"color": "#333",
