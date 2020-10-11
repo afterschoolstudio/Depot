@@ -16,8 +16,8 @@
 ✔ line reference fields in lists aren't displaying line options @done (10/5/2020, 5:32:08 PM)
 ✔ image fields arent working in sheets and nested sheets @done (10/10/2020, 8:07:38 PM)
 ☐ finish implementing allowedTypes for columnSelect field types
-☐ line reference fields with default value not set getting set to undefinied instead of ""
-☐ lissue where editing the sheet name throws error in column select field because the name is changing — column select for sheets should look up columns by guid??
+✔ line reference fields with default value not set getting set to undefinied instead of "" @done (10/10/2020, 8:14:41 PM)
+✔ lissue where editing the sheet name throws error in column select field because the name is changing — column select for sheets should look up columns by guid?? @done (10/10/2020, 8:49:54 PM)
 
 ✔ renaming 2+ level deep nested list values not updating list values @done (10/8/2020, 6:06:53 PM)
 ✔ add in ability to remove a nested line @done (9/29/2020, 5:43:18 PM)
@@ -36,3 +36,4 @@
 ☐ treeview stuff to more easily browse large data
 ☐ search?
 ☐ perform validation in the extension code when updates are submitted or do it in the field itself? onDidRecieveMessage could get validate type and call validation
+☐ use vscode native theme colors for css

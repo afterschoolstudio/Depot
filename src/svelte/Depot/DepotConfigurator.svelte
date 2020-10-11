@@ -102,6 +102,7 @@ $: {
                 <!-- column and line select assume a sheet field in the editing object -->
                 {:else if configuration[fieldName].split("@")[0] === "lineSelect"}
                     {#if data[configuration[fieldName].split("@")[1]] !== ""}
+                    <!-- 1 is the sheet field -->
                         <div><EnumField bind:data={data[fieldName]}
                                         options={config.depotInfo.lines[data[configuration[fieldName].split("@")[1]]].guids}
                                         aliases={config.depotInfo.lines[data[configuration[fieldName].split("@")[1]]].names}/></div>
@@ -129,7 +130,7 @@ $: {
                                             bind:data={data[fieldName]}
                                             options={config.depotInfo.columns[
                                                         config.depotInfo.sheets.guids[
-                                                            config.depotInfo.sheets.names.indexOf(data[configuration[fieldName].split("@")[1]])
+                                                            config.depotInfo.sheets.names.indexOf(config.originalData[configuration[fieldName].split("@")[1]])
                                                         ]
                                                     ].names}/>
                             </div>

@@ -478,9 +478,11 @@ function handleTableAction(event) {
                 case "edit":
                     switch (event.detail.data.editType) {
                         case "sheet":
+                            editorConfig["originalData"] = JSON.parse(JSON.stringify(data.sheets[sheetIndex]));
                             editorData = JSON.parse(JSON.stringify(data.sheets[sheetIndex]));
                             break;
                         default: //column
+                            editorConfig["originalData"] = JSON.parse(JSON.stringify(data.sheets[sheetIndex].columns.find(x => x.name === editorConfig.editType)));
                             editorData = JSON.parse(JSON.stringify(data.sheets[sheetIndex].columns.find(x => x.name === editorConfig.editType)));
                             break;
                     }
