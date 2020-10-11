@@ -92,7 +92,7 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 | Multi Select    | ![Multi Select Icon](./images/icons/newMulti.png)        | Several choices between a set number of choices                                                   | Array of selected values as string | ```""```                 |
 | Line Reference  | ![Line Reference Icon](./images/icons/newLineLink.png)   | A reference to a line in a sheet in the current Depot file                                        | String GUID of selected line       | ```""```                 |
 | Sheet Reference | ![Sheet Reference Icon](./images/icons/newSheetLink.png) | A reference to a sheet in the current Depot file                                                  | String GUID of selected sheet      | ```""```                 |
-| List            | ![List Icon](./images/icons/newList.svg)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
+| List            | ![List Icon](./images/icons/newList.png)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
 
 ## CastleDB Differences
 WIP
