@@ -14,9 +14,10 @@
 ✔ line references for default value getting "undefined" option if the display column for the referenced sheet is deleted @done (10/5/2020, 4:41:33 PM)
 ✔ need to set line list visibilty context in Depot.svelte and pass down to tables so context isn't lost between switching sheets or editing fields @done (10/6/2020, 5:44:39 PM)
 ✔ line reference fields in lists aren't displaying line options @done (10/5/2020, 5:32:08 PM)
-☐ image fields arent working in sheets and nested sheets
+✔ image fields arent working in sheets and nested sheets @done (10/10/2020, 8:07:38 PM)
 ☐ finish implementing allowedTypes for columnSelect field types
 ☐ line reference fields with default value not set getting set to undefinied instead of ""
+☐ lissue where editing the sheet name throws error in column select field because the name is changing — column select for sheets should look up columns by guid??
 
 ✔ renaming 2+ level deep nested list values not updating list values @done (10/8/2020, 6:06:53 PM)
 ✔ add in ability to remove a nested line @done (9/29/2020, 5:43:18 PM)
@@ -26,12 +27,12 @@
 ☐ add in ability for sheet edit menu and line add to only be shown if that sheet is being hovered
 ☐ maybe add more persistence if view is exited and returned with https://code.visualstudio.com/api/extension-guides/webview#persistence
 ☐ better css lol
-add in a disabled style for buttons so to show disabled when in configurator
-add in ability to set dpo file meta that can be shown at the top of the sheet
-add in ability for sheet to dictate if the file info is shown or the sheet info is shown
-add in way for people to declare their own depot extension (maybe just editing the extension manually due to contributes?)
-figure out how to give people the way to make their own custom fields?
-tests
-treeview stuff to more easily browse large data
-search?
-perform validation in the extension code when updates are submitted or do it in the field itself? onDidRecieveMessage could get validate type and call validation
+☐ add in a disabled style for buttons so to show disabled when in configurator
+☐ add in ability to set dpo file meta that can be shown at the top of the sheet
+☐ add in ability for sheet to dictate if the file info is shown or the sheet info is shown
+☐ add in way for people to declare their own depot extension (maybe just editing the extension manually due to contributes?)
+☐ figure out how to give people the way to make their own custom fields?
+☐ tests!
+☐ treeview stuff to more easily browse large data
+☐ search?
+☐ perform validation in the extension code when updates are submitted or do it in the field itself? onDidRecieveMessage could get validate type and call validation

@@ -199,7 +199,7 @@ function validateID(event,line) {
         <td colspan="{totalColumns}">
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
-                <button class="buttonIcon padded" on:click={() => createColumn(columnType)}>
+                <button class="buttonIcon padded" title="Create new {columnType} column" on:click={() => createColumn(columnType)}>
                     <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
                 </button>
                 {/if}
@@ -220,7 +220,7 @@ function validateID(event,line) {
     {#each lineData as line, i}
         <tr>
             <td style="width:17px">
-            <button class="buttonIcon" on:click={() => removeLine(i,line,originLineGUID)}>
+            <button class="buttonIcon" title="Remove Line" on:click={() => removeLine(i,line,originLineGUID)}>
                 <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Remove Line">
             </button>
             </td>
@@ -300,13 +300,13 @@ function validateID(event,line) {
     <tr>
         <td></td>
         <td colspan="{totalColumns -  1}">
-            <button class="buttonIcon addLine" on:click={() => addLines(1,originLineGUID)}>
+            <button class="buttonIcon addLine" title="Add one line" on:click={() => addLines(1,originLineGUID)}>
                 <img src={iconPaths["addOneLine"].path} alt="Add one line">
             </button>
-            <button class="buttonIcon addLine" on:click={() => addLines(5,originLineGUID)}>
+            <button class="buttonIcon addLine" title="Add five lines" on:click={() => addLines(5,originLineGUID)}>
                 <img src={iconPaths["addFiveLines"].path} alt="Add five lines">
             </button>
-            <button class="buttonIcon addLine" on:click={() => addLines(10,originLineGUID)}>
+            <button class="buttonIcon addLine" alt="Add ten lines" on:click={() => addLines(10,originLineGUID)}>
                 <img src={iconPaths["addTenLines"].path} alt="Add ten lines">
             </button>
         </td>

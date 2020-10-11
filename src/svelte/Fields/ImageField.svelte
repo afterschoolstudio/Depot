@@ -10,7 +10,10 @@
     function pickFile() {
         dispatch('message', {
             "type" : "pickFile",
-            "fileKey" : fileKey
+            "fileKey" : fileKey,
+            "data" : {
+                "sheetGUID" : sheetGUID
+            }
         });
     }
     function clearFile() {

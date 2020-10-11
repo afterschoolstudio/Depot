@@ -55,6 +55,8 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 
 | Column Type | Description | Storage Type | Default Value |
 |-------------|-------------|---------|---------------|
+| ID       | This is the the ID for a given line. These have to be unique         |         |               |
+| GUID       | asd         |         |               |
 | Text       | asd         |         |               |
 | Long Text       | asd         |         |               |
 | Float       | asd         |         |               |
@@ -62,7 +64,8 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 | text        | asd         |         |               |
 
 
-This is the README for your extension "cantata-tools". After writing up a brief description, we recommend including the following sections.
+
+## Extending Depot WIP
 
 ## Edge Cases WIP
 

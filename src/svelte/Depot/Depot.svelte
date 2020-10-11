@@ -536,8 +536,25 @@ function handleTableAction(event) {
             break;
         case "pickFile":
             //forward events from fields
+            //fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}
             var fileKey = event.detail.fileKey;
             fileKey["sheet"] = sheetIndex;
+            if(data.sheets[sheetIndex].hidden) {
+                //find the topmost sheet - this is because nested sheet info is stored inside the top level line values
+                let parentInfo = getSubsheetParentInfo(sheetIndex)
+                //reverse the path because it comes it from the perspective of the affected entry, not the sheet itself
+                parentInfo.path.reverse();
+                //grab the paths to the affected lines
+                let affectedLines = getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,"").paths;
+                //this is every line with this path, we now need to filter this down to the specific 
+                let filtered = affectedLines.filter(linePath => {
+                    let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
+                    return subsheetLines[fileKey.lineIndex].guid == fileKey.line.guid;
+                });
+                //filtered now has one element in it with only the path to the cooresponding line
+                fileKey["linePath"] = filtered[0];
+                fileKey["sheet"] = parentInfo.parentIndex; //the passed in sheet needs to be the parent index
+            }
             dispatch('message', {
                 "type" : "pickFile",
                 "fileKey" : event.detail.fileKey
@@ -585,13 +602,14 @@ function selectedSheetEdit() {
 }
 
 </script>
-<h1>Depot</h1>
 {#if !data.hasOwnProperty("sheets")}
+    <h1>Depot</h1>
     <p>Invalid Depot File</p>
     <p>Use Ctrl/Cmd+Shift+P and select "Create new Depot File" to get started</p>
 {:else}
-    <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs}/>
     {#if data.sheets.length === 0}
+        <h1>Depot</h1>
+        <p>Click the button below to create sheet in Depot and get started</p>
        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
        {#if !editorConfig.active}
        <button class="buttonIcon padded" title="New sheet" on:click={createSheet}>
@@ -599,15 +617,18 @@ function selectedSheetEdit() {
         </button>
         {/if}
     {:else}
-        <button class="buttonIcon padded" disabled={editorConfig.active} on:click={createSheet}>
+        <h1>{data.sheets[selectedSheet].name}</h1>
+        <p>{data.sheets[selectedSheet].description}</p>
+        <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs}/>
+        <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active} on:click={createSheet}>
             <img src={iconPaths["newSheet"].path} alt="New Sheet">
         </button>
-        <button class="buttonIcon padded" disabled={editorConfig.active} on:click={selectedSheetEdit}>
+        <button class="buttonIcon padded" title="Edit sheet" disabled={editorConfig.active} on:click={selectedSheetEdit}>
             <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
         </button>
         {#each Object.keys(defaults) as columnType}
             {#if columnType !== "sheet"}
-                <button class="buttonIcon padded" disabled={editorConfig.active} on:click={() => selectedSheetColumnCreate(columnType)}>
+                <button class="buttonIcon padded" disabled={editorConfig.active} title="Create new {columnType} column" on:click={() => selectedSheetColumnCreate(columnType)}>
                     <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
                 </button>
             {/if}
@@ -615,7 +636,7 @@ function selectedSheetEdit() {
         <div>
         {#each data.sheets as sheet}
             {#if !sheet.hidden}
-            <button class="sheetButton {data.sheets.indexOf(sheet) == selectedSheet ? "selected" : ""}"on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
+            <button class="sheetButton {data.sheets.indexOf(sheet) == selectedSheet ? "selected" : ""}" title="Select sheet" on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
             {/if}
         {/each}
         </div>
