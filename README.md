@@ -82,17 +82,17 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 |-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------|--------------------------|
 | ID              | None                                              | The ID of a column. These are ideally unique, and Depot will warn you if you duplicate the value. | String value                       | index in sheet as string |
 | GUID            | None                                              | A generated GUID for the given line. These cannot be edited.                                      | String value                       | guid as string           |
-| Text            | ![Text Icon](./icons/newText.svg)                 | A standard line of text.                                                                          | String value                       | ```""```                 |
-| Long Text       | ![Long Text Icon](./icons/newLongText.svg)        | Longer line of text. These fields can be resized in the editor.                                   | String Value                       | ```""```                 |
-| Float           | ![Float Icon](./icons/newFloat.svg)               | Any number                                                                                        | Number value                       | ```0```                  |
-| Int             | ![Int Icon](./icons/newInt.svg)                   | Integer number                                                                                    | Number value                       | ```0```                  |
-| Bool            | ![Bool Icon](./icons/newBool.svg)                 | True / False boolean value.                                                                       | ```true``` or ```false```          | ```true```               |
-| Image           | ![Image Icon](./icons/newImage.svg)               | Path to an image relative to the location of the Depot file (displayed in the sheet)              | String relative path to the image  | ```""```                 |
-| Single Select   | ![Single Select Icon](./icons/newEnum.svg)        | Exclusive choice between a set number of choices                                                  | String value                       | ```""```                 |
-| Multi Select    | ![Multi Select Icon](./icons/newMulti.svg)        | Several choices between a set number of choices                                                   | Array of selected values as string | ```""```                 |
-| Line Reference  | ![Line Reference Icon](./icons/newLineLink.svg)   | A reference to a line in a sheet in the current Depot file                                        | String GUID of selected line       | ```""```                 |
-| Sheet Reference | ![Sheet Reference Icon](./icons/newSheetLink.svg) | A reference to a sheet in the current Depot file                                                  | String GUID of selected sheet      | ```""```                 |
-| List            | ![List Icon](./icons/newList.svg)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
+| Text            | ![Text Icon](./images/icons/newText.svg)                 | A standard line of text.                                                                          | String value                       | ```""```                 |
+| Long Text       | ![Long Text Icon](./images/icons/newLongText.svg)        | Longer line of text. These fields can be resized in the editor.                                   | String Value                       | ```""```                 |
+| Float           | ![Float Icon](./images/icons/newFloat.svg)               | Any number                                                                                        | Number value                       | ```0```                  |
+| Int             | ![Int Icon](./images/icons/newInt.svg)                   | Integer number                                                                                    | Number value                       | ```0```                  |
+| Bool            | ![Bool Icon](./images/icons/newBool.svg)                 | True / False boolean value.                                                                       | ```true``` or ```false```          | ```true```               |
+| Image           | ![Image Icon](./images/icons/newImage.svg)               | Path to an image relative to the location of the Depot file (displayed in the sheet)              | String relative path to the image  | ```""```                 |
+| Single Select   | ![Single Select Icon](./images/icons/newEnum.svg)        | Exclusive choice between a set number of choices                                                  | String value                       | ```""```                 |
+| Multi Select    | ![Multi Select Icon](./images/icons/newMulti.svg)        | Several choices between a set number of choices                                                   | Array of selected values as string | ```""```                 |
+| Line Reference  | ![Line Reference Icon](./images/icons/newLineLink.svg)   | A reference to a line in a sheet in the current Depot file                                        | String GUID of selected line       | ```""```                 |
+| Sheet Reference | ![Sheet Reference Icon](./images/icons/newSheetLink.svg) | A reference to a sheet in the current Depot file                                                  | String GUID of selected sheet      | ```""```                 |
+| List            | ![List Icon](./images/icons/newList.svg)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
 
 ## CastleDB Differences
 WIP
@@ -119,6 +119,10 @@ WIP
 ## Known Issues WIP
 
 Calling out known issues can help limit users opening duplicate issues against your extension.
+
+## Attribution
+
+Image samples in the example folder are from [game-icons.net](https://game-icons.net/) under the [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) license
 
 ## Release Notes WIP
 
