@@ -12,7 +12,7 @@
 
 ## Requirements
 
-* Visual Studio Code 1.46+
+* Visual Studio Code 1.48+
 
 ## Quickstart
 
