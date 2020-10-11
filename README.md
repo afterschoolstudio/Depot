@@ -1,4 +1,4 @@
-![Depot logo](depot_logo.png)
+![Depot logo](images/depot_logo.png)
 
 # Depot
 **Depot** is a structured data editor for Visual Studio Code that leverages Code's Custom Editor API to allow you to edit JSON data like a spreadsheet. Data you would normally store in raw JSON or XML can instead be stored, edited, and managed, all through a _single_ Depot file.
@@ -7,6 +7,8 @@
 * Edit data normally stored as raw JSON in a spreadsheet style interface
 * A Depot file contains its data model, making the file itself portable to any other program
 * Because the file uses JSON with newlines, you can easily track changes to data values or the model itself through source control
+
+![Depot logo](images/depot_screenshot.png)
 
 ## Requirements
 
@@ -27,6 +29,28 @@ You can also manually create a Depot file by creating a file with this as its co
 ```
 
 Note that once Depot is installed, the extension will try to open any file with ```.dpo``` through the Depot editor. If you want to manually create a Depot file, I suggest creating the file as a ```.txt``` file, adding the above contents, then changing the file's extension to ```.dpo```.
+
+### Custom File Extensions
+You can also use a custom file extension for Depot by editing your ```settings.json``` file and adding the following line:
+
+```
+"workbench.editorAssociations": [
+    {
+        "viewType": "depot.data",
+        "filenamePattern": "*.foo"
+    },
+    {
+        "viewType": "depot.data",
+        "filenamePattern": "*.bar"
+    }
+]
+```
+
+In the above example, clicking on a file with ```.foo``` or ```.bar``` would also open that file for editing in Depot.
+
+### Other Extension Settings
+
+```depot.defaults.newFileName``` allows you to set the default name for a new Depot file created through the Command Palette command.
 
 ## About / Why
 
@@ -54,36 +78,43 @@ A given sheet also has some number of lines. You can think of a sheet's lines as
 
 Columns define the fields of a sheet that a line can have data for. Columns can be specific primitive types (```string```, ```bool```, ```int```, etc.), but can also be other special types unique to Depot:
 
-| Column Type | Description | Storage Type | Default Value |
-|-------------|-------------|---------|---------------|
-| ID       | This is the the ID for a given line. These have to be unique         |         |               |
-| GUID       | asd         |         |               |
-| Text       | asd         |         |               |
-| Long Text       | asd         |         |               |
-| Float       | asd         |         |               |
-| bool        | asd         |         |               |
-| text        | asd         |         |               |
+| Column Type     | Icon                                              | Description                                                                                       | Storage Type                       | Default Value            |
+|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------|--------------------------|
+| ID              | None                                              | The ID of a column. These are ideally unique, and Depot will warn you if you duplicate the value. | String value                       | index in sheet as string |
+| GUID            | None                                              | A generated GUID for the given line. These cannot be edited.                                      | String value                       | guid as string           |
+| Text            | ![Text Icon](./icons/newText.svg)                 | A standard line of text.                                                                          | String value                       | ```""```                 |
+| Long Text       | ![Long Text Icon](./icons/newLongText.svg)        | Longer line of text. These fields can be resized in the editor.                                   | String Value                       | ```""```                 |
+| Float           | ![Float Icon](./icons/newFloat.svg)               | Any number                                                                                        | Number value                       | ```0```                  |
+| Int             | ![Int Icon](./icons/newInt.svg)                   | Integer number                                                                                    | Number value                       | ```0```                  |
+| Bool            | ![Bool Icon](./icons/newBool.svg)                 | True / False boolean value.                                                                       | ```true``` or ```false```          | ```true```               |
+| Image           | ![Image Icon](./icons/newImage.svg)               | Path to an image relative to the location of the Depot file (displayed in the sheet)              | String relative path to the image  | ```""```                 |
+| Single Select   | ![Single Select Icon](./icons/newEnum.svg)        | Exclusive choice between a set number of choices                                                  | String value                       | ```""```                 |
+| Multi Select    | ![Multi Select Icon](./icons/newMulti.svg)        | Several choices between a set number of choices                                                   | Array of selected values as string | ```""```                 |
+| Line Reference  | ![Line Reference Icon](./icons/newLineLink.svg)   | A reference to a line in a sheet in the current Depot file                                        | String GUID of selected line       | ```""```                 |
+| Sheet Reference | ![Sheet Reference Icon](./icons/newSheetLink.svg) | A reference to a sheet in the current Depot file                                                  | String GUID of selected sheet      | ```""```                 |
+| List            | ![List Icon](./icons/newList.svg)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
 
+## CastleDB Differences
+WIP
 
+## Column Editing
+WIP
+
+## Sheet Editing
+WIP
+
+## Wiki Note
+WIP
 
 ## Extending Depot WIP
+
+WIP
 
 ## Edge Cases WIP
 
 * When the sheet a line reference field references is deleted, the line value goes to "", the default values are cleared, and the sheet is reset to "".
 * When the linw a line reference field references is deleted the lines that pointed to that line get their linked value set to "". Defaults that pointed to that get pointed to ""
 * If the sheet column is modified for a line reference field, the defaults and values stay as their old values but display an error that they link to an unreachable value
-
-## Extension Settings WIP
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
 
 ## Known Issues WIP
 

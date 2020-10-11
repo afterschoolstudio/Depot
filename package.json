@@ -1,14 +1,65 @@
 {
-	"name": "cantata-tools",
-	"displayName": "Cantata Tools",
-	"description": "Tools to help create and mod Cantata",
-	"version": "0.0.1",
+	"name": "depot",
+	"icon": "images/depot_icon_code.png",
+	"displayName": "Depot Data Editor",
+	"description": "Structured data editor for VS Code - Edit JSON data directly inside of code with a spreadsheet like interface. Can be used to replace the need for .csv or XML files",
+	"publisher": "afterschool",
+	"contributors": [
+		"Kyle Kukshtel"
+	],
+	"version": "1.0.0",
 	"engines": {
 		"vscode": "^1.46.0"
 	},
 	"categories": [
 		"Other"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/RandomFractals/vscode-data-preview"
+	},
+	"bugs": "https://github.com/kkukshtel/Depot/issues",
+	"homepage": "https://github.com/kkukshtel/Depot/blob/master/README.md",
+	"keywords": [
+		"data tools",
+		"data preview",
+		"data schema",
+		"data view",
+		"data viewer",
+		"data inspector",
+		"charts",
+		"grid",
+		"editable grid",
+		"graph",
+		"large data",
+		"data formatter",
+		"data export",
+		"data import",
+		"json array",
+		"json line",
+		"json",
+		"config",
+		"env",
+		"properties",
+		"Excel",
+		"workbook",
+		"spreadsheet",
+		"csv",
+		"xls",
+		"xlsb",
+		"xlsx",
+		"xlsm",
+		"xml"
+	],
+	"categories": [
+		"Data Science",
+		"Other",
+		"Visualization"
+	],
+	"galleryBanner": {
+		"color": "#333",
+		"theme": "dark"
+	},
 	"activationEvents": [
 		"onCommand:depot.newDepotFile",
 		"onCustomEditor:depot.data"
@@ -18,11 +69,6 @@
 		"configuration": {
 			"title": "Depot",
 			"properties": {
-				"depot.defaults.depotExtensions": {
-					"type": "string",
-					"default": "dpo,depot",
-					"description": "Recgonized Depot file extensions"
-				},
 				"depot.defaults.newFileName": {
 					"type": "string",
 					"default": "depot.dpo",

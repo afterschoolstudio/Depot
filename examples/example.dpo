@@ -1,0 +1,511 @@
+{
+    "sheets": [
+        {
+            "name": "Creatures",
+            "description": "Sheet of creatures that can appear in levels",
+            "displayColumn": "id",
+            "guid": "a0c417ca-b70d-47f2-8335-da97a81744eb",
+            "columns": [
+                {
+                    "typeStr": "int",
+                    "guid": "f2ad02f7-7885-4d36-893f-b07bf1e7c00a",
+                    "description": "int field",
+                    "name": "Base Damage",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newInt",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "int",
+                        "max": "int",
+                        "defaultValue": "int"
+                    }
+                },
+                {
+                    "typeStr": "text",
+                    "guid": "9176403e-ff62-4265-add8-535f147e5971",
+                    "name": "TooltipText",
+                    "description": "text field",
+                    "defaultValue": "",
+                    "iconName": "newText",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                },
+                {
+                    "typeStr": "bool",
+                    "guid": "b7dd10d0-2612-4ec1-a9af-be7a37d4b22c",
+                    "description": "bool field",
+                    "name": "Flying",
+                    "defaultValue": true,
+                    "iconName": "newBool",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "bool"
+                    }
+                },
+                {
+                    "typeStr": "list",
+                    "guid": "15a0cda6-97b9-4d91-9f2f-bed89d923df4",
+                    "name": "Stats",
+                    "description": "new list field",
+                    "sheet": "d9310e74-aa60-4cd8-837e-1c7af333781d",
+                    "defaultValue": [],
+                    "iconName": "newList",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                },
+                {
+                    "typeStr": "image",
+                    "guid": "481b6145-01cf-4e2b-bc6d-effb3e088198",
+                    "name": "Icon",
+                    "description": "new image field",
+                    "defaultValue": "",
+                    "iconName": "newImage",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "9742fc00-3d8a-49bf-826e-1e085a594ad0",
+                    "id": "Dragon",
+                    "TooltipText": "A winged, flying beast",
+                    "Flying": true,
+                    "Stats": [
+                        {
+                            "guid": "978c0791-fad7-4044-ae91-23ba989f0b94",
+                            "id": "Basic",
+                            "DamageModifier": 1
+                        }
+                    ],
+                    "Base Damage": 10,
+                    "Icon": "../images/dragon.png"
+                },
+                {
+                    "guid": "effe33cf-aa70-4147-a0a3-c4c94636bd9a",
+                    "id": "Shark",
+                    "TooltipText": "Dragons of the sea",
+                    "Flying": false,
+                    "Stats": [
+                        {
+                            "guid": "2800d4d0-dd44-4081-baa4-f19eb2050850",
+                            "id": "Basic",
+                            "DamageModifier": 1
+                        },
+                        {
+                            "guid": "057dcb84-a366-4036-8c58-9e3ba4d6d434",
+                            "id": "Advanced",
+                            "DamageModifier": 5
+                        }
+                    ],
+                    "Base Damage": 4,
+                    "Icon": "../images/shark.png"
+                },
+                {
+                    "guid": "8ab58bf6-52d0-403f-863e-5e3d9150b307",
+                    "id": "Bear",
+                    "TooltipText": "Sleepy, full of honey",
+                    "Flying": false,
+                    "Stats": [
+                        {
+                            "guid": "caf51ad1-c60e-4e63-9b7a-51181663acee",
+                            "id": "Basic",
+                            "DamageModifier": 1
+                        }
+                    ],
+                    "Base Damage": 7,
+                    "Icon": "../images/bear.png"
+                },
+                {
+                    "guid": "d1892cc6-561d-4421-8412-ce2e12b695c0",
+                    "id": "Lion",
+                    "TooltipText": "Like a house cat, but bigger",
+                    "Flying": false,
+                    "Stats": [
+                        {
+                            "guid": "ff24ceda-ed31-462a-a764-2f63d7a20b02",
+                            "id": "Basic",
+                            "DamageModifier": 1
+                        }
+                    ],
+                    "Base Damage": 6,
+                    "Icon": "../images/lion.png"
+                },
+                {
+                    "guid": "69b0dd0d-ac65-4398-aef5-81b291f722a6",
+                    "id": "Raven",
+                    "TooltipText": "Quoth, Itself",
+                    "Flying": true,
+                    "Stats": [
+                        {
+                            "guid": "8beffe12-4887-469c-886e-3eeb6812c728",
+                            "id": "Basic",
+                            "DamageModifier": 1
+                        }
+                    ],
+                    "Base Damage": 2,
+                    "Icon": "../images/raven.png"
+                }
+            ],
+            "hidden": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Levels",
+            "description": "The levels in the game",
+            "displayColumn": "id",
+            "guid": "c831852d-bf14-40a4-9daf-d4bc3eaa9f66",
+            "columns": [
+                {
+                    "typeStr": "list",
+                    "guid": "4dc3d748-2227-4c37-87a0-936334a220fd",
+                    "name": "Spawns",
+                    "description": "new list field",
+                    "sheet": "c0061b99-378e-4c38-868c-68b2312d4b84",
+                    "defaultValue": [],
+                    "iconName": "newList",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "981148d5-979d-4098-b4d8-59c5dce071e2",
+                    "id": "Forest",
+                    "Spawns": [
+                        {
+                            "guid": "b59c1a91-3127-4577-96cc-64cbc0faf207",
+                            "id": "0",
+                            "Creature": "9742fc00-3d8a-49bf-826e-1e085a594ad0",
+                            "SpawnChance": 0.1,
+                            "Drops": [
+                                {
+                                    "guid": "cf4835d1-7777-4caf-b1ef-cf8fe1af61e0",
+                                    "id": "0",
+                                    "Item": "2f90039f-4a9d-4164-a3aa-0ca1c3e2843b",
+                                    "Chance": 60
+                                }
+                            ]
+                        },
+                        {
+                            "guid": "bb4dc09b-0b69-4130-9f37-aebf149f539f",
+                            "id": "1",
+                            "Creature": "8ab58bf6-52d0-403f-863e-5e3d9150b307",
+                            "SpawnChance": 0.6,
+                            "Drops": [
+                                {
+                                    "guid": "66445af3-8e76-4520-a53f-eaca73cad2f7",
+                                    "id": "0",
+                                    "Item": "9f8ed548-24e0-4ba2-8af9-b36a503a4532",
+                                    "Chance": 38
+                                }
+                            ]
+                        },
+                        {
+                            "guid": "7903c624-9acc-4684-a90e-1e078216dd1e",
+                            "id": "2",
+                            "Creature": "d1892cc6-561d-4421-8412-ce2e12b695c0",
+                            "Drops": [
+                                {
+                                    "guid": "c7ecad9a-9f9c-41ee-bd69-962257bf9c1b",
+                                    "id": "0",
+                                    "Item": "3222cf74-1224-4417-9d40-c3627320f044",
+                                    "Chance": 49
+                                }
+                            ],
+                            "SpawnChance": 0.2
+                        }
+                    ]
+                },
+                {
+                    "guid": "adf7a8a7-0b6b-42da-ba48-c70b4dd8373c",
+                    "id": "Ocean",
+                    "Spawns": [
+                        {
+                            "guid": "62517f0d-3278-4790-a396-b1ab94794031",
+                            "id": "0",
+                            "Creature": "effe33cf-aa70-4147-a0a3-c4c94636bd9a",
+                            "SpawnChance": 0.9,
+                            "Drops": [
+                                {
+                                    "guid": "764e72e5-c7b2-4578-9c39-0e4945aecd35",
+                                    "id": "0",
+                                    "Item": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
+                                    "Chance": 29
+                                }
+                            ]
+                        },
+                        {
+                            "guid": "48c0da60-914f-4465-aeb1-99fe5ed93755",
+                            "id": "1",
+                            "Creature": "69b0dd0d-ac65-4398-aef5-81b291f722a6",
+                            "SpawnChance": -2,
+                            "Drops": [
+                                {
+                                    "guid": "9303ac57-8c15-4e34-8c44-0b5fc09fad48",
+                                    "id": "0",
+                                    "Item": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
+                                    "Chance": 8
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "guid": "2da87158-8e0f-4316-af15-fd4b7d8ff344",
+                    "id": "Castle",
+                    "Spawns": [
+                        {
+                            "guid": "58260fbb-65b5-4339-bc78-e51d236531b8",
+                            "id": "0",
+                            "Creature": "9742fc00-3d8a-49bf-826e-1e085a594ad0",
+                            "SpawnChance": 0.6,
+                            "Drops": [
+                                {
+                                    "guid": "84f86539-3002-4e39-b872-bddd327b1f37",
+                                    "id": "0",
+                                    "Item": "2f90039f-4a9d-4164-a3aa-0ca1c3e2843b",
+                                    "Chance": 70
+                                },
+                                {
+                                    "guid": "d938296d-093a-49af-9768-0dee5c764fb8",
+                                    "id": "1",
+                                    "Item": "3222cf74-1224-4417-9d40-c3627320f044",
+                                    "Chance": 80
+                                },
+                                {
+                                    "guid": "acbf83f7-3c0a-44a5-bebe-b240c3b6e2aa",
+                                    "id": "2",
+                                    "Item": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
+                                    "Chance": 89
+                                }
+                            ]
+                        },
+                        {
+                            "guid": "8c4c5dfe-e765-4eb4-b72b-ae7b30277988",
+                            "id": "1",
+                            "Creature": "69b0dd0d-ac65-4398-aef5-81b291f722a6",
+                            "SpawnChance": 0.9,
+                            "Drops": [
+                                {
+                                    "guid": "606977ba-7468-4e5c-a994-8f9c68dfccca",
+                                    "id": "0",
+                                    "Item": "2f90039f-4a9d-4164-a3aa-0ca1c3e2843b",
+                                    "Chance": 5
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "hidden": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Items",
+            "description": "Items that can be dropped by creatures",
+            "displayColumn": "id",
+            "guid": "bc287c20-f34c-4001-b9b6-5d06be5958d2",
+            "columns": [],
+            "lines": [
+                {
+                    "guid": "2f90039f-4a9d-4164-a3aa-0ca1c3e2843b",
+                    "id": "Big Sword"
+                },
+                {
+                    "guid": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
+                    "id": "Magic Potion"
+                },
+                {
+                    "guid": "9f8ed548-24e0-4ba2-8af9-b36a503a4532",
+                    "id": "Quick Shoes"
+                },
+                {
+                    "guid": "3222cf74-1224-4417-9d40-c3627320f044",
+                    "id": "Large Shield"
+                }
+            ],
+            "hidden": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Stats",
+            "description": "list@a0c417ca-b70d-47f2-8335-da97a81744eb",
+            "displayColumn": "id",
+            "guid": "d9310e74-aa60-4cd8-837e-1c7af333781d",
+            "columns": [
+                {
+                    "typeStr": "float",
+                    "guid": "5c9cfc3f-880d-48e5-9620-dadb6df4e6aa",
+                    "description": "float field",
+                    "name": "DamageModifier",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newFloat",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "float",
+                        "max": "float",
+                        "defaultValue": "float"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "parentSheetGUID": "a0c417ca-b70d-47f2-8335-da97a81744eb",
+            "columnGUID": "15a0cda6-97b9-4d91-9f2f-bed89d923df4"
+        },
+        {
+            "name": "Spawns",
+            "description": "list@c831852d-bf14-40a4-9daf-d4bc3eaa9f66",
+            "displayColumn": "id",
+            "guid": "c0061b99-378e-4c38-868c-68b2312d4b84",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "3f35cb3f-0501-4dee-a678-e368b1d0fd75",
+                    "name": "Creature",
+                    "description": "new line reference field",
+                    "sheet": "a0c417ca-b70d-47f2-8335-da97a81744eb",
+                    "defaultValue": "",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "float",
+                    "guid": "3a92e7eb-1d81-4800-bd2a-5fc0eb9aa3c8",
+                    "description": "float field",
+                    "name": "SpawnChance",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newFloat",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "float",
+                        "max": "float",
+                        "defaultValue": "float"
+                    }
+                },
+                {
+                    "typeStr": "list",
+                    "guid": "b36ae21d-0396-495f-bca7-cb74fc417a57",
+                    "name": "Drops",
+                    "description": "new list field",
+                    "sheet": "0143dbef-47b2-4491-8fac-efd7d0ca908d",
+                    "defaultValue": [],
+                    "iconName": "newList",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "parentSheetGUID": "c831852d-bf14-40a4-9daf-d4bc3eaa9f66",
+            "columnGUID": "4dc3d748-2227-4c37-87a0-936334a220fd"
+        },
+        {
+            "name": "Drops",
+            "description": "list@c0061b99-378e-4c38-868c-68b2312d4b84",
+            "displayColumn": "id",
+            "guid": "0143dbef-47b2-4491-8fac-efd7d0ca908d",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "2586dc09-aa0c-4bf1-8b26-841168ad10ff",
+                    "name": "Item",
+                    "description": "new line reference field",
+                    "sheet": "bc287c20-f34c-4001-b9b6-5d06be5958d2",
+                    "defaultValue": "",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "float",
+                    "guid": "ffe02cb2-80bf-466b-942e-01545f8afa0d",
+                    "description": "float field",
+                    "name": "Chance",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newFloat",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "float",
+                        "max": "float",
+                        "defaultValue": "float"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "parentSheetGUID": "c0061b99-378e-4c38-868c-68b2312d4b84",
+            "columnGUID": "b36ae21d-0396-495f-bca7-cb74fc417a57"
+        }
+    ]
+}

@@ -38,15 +38,16 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 			});
 		}
 		function initWebview() {
-			let dataType = "";
-			switch (document.fileName.split('.').pop()) 
-			{
-				// This is sketched in here for people to easily extend Depot by providing their own extensions
-				// That allow a different route through the scaffolded code
-				case 'dpo':
-					dataType = 'depot';
-					break;			
-			}
+			// This is sketched in here for people to easily extend Depot by providing their own extensions
+			// That allow a different route through the scaffolded code
+			// let dataType = "";
+			// switch (document.fileName.split('.').pop()) 
+			// {
+			// 	case 'dpo':
+			// 		dataType = 'depot';
+			// 		break;			
+			// }
+			let dataType = 'depot';
 			webviewPanel.webview.postMessage({
 				type: 'init',
 				text: document.getText(),

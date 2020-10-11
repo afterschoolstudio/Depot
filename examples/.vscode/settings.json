@@ -1,0 +1,8 @@
+{
+    "workbench.editorAssociations": [
+        {
+            "viewType": "depot.data",
+            "filenamePattern": "*.test"
+        }
+    ]
+}

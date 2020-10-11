@@ -126,8 +126,6 @@
 	<p>Loading</p>
 {:else if dataType === "depot"}
     <Depot bind:data={jsonData} on:message={handleMessage}/>
-{:else if dataType === "example"}
-    <!-- Could use a different data type here and bypass Depot -->
 {:else}
 	<p>Error: Invalid Data Type {dataType}</p>
 {/if}
