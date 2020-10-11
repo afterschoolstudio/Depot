@@ -1,6 +1,6 @@
 {
 	"name": "depot",
-	"icon": "images/depot_icon_code.png",
+	"icon": "depot_icon_code.png",
 	"displayName": "Depot Data Editor",
 	"description": "Structured data editor for VS Code - Edit JSON data directly inside of code with a spreadsheet like interface. Can be used to replace the need for .csv or XML files",
 	"publisher": "afterschool",
@@ -16,7 +16,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/RandomFractals/vscode-data-preview"
+		"url": "https://github.com/kkukshtel/Depot"
 	},
 	"bugs": "https://github.com/kkukshtel/Depot/issues",
 	"homepage": "https://github.com/kkukshtel/Depot/blob/master/README.md",
