@@ -24,7 +24,7 @@ You can also manually create a Depot file by creating a file with this as its co
 
 ```
 {
-    sheets:[]
+    "sheets":[]
 }
 ```
 
