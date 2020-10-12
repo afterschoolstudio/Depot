@@ -1,13 +1,56 @@
 import * as path from 'path';
+import { posix } from 'path';
 import * as vscode from 'vscode';
+import { window } from 'vscode';
 import { getNonce } from './util';
 
 export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 
 	public static register(context: vscode.ExtensionContext): vscode.Disposable { 
-		const provider = new DepotEditorProvider(context);
-		const providerRegistration = vscode.window.registerCustomEditorProvider(DepotEditorProvider.viewType, provider);
-		return providerRegistration;
+
+		vscode.commands.registerCommand('depot.newDepotFile', async () => {
+			const workspaceFolders = vscode.workspace.workspaceFolders;
+			if (!workspaceFolders) {
+				vscode.window.showErrorMessage("Creating new Depot files currently requires opening a workspace");
+				return;
+			}
+
+			let defFile = vscode.workspace.getConfiguration('depot').get('defaults.newFileName') + "";
+			const result = await window.showInputBox({
+				value: defFile,
+				valueSelection: [0, 0],
+				placeHolder: 'Enter the name of the new Depot file, including the extension'
+				// validateInput: text => {
+				// 	window.showInformationMessage(`Validating: ${text}`);
+				// 	return text === '123' ? 'Not 123!' : null;
+				// }
+			});
+
+			if(result !== undefined)
+			{
+				// @ts-ignore
+				const folderUri = vscode.workspace.workspaceFolders[0].uri;
+				//set these in depot settings config - default file name, default template
+				// @ts-ignore
+				const fileUri = folderUri.with({ path: posix.join(folderUri.path, result) });
+				const writeStr = '{ "sheets": []}';
+				const writeData = Buffer.from(writeStr, 'utf8');
+				vscode.workspace.fs.writeFile(fileUri,writeData).then(() => {
+					vscode.commands.executeCommand('vscode.openWith', fileUri, DepotEditorProvider.viewType);
+				});
+			}
+
+		});
+
+
+		return vscode.window.registerCustomEditorProvider(
+			DepotEditorProvider.viewType,
+			new DepotEditorProvider(context),
+			{
+				webviewOptions: {
+					retainContextWhenHidden: true,
+				}
+			});
 	}
 
 	private static readonly viewType = 'depot.data';
