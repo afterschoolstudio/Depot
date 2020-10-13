@@ -16,6 +16,8 @@
 
 ## Quickstart
 
+[Watch an overview video here](https://www.youtube.com/watch?v=tCTQvd3zkEg)
+
 1. Install Depot as an extension in VS Code.
 2. Once installed, use the "Create a new Depot file" command to create a new Depot file in your workspace.
 3. Click on the file, create a new sheet, and start working!
