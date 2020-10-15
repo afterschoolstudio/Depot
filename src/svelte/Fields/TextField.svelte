@@ -14,7 +14,10 @@
     }
     function validateText() {
         dispatch('message', {
-            "type" : "validate"
+            "type" : "validate",
+            "data" : {
+                "sheetGUID" : sheetGUID
+            }
         });
     }
 </script>

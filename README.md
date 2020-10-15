@@ -70,13 +70,17 @@ A Depot file (```.dpo```) is just JSON, but unlike normal JSON it's organized th
 
 ### Sheets
 
+[Read more about sheets on the wiki here](https://github.com/kkukshtel/Depot/wiki/Depot-Sheet-Information)
+
 At the highest level, a Depot file consists of some number of sheets. These sheets are invididual collections of structured data, with the added benefit that they can also reference each other.
 
 ### Lines
 
 A given sheet also has some number of lines. You can think of a sheet's lines as entries in the database defined by the sheet. Lines have data based on what columns are in the sheet it is a part of.
 
-### Columns WIP
+### Columns
+
+[For a deeper dive on columns and their types, click here](https://github.com/kkukshtel/Depot/wiki/Depot-Column-Information)
 
 Columns define the fields of a sheet that a line can have data for. Columns can be specific primitive types (```string```, ```bool```, ```int```, etc.), but can also be other special types unique to Depot:
 
@@ -97,12 +101,6 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 | List            | ![List Icon](./images/icons/newList.png)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
 
 ## CastleDB Differences
-WIP
-
-## Column Editing
-WIP
-
-## Sheet Editing
 WIP
 
 ## Wiki Note
