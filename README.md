@@ -62,7 +62,7 @@ A Depot file is special because it contains not only its data, but also stores i
 
 Additionally, because Depot uses JSON with newlines, your data can be easily versioned through things like Git. Any changes to the data model or data itself will be reflected in the Depot file, with the same accuracy as normal source control.
 
-Lastly, Depot could not exist without the work done by Nicholas Canasse on [CastleDB](https://github.com/ncannasse/castle). Depot is heavily inspired by CastleDB, but with the goal of bringing structed data editing to the IDE itself instead of needing to use another program. If you're familiar with CastleDB, you can read more about the similarites and differences between it and Depot below.
+Lastly, Depot could not exist without the work done by Nicholas Canasse on [CastleDB](https://github.com/ncannasse/castle). Depot is heavily inspired by CastleDB, but with the goal of bringing structed data editing to the IDE itself instead of needing to use another program. [If you're familiar with CastleDB, you can read more about the similarites and differences between it and Depot here](https://github.com/kkukshtel/Depot/wiki/Depot-vs.-CastleDB).
 
 ## Under the hood
 
