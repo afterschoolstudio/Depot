@@ -282,10 +282,16 @@ function validateID(event,line) {
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,false)}>
                             <img src={iconPaths["showList"].path} alt="Hide list">
                         </button>
+                        ...
                     {:else}
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,true)}>
                             <img src={iconPaths["hideList"].path} alt="Show list">
                         </button>
+                        {#if line[column.name].length > 0 && line[column.name].length <= 5}
+                            {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id)}
+                        {:else if line[column.name].length > 5}
+                            {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id).slice(0, 4)}...
+                        {/if}
                     {/if}
                 {/if}
                 </div>
