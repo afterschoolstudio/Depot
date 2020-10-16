@@ -62,7 +62,7 @@ A Depot file is special because it contains not only its data, but also stores i
 
 Additionally, because Depot uses JSON with newlines, your data can be easily versioned through things like Git. Any changes to the data model or data itself will be reflected in the Depot file, with the same accuracy as normal source control.
 
-Lastly, Depot could not exist without the work done by Nicholas Canasse on [CastleDB](https://github.com/ncannasse/castle). Depot is heavily inspired by CastleDB, but with the goal of bringing structed data editing to the IDE itself instead of needing to use another program. [If you're familiar with CastleDB, you can read more about the similarites and differences between it and Depot here](https://github.com/kkukshtel/Depot/wiki/Depot-vs.-CastleDB).
+Lastly, Depot could not exist without the work done by Nicholas Canasse on [CastleDB](https://github.com/ncannasse/castle). Depot is heavily inspired by CastleDB, but with the goal of bringing structed data editing to the IDE itself instead of needing to use another program. If you're familiar with CastleDB, you can [read more about the similarites and differences between it and Depot here](https://github.com/kkukshtel/Depot/wiki/Depot-vs.-CastleDB).
 
 ## Under the hood
 
@@ -100,13 +100,10 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 | Sheet Reference | ![Sheet Reference Icon](./images/icons/newSheetLink.png) | A reference to a sheet in the current Depot file                                                  | String GUID of selected sheet      | ```""```                 |
 | List            | ![List Icon](./images/icons/newList.png)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
 
-## CastleDB Differences
-WIP
+## Wiki
+For more in-depth documentation on Depot, [you can read the wiki here](https://github.com/kkukshtel/Depot/wiki).
 
-## Wiki Note
-WIP
-
-## Extending Depot WIP
+## Extending Depot
 
 WIP
 
@@ -116,20 +113,14 @@ WIP
 * When the linw a line reference field references is deleted the lines that pointed to that line get their linked value set to "". Defaults that pointed to that get pointed to ""
 * If the sheet column is modified for a line reference field, the defaults and values stay as their old values but display an error that they link to an unreachable value
 
-## Known Issues WIP
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Attribution
-
-Image samples in the example folder are from [game-icons.net](https://game-icons.net/) under the [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) license
-
-## Release Notes WIP
-
-Users appreciate release notes as you update your extension.
+## Release Notes
 
 ### 1.0.0
 
 Initial release of Depot
 
 ---
+
+## Attribution
+
+Image samples in the example folder are from [game-icons.net](https://game-icons.net/) under the [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) license
