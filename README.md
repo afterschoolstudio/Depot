@@ -115,6 +115,13 @@ WIP
 
 ## Release Notes
 
+### 1.2.0
+
+- Updates Mult-select fields to use checkmark options instead of Ctrl/Cmd+Click
+- Adds ability for Multi to display horizontally or vertically
+- Adds in List preview in lines to see what items are in a given list. Uses ID to display values
+- Adds in concept of "Column Updating" for a column. If the default schema of a column is updated (for example, Multi-Select got the "displayType" property), Depot will prompt you to update "older" versions of that schema to add in any new values.
+
 ### 1.0.0
 
 Initial release of Depot
