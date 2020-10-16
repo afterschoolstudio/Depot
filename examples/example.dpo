@@ -506,6 +506,52 @@
             "hidden": true,
             "parentSheetGUID": "c0061b99-378e-4c38-868c-68b2312d4b84",
             "columnGUID": "b36ae21d-0396-495f-bca7-cb74fc417a57"
+        },
+        {
+            "name": "multitest",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "0e3c1c33-df31-4d72-a379-be4f7b7c18a4",
+            "columns": [
+                {
+                    "typeStr": "multiple",
+                    "guid": "9c63db94-71a0-4f4d-93f6-49c58e87d99a",
+                    "name": "newMultiple",
+                    "description": "new multiple field",
+                    "options": "one, two, three",
+                    "defaultValue": "one",
+                    "iconName": "newMulti",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text",
+                        "options": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "2a64d3cf-32ab-45d3-8b41-d954bd2c8258",
+                    "id": "0",
+                    "newMultiple": [
+                        "one"
+                    ]
+                }
+            ],
+            "hidden": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
         }
     ]
 }
