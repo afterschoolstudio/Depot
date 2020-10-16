@@ -4,6 +4,7 @@
     export let data;
     export let sheetGUID;
     export let options;
+    export let displayType = "vertical";
     const dispatch = createEventDispatcher();
     function fieldUpdated() {
         dispatch('message', {
@@ -13,12 +14,14 @@
             }
         });
     }
+
 </script>
-<!-- svelte-ignore a11y-no-onchange -->
-<select multiple bind:value={data} on:change={fieldUpdated}>
-    {#each options as option}
-    <option value={option}>
-        {option}
-    </option>
-    {/each}
-</select>
+{#each options as option}
+<label>
+    <input type=checkbox bind:group={data} value={option} on:change={fieldUpdated}>
+    {option}
+</label>
+    {#if displayType == "vertical"}
+    <br>
+    {/if}
+{/each}

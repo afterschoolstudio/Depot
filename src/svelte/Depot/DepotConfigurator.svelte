@@ -52,6 +52,9 @@ function saveBlob() {
 function deleteBlob() {
     configUpdate("delete");
 }
+function upgradeColumn() {
+    configUpdate("upgradeColumnData");
+}
 
 let validName = true;
 // $: disabled = !validName;
@@ -81,9 +84,39 @@ $: {
     }
 }
 
+let needsColumnUpdate = false;
+$: {
+    if(config.operation === "edit" && config.editType !== "sheet") {
+        needsColumnUpdate = false;
+        Object.keys(defaults[data.typeStr]).forEach(key => {
+            if(key !== "configurable") {
+                if (!(key in data)){
+                    needsColumnUpdate = true;
+                    return;
+                }
+            } else {
+            Object.keys(defaults[data.typeStr]["configurable"]).forEach(configKey => {
+                if (!(configKey in data["configurable"])){
+                    needsColumnUpdate = true;
+                    return;
+                }
+                });
+            }
+        });
+    } else {
+        needsColumnUpdate = false;
+    }
+}
+
 </script>
 {#if config.active}
     <p>{configTitle}</p>
+    {#if needsColumnUpdate}
+        Depot has been updated since you first created this column. Click below to update this column to the latest version.<br>
+        Note that any unsaved changes on this column will be reverted upon column update.<br>
+        <button on:click={upgradeColumn}>Update Column</button>
+        <br>
+    {/if}
     <table>
     <tr>
         <td>Field</td>
@@ -114,6 +147,9 @@ $: {
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->
                 {:else if configuration[fieldName] === "int" || configuration[fieldName] === "float"}
                 <div><NumberField bind:data={data[fieldName]}/></div>
+                
+                {:else if configuration[fieldName] === "enum"}
+                <div><EnumField allowEmpty={false} bind:data={data[fieldName]} options={configuration["enum@"+fieldName].options}/></div>
 
                 <!-- column and line select assume a sheet field in the editing object -->
                 {:else if configuration[fieldName].split("@")[0] === "lineSelect"}

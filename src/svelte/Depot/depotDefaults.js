@@ -141,11 +141,16 @@ export let defaults = {
         "options" : "",
         "defaultValue" : "",
         "iconName" : "newMulti",
+        "displayType" : "vertical",
         "configurable" : {
             "name" : "text",
             "description" : "text",
             "defaultValue" : "text",
-            "options" : "text"
+            "options" : "text",
+            "displayType" : "enum",
+            "enum@displayType" : {
+                "options" : ["vertical","horizontal"]
+            }
         }
     },
     "sheetReference" : {

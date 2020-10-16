@@ -274,7 +274,7 @@ function validateID(event,line) {
                         <div title="Selected value with GUID {line[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
                     {/if}
                 {:else if column.typeStr === "multiple"}
-                <MultipleField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <MultipleField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "list"}

@@ -200,8 +200,7 @@
                     "Spawns": [
                         {
                             "guid": "b59c1a91-3127-4577-96cc-64cbc0faf207",
-                            "id": "0",
-                            "Creature": "9742fc00-3d8a-49bf-826e-1e085a594ad0",
+                            "id": "Dragon",
                             "SpawnChance": 0.1,
                             "Drops": [
                                 {
@@ -210,12 +209,12 @@
                                     "Item": "2f90039f-4a9d-4164-a3aa-0ca1c3e2843b",
                                     "Chance": 60
                                 }
-                            ]
+                            ],
+                            "Data": "9742fc00-3d8a-49bf-826e-1e085a594ad0"
                         },
                         {
                             "guid": "bb4dc09b-0b69-4130-9f37-aebf149f539f",
-                            "id": "1",
-                            "Creature": "8ab58bf6-52d0-403f-863e-5e3d9150b307",
+                            "id": "Bear",
                             "SpawnChance": 0.6,
                             "Drops": [
                                 {
@@ -224,12 +223,12 @@
                                     "Item": "9f8ed548-24e0-4ba2-8af9-b36a503a4532",
                                     "Chance": 38
                                 }
-                            ]
+                            ],
+                            "Data": "8ab58bf6-52d0-403f-863e-5e3d9150b307"
                         },
                         {
                             "guid": "7903c624-9acc-4684-a90e-1e078216dd1e",
-                            "id": "2",
-                            "Creature": "d1892cc6-561d-4421-8412-ce2e12b695c0",
+                            "id": "Lion",
                             "Drops": [
                                 {
                                     "guid": "c7ecad9a-9f9c-41ee-bd69-962257bf9c1b",
@@ -238,7 +237,8 @@
                                     "Chance": 49
                                 }
                             ],
-                            "SpawnChance": 0.2
+                            "SpawnChance": 0.2,
+                            "Data": "d1892cc6-561d-4421-8412-ce2e12b695c0"
                         }
                     ]
                 },
@@ -248,8 +248,7 @@
                     "Spawns": [
                         {
                             "guid": "62517f0d-3278-4790-a396-b1ab94794031",
-                            "id": "0",
-                            "Creature": "effe33cf-aa70-4147-a0a3-c4c94636bd9a",
+                            "id": "Shark",
                             "SpawnChance": 0.9,
                             "Drops": [
                                 {
@@ -258,12 +257,12 @@
                                     "Item": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
                                     "Chance": 29
                                 }
-                            ]
+                            ],
+                            "Data": "effe33cf-aa70-4147-a0a3-c4c94636bd9a"
                         },
                         {
                             "guid": "48c0da60-914f-4465-aeb1-99fe5ed93755",
-                            "id": "1",
-                            "Creature": "69b0dd0d-ac65-4398-aef5-81b291f722a6",
+                            "id": "Raven",
                             "SpawnChance": -2,
                             "Drops": [
                                 {
@@ -272,7 +271,8 @@
                                     "Item": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
                                     "Chance": 8
                                 }
-                            ]
+                            ],
+                            "Data": "69b0dd0d-ac65-4398-aef5-81b291f722a6"
                         }
                     ]
                 },
@@ -282,8 +282,7 @@
                     "Spawns": [
                         {
                             "guid": "58260fbb-65b5-4339-bc78-e51d236531b8",
-                            "id": "0",
-                            "Creature": "9742fc00-3d8a-49bf-826e-1e085a594ad0",
+                            "id": "Dragon",
                             "SpawnChance": 0.6,
                             "Drops": [
                                 {
@@ -304,12 +303,12 @@
                                     "Item": "ad56ccdf-caad-4c52-8db8-fde59913e42c",
                                     "Chance": 89
                                 }
-                            ]
+                            ],
+                            "Data": "9742fc00-3d8a-49bf-826e-1e085a594ad0"
                         },
                         {
                             "guid": "8c4c5dfe-e765-4eb4-b72b-ae7b30277988",
-                            "id": "1",
-                            "Creature": "69b0dd0d-ac65-4398-aef5-81b291f722a6",
+                            "id": "Raven",
                             "SpawnChance": 0.9,
                             "Drops": [
                                 {
@@ -318,7 +317,8 @@
                                     "Item": "2f90039f-4a9d-4164-a3aa-0ca1c3e2843b",
                                     "Chance": 5
                                 }
-                            ]
+                            ],
+                            "Data": "69b0dd0d-ac65-4398-aef5-81b291f722a6"
                         }
                     ]
                 }
@@ -415,7 +415,7 @@
                 {
                     "typeStr": "lineReference",
                     "guid": "3f35cb3f-0501-4dee-a678-e368b1d0fd75",
-                    "name": "Creature",
+                    "name": "Data",
                     "description": "new line reference field",
                     "sheet": "a0c417ca-b70d-47f2-8335-da97a81744eb",
                     "defaultValue": "",

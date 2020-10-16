@@ -370,10 +370,7 @@ function handleConfigUpdate(event) {
                         }
                     });
                     data.sheets.splice(selectedSheet,1);
-                    if(selectedSheet >= data.sheets.length)
-                    {
-                        focusSheet(selectedSheet - 1 < 0 ? 0 : selectedSheet - 1);
-                    }
+                    focusSheet(0);
                     //delete any references to this and set to ""
                     data.sheets.forEach(sheet => {
                         var sheetRefColumns = sheet.columns.filter(column => column.typeStr === "sheetReference");
@@ -448,6 +445,36 @@ function handleConfigUpdate(event) {
         case "close":
             editorConfig = {"active":false};
             break;
+        case "upgradeColumnData":
+            //this updates a column with a new config
+            let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
+            var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.originalData.name); //old name, dont use a new name we may have input into editordata
+            //find discrepancies
+            let targetColumn = data.sheets[sheetIndex].columns[index];
+            Object.keys(defaults[editorData.typeStr]).forEach(key => {
+                if(key !== "configurable") {
+                    if (!(key in targetColumn)){
+                        targetColumn[key] = defaults[editorData.typeStr][key];
+                    }
+                } else {
+                    Object.keys(defaults[editorData.typeStr]["configurable"]).forEach(configKey => {
+                        if (!(configKey in targetColumn["configurable"])){
+                        targetColumn["configurable"][configKey] = defaults[editorData.typeStr]["configurable"][configKey];
+                    }
+                    });
+                }
+            });
+            sheetsUpdated();
+            handleTableAction({"detail":{
+                "type" : "editorUpdate",
+                "data" : {
+                    "active" : true,
+                    "operation" : "edit",
+                    "editType" : editorConfig.originalData.name,
+                    "sheetGUID" : editorConfig.sheetGUID
+                }
+            }});
+            break;
         default:
             editorConfig = {"active":false};
             break;
@@ -478,13 +505,13 @@ function handleTableAction(event) {
     switch (event.detail.type) {
         case "editorUpdate":
             editorConfig = event.detail.data;
-            editorConfig["bannedNames"] = getBannedNames(event.detail.data.sheetGUID,editorConfig);
+            editorConfig["bannedNames"] = getBannedNames(editorConfig.sheetGUID,editorConfig);
             editorConfig["depotInfo"] = depotFileInfo;
-            switch (event.detail.data.operation) {
+            switch (editorConfig.operation) {
                 case "new":
                     editorData = JSON.parse(JSON.stringify(defaults[editorConfig.editType]));
                     editorData["guid"] = uuidv4(); //assign columns and sheets guids
-                    if(event.detail.data.editType === "lineReference")
+                    if(editorConfig.editType === "lineReference")
                     {
                         //not sure why enum value not setting to default in the configurator, so set a default here
                         let defSheet = data.sheets.find(s => s.hidden !== true).guid; //get first unhidden sheet
@@ -492,7 +519,7 @@ function handleTableAction(event) {
                     }
                     break;
                 case "edit":
-                    switch (event.detail.data.editType) {
+                    switch (editorConfig.editType) {
                         case "sheet":
                             editorConfig["originalData"] = JSON.parse(JSON.stringify(data.sheets[sheetIndex]));
                             editorData = JSON.parse(JSON.stringify(data.sheets[sheetIndex]));
