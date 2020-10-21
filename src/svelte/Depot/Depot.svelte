@@ -189,7 +189,7 @@ function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
                 if(Object.keys(line[pathTrail[trailIndex]]).length > 0) {
                     var validPath = basePath + `[${lineIndex}]["${pathTrail[trailIndex]}"]`;
                     if(trailIndex + 1 < pathTrail.length) {
-                        paths = paths.concat(getValidLinesWithListPath(lines[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+                        paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
                     } else {
                         paths.push(validPath);
                     }
@@ -206,7 +206,7 @@ function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
                 // [0].listVarName
                 var validPath = basePath + `["${pathTrail[trailIndex]}"]`;
                 if(trailIndex + 1 < pathTrail.length) {
-                    paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+                    paths = paths.concat(getValidLinesWithListPath(lines[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
                 } else {
                     paths.push(validPath);
                 }
