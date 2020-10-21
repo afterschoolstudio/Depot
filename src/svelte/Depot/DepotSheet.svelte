@@ -29,7 +29,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { createEventDispatcher } from 'svelte';
 export let fullData;
 export let sheetData;
-export let lineData;
+export let inputLineData;
+//maybe just switch on sheetData below instead of trying to cast an array?
+//that way you could also (i think) just write to the single bound lineData?
+$: {
+    if(Array.isArray(inputLineData)) {
+        lineData = inputLineData;
+    } else {
+        //this is a props sheet so we need to spoof a linedata array
+        lineData = [inputLineData]
+    }
+}
+let lineData;
 export let debug;
 export let showLineGUIDs;
 export let depotInfo;
@@ -116,7 +127,6 @@ function handleSubTableEvent(event) {
                     for (let index = 1; index <= event.detail.data.amount; index++) {
                         var newLine = {};
                         newLine["guid"] = uuidv4();
-                        newLine["id"] = lineData[refLineIndex][refLineColumn.name].length + "";
                         fullData.sheets[nestedSheetIndex].columns.forEach(column => {
                             if(column.typeStr == "multiple")
                             {
@@ -127,11 +137,21 @@ function handleSubTableEvent(event) {
                                 newLine[column.name] = column.defaultValue;
                             }
                         });
-                        lineData[refLineIndex][refLineColumn.name].push(newLine);
+                        if(!fullData.sheets[nestedSheetIndex].isProps) {
+                            newLine["id"] = lineData[refLineIndex][refLineColumn.name].length + "";
+                            lineData[refLineIndex][refLineColumn.name].push(newLine);
+                        } else {
+                            lineData[refLineIndex][refLineColumn.name] = newLine;
+                        }
                     }
                     break;
                 case "remove":
-                    lineData[refLineIndex][refLineColumn.name].splice(event.detail.data.lineIndex,1);
+                    if(!fullData.sheets[nestedSheetIndex].isProps) {
+                        lineData[refLineIndex][refLineColumn.name].splice(event.detail.data.lineIndex,1);
+                    } else {
+                        //note this doesnt remove the props config, just this entry in this line
+                        lineData[refLineIndex][refLineColumn.name] = {};
+                    }
                     //delete this from visibility
                     //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
                     //this doesn't happen right now so creates some garbage in listVisibility
@@ -228,12 +248,16 @@ function validateID(event,line) {
         {#if showLineGUIDs}
         <th>GUID</th>
         {/if}
+        {#if !sheetData.isProps}
         <th>ID</th>
+        {/if}
         {#each sheetData.columns as column}
             <th title="{column.description}"><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
         {/each}
     </tr>
     {#each lineData as line, i}
+    <!-- this prevents us from preemptively drawing empty an empty props entry -->
+    {#if Object.keys(line).length !== 0}
         <tr>
             <td style="width:17px">
             <button class="buttonIcon" title="Remove Line" on:click={() => removeLine(i,line,originLineGUID)}>
@@ -243,7 +267,9 @@ function validateID(event,line) {
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}
+            {#if !sheetData.isProps}
             <td><TextField sheetGUID={sheetData.guid} bind:data={line["id"]} on:message={(event) => validateID(event,line)}/></td>
+            {/if}
             {#each sheetData.columns as column, c}
                 <td title="{column.description}">
                 <div>
@@ -277,20 +303,31 @@ function validateID(event,line) {
                 <MultipleField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
-                {:else if column.typeStr === "list"}
+                {:else if column.typeStr === "list" || column.typeStr === "props"}
                     {#if line.guid in listVisibility && listVisibility[line.guid].guid === column.guid}
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,false)}>
-                            <img src={iconPaths["showList"].path} alt="Hide list">
+                            <img src={iconPaths["showList"].path} alt="Hide {column.typeStr}">
                         </button>
                         ...
                     {:else}
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,true)}>
-                            <img src={iconPaths["hideList"].path} alt="Show list">
+                            <img src={iconPaths["hideList"].path} alt="Show {column.typeStr}">
                         </button>
-                        {#if line[column.name].length > 0 && line[column.name].length <= 5}
-                            {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id)}
-                        {:else if line[column.name].length > 5}
-                            {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id).slice(0, 4)}...
+                        {#if column.typeStr === "list"}
+                            <!-- Preview list contents  -->
+                            {#if line[column.name].length > 0 && line[column.name].length <= 5}
+                                {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id)}
+                            {:else if line[column.name].length > 5}
+                                {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id).slice(0, 4)}...
+                            {/if}
+                        {:else}
+                            <!-- Preview props contents  -->
+                            {#each Object.keys(line[column.name]) as k, index}
+                                {#if k !== "guid" && index < 5}
+                                    {k} : {line[column.name][k]} 
+                                {/if}
+                            {/each}
+                            ...
                         {/if}
                     {/if}
                 {/if}
@@ -298,6 +335,8 @@ function validateID(event,line) {
                 </td>
             {/each}
         </tr>
+        <!-- if line has a hidden sheet currently set to visible -->
+        <!-- listVisibility is guid, column  -->
         {#if line.guid in listVisibility}
         <!-- maybe pull this out of the tr and just use a div? -->
         <tr>
@@ -310,7 +349,7 @@ function validateID(event,line) {
                                 originLineGUID={line.guid}
                                 bind:fullData={fullData} 
                                 bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
-                                bind:lineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)] 
+                                bind:inputLineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)] 
                                                        [listVisibility[line.guid].name]} 
                                 depotInfo={depotInfo} 
                                 on:message={handleSubTableEvent}
@@ -318,7 +357,19 @@ function validateID(event,line) {
             </td>
         </tr>
         {/if}
+    {/if}
     {/each}
+    <!-- dont allow more than one line for a props sheet -->
+    {#if sheetData.isProps && Object.keys(inputLineData).length === 0}
+    <tr>
+        <td></td>
+        <td colspan="{totalColumns -  1}">
+            <button class="buttonIcon addLine" title="Add props" on:click={() => addLines(1,originLineGUID)}>
+                <img src={iconPaths["addPropsLine"].path} alt="Add props">
+            </button>
+        </td>
+    </tr>
+    {:else if !sheetData.isProps}
     <tr>
         <td></td>
         <td colspan="{totalColumns -  1}">
@@ -333,6 +384,7 @@ function validateID(event,line) {
             </button>
         </td>
     </tr>
+    {/if}
     </table>
 {#if debug}
 <p>Current Table Data:</p>

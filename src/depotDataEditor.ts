@@ -194,7 +194,9 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 			"newText.svg",
 			"removeLine.svg",
 			"showList.svg",
-			"hideList.svg"
+			"hideList.svg",
+			"newProps.svg",
+			"addPropsLine.svg"
 		];
 
 		const icons:any = {};

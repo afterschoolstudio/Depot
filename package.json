@@ -124,6 +124,7 @@
 		"svelte": "^3.0.0"
 	},
 	"dependencies": {
+		"object-resolve-path": "^1.1.1",
 		"sirv-cli": "^1.0.0",
 		"uuid": "^8.3.0"
 	}

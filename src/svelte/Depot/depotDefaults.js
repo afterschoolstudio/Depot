@@ -23,6 +23,7 @@ export let defaults = {
         "columns": [],
         "lines": [],
         "hidden":false,
+        "isProps":false,
         "configurable" : {
             "name" : "text",
             "description" : "text",
@@ -188,10 +189,23 @@ export let defaults = {
         "typeStr":"list",
         "guid":"",
         "name":"new list",
-        "description":"new list field",
+        "description":"new list field", 
         "sheet":"",
         "defaultValue":[],
         "iconName" : "newList",
+        "configurable" : {
+            "name" : "text",
+            "description" : "text",
+        }
+    },
+    "props" : {
+        "typeStr":"props",
+        "guid":"",
+        "name":"new properties",
+        "description":"new properties field",
+        "sheet":"",
+        "defaultValue":{},
+        "iconName" : "newProps",
         "configurable" : {
             "name" : "text",
             "description" : "text",

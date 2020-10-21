@@ -16,6 +16,7 @@ limitations under the License.
 
 <script>
 import { createEventDispatcher, getContext } from 'svelte';
+import resolvePath from 'object-resolve-path';
 import {defaults} from './depotDefaults';
 import DepotOptions from './DepotOptions.svelte';
 import DepotSheet from './DepotSheet.svelte';
@@ -169,19 +170,59 @@ Object.byString = function(o, s) {
 
 function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
     let paths = [];
-    lines.forEach((line,lineIndex) => {
-        if(line[pathTrail[trailIndex]].length > 0)
-        {
-            // [0].listVarName
-            var validPath = basePath + `[${lineIndex}].${pathTrail[trailIndex]}`;
-            // paths.push(validPath);
-            if(trailIndex + 1 < pathTrail.length) {
-                paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+    //lists and top level sheets
+    if(Array.isArray(lines)) {
+        lines.forEach((line,lineIndex) => {
+            //if line[columnName].length > 0 - aka if there are nested lines here
+            if(Array.isArray(line[pathTrail[trailIndex]])) {
+                if(line[pathTrail[trailIndex]].length > 0) {
+                    // [0].listVarName
+                    var validPath = basePath + `[${lineIndex}]["${pathTrail[trailIndex]}"]`;
+                    if(trailIndex + 1 < pathTrail.length) {
+                        paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+                    } else {
+                        paths.push(validPath);
+                    }
+                }
             } else {
-                paths.push(validPath);
+                //props
+                if(Object.keys(line[pathTrail[trailIndex]]).length > 0) {
+                    var validPath = basePath + `[${lineIndex}]["${pathTrail[trailIndex]}"]`;
+                    if(trailIndex + 1 < pathTrail.length) {
+                        paths = paths.concat(getValidLinesWithListPath(lines[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+                    } else {
+                        paths.push(validPath);
+                    }
+                }
+            }
+        });
+    } else {
+        console.log(lines);
+        console.log(trailIndex);
+        console.log(pathTrail[trailIndex]);
+        console.log(lines[pathTrail[trailIndex]]);
+        if(Array.isArray(lines[pathTrail[trailIndex]])) {
+            if(lines[pathTrail[trailIndex]].length > 0) {
+                // [0].listVarName
+                var validPath = basePath + `["${pathTrail[trailIndex]}"]`;
+                if(trailIndex + 1 < pathTrail.length) {
+                    paths = paths.concat(getValidLinesWithListPath(line[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+                } else {
+                    paths.push(validPath);
+                }
+            }
+        } else {
+            //props
+            if(Object.keys(lines[pathTrail[trailIndex]]).length > 0) {
+                var validPath = basePath + `["${pathTrail[trailIndex]}"]`;
+                if(trailIndex + 1 < pathTrail.length) {
+                    paths = paths.concat(getValidLinesWithListPath(lines[pathTrail[trailIndex]],pathTrail,trailIndex+1,validPath).paths)
+                } else {
+                    paths.push(validPath);
+                }
             }
         }
-    });
+    }
     return {"paths":paths};
 }
 
@@ -198,16 +239,23 @@ function iterateNestedLines(subsheetIndex,iteratorFunction) {
         [6].level1[0].level2
         etc.
     */
-    console.log(getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,""));
+    console.log("paths: " + affectedLines.paths);
     affectedLines.paths.forEach(linePath => {
         /* linePath comes in like [0].level1[0].level2 */
         // subsheetLines is the array of lines nested inside this line entry
-        let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
-        subsheetLines.forEach(line => {
-            console.log("destination line:");
-            console.log(line);
-            iteratorFunction(line);
-        });
+        console.log(resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath));
+        let subsheetLines = resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath);
+        if(Array.isArray(subsheetLines)) {
+            //top level and subsheet
+            subsheetLines.forEach(line => {
+                console.log("destination line:");
+                console.log(line);
+                iteratorFunction(line);
+            });
+        } else {
+            //props
+            iteratorFunction(subsheetLines);
+        }
     });
 }
 
@@ -260,11 +308,29 @@ function handleConfigUpdate(event) {
                         newList["columnGUID"] = editorData.guid;
                         let guid = uuidv4();
                         newList["guid"] = guid;
+                        //assign the column's sheet param to this new list
                         data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
                         newList["name"] = editorData.name;
                         //the list sheet is not configurable
                         delete newList.configurable;
                         data.sheets.push(newList);
+                    }
+                    else if(editorData.typeStr === "props") {
+                        // make a new sheet that this props will reference
+                        let newProps = JSON.parse(JSON.stringify(defaults["sheet"]));
+                        newProps["hidden"] = true;
+                        newProps["isProps"] = true;
+                        newProps["description"] = "props@"+data.sheets[sheetIndex].guid;
+                        newProps["parentSheetGUID"] = data.sheets[sheetIndex].guid;
+                        newProps["columnGUID"] = editorData.guid;
+                        let guid = uuidv4();
+                        newProps["guid"] = guid;
+                        //assign the column's sheet param to this new props
+                        data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
+                        newProps["name"] = editorData.name;
+                        //the list sheet is not configurable
+                        delete newProps.configurable;
+                        data.sheets.push(newProps);
                     }
                     editorConfig = {"active":false};
                     sheetsUpdated();
@@ -692,7 +758,7 @@ function selectedSheetEdit() {
                         showLineGUIDs={showLineGUIDs} 
                         bind:fullData={data} 
                         bind:sheetData={data.sheets[selectedSheet]} 
-                        bind:lineData={data.sheets[selectedSheet].lines} 
+                        bind:inputLineData={data.sheets[selectedSheet].lines} 
                         depotInfo={depotFileInfo} 
                         on:message={handleTableAction}
                         bind:listVisibility={listVisibility}/>
