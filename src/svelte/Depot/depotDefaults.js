@@ -119,6 +119,19 @@ export let defaults = {
             "defaultValue" : "text"
         }
     },
+    "file" : {
+        "typeStr": "file",
+        "guid" : "",
+        "name": "newFile",
+        "description" : "new file field",
+        "defaultValue" : "",
+        "iconName" : "newFile",
+        "configurable" : {
+            "name" : "text",
+            "description" : "text",
+            "defaultValue" : "text"
+        }
+    },
     "enum" : {
         "typeStr": "enum",
         "guid" : "",

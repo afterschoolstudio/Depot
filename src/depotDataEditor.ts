@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 import { posix } from 'path';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
@@ -175,35 +176,20 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 			path.join(this.context.extensionPath, 'out', 'compiled/bundle.css')
 		));
 
-		const iconPaths = [
-			"addFiveLines.svg",
-			"addOneLine.svg",
-			"newSheet.svg",
-			"addTenLines.svg",
-			"editSheet.svg",
-			"newBool.svg",
-			"newEnum.svg",
-			"newFloat.svg",
-			"newImage.svg",
-			"newInt.svg",
-			"newLineLink.svg",
-			"newList.svg",
-			"newLongText.svg",
-			"newMulti.svg",
-			"newSheetLink.svg",
-			"newText.svg",
-			"removeLine.svg",
-			"showList.svg",
-			"hideList.svg",
-			"newProps.svg",
-			"addPropsLine.svg"
-		];
+		let iconsExtensionPath = path.join(this.context.extensionPath, 'icons');
+		let iconNames = fs.readdirSync(iconsExtensionPath);
+		//@ts-ignore
+		const iconPaths = [];
+		iconNames.forEach(n => {
+			iconPaths.push(n);
+		});
 
 		const icons:any = {};
+		//@ts-ignore
 		iconPaths.forEach(iconPath => {
 			let filename = iconPath.split(".")[0];
 			let diskPath = vscode.Uri.file(
-				path.join(this.context.extensionPath, 'icons', iconPath)
+				path.join(iconsExtensionPath, iconPath)
 			);
 			icons[filename] = webview.asWebviewUri(diskPath);
 		});

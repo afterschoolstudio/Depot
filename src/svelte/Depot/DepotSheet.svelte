@@ -23,6 +23,7 @@ import ImageField from '../Fields/ImageField.svelte';
 import LongTextField from '../Fields/LongTextField.svelte';
 import MultipleField from '../Fields/MultipleField.svelte';
 import NumberField from '../Fields/NumberField.svelte';
+import FileField from '../Fields/FileField.svelte';
 import {defaults} from './depotDefaults';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -280,6 +281,8 @@ function validateID(event,line) {
                 <LongTextField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "image"}
                 <ImageField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
+                {:else if column.typeStr === "file"}
+                <FileField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "bool"}
                 <BooleanField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "enum"}
