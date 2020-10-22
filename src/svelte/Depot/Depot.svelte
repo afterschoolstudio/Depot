@@ -152,22 +152,6 @@ function getSubsheetParentInfo(subsheetIndex) {
     return parent;
 }
 
-//https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-and-arays-by-string-path/6491621#6491621
-Object.byString = function(o, s) {
-    s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-    s = s.replace(/^\./, '');           // strip a leading dot
-    var a = s.split('.');
-    for (var i = 0, n = a.length; i < n; ++i) {
-        var k = a[i];
-        if (k in o) {
-            o = o[k];
-        } else {
-            return;
-        }
-    }
-    return o;
-}
-
 function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
     let paths = [];
     //lists and top level sheets
@@ -659,7 +643,7 @@ function handleTableAction(event) {
                 let affectedLines = getValidLinesWithListPath(data.sheets[parentInfo.parentIndex].lines,parentInfo.path,0,"").paths;
                 //this is every line with this path, we now need to filter this down to the specific 
                 let filtered = affectedLines.filter(linePath => {
-                    let subsheetLines = Object.byString(data.sheets[parentInfo.parentIndex].lines, linePath);
+                    let subsheetLines = resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath);
                     return subsheetLines[fileKey.lineIndex].guid == fileKey.line.guid;
                 });
                 //filtered now has one element in it with only the path to the cooresponding line
