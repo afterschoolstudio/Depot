@@ -331,7 +331,7 @@ function handleConfigUpdate(event) {
                     var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
                     data.sheets[sheetIndex].columns[index] = editorData; //column now has new name maybe
                     //update line entries depending on circumstances - maybe a faster way?
-                    if(editorConfig.editType !== editorData.name)
+                    if(editorConfig.editType !== editorData.name) //the name changed
                     {
                         if(!data.sheets[sheetIndex].hidden) {
                             data.sheets[sheetIndex].lines.forEach(line => {
@@ -350,6 +350,12 @@ function handleConfigUpdate(event) {
                                 delete line[editorConfig.editType];
                             });
                         }
+
+                        //update display column if it used the old name
+                        if(data.sheets[sheetIndex].displayColumn == editorConfig.editType) {
+                            data.sheets[sheetIndex].displayColumn = editorData.name;
+                        }
+
                         //TODO: may need to do more here if column name change was referenced by other sheet?
                     }
                     if(editorData.typeStr == "multiple")
