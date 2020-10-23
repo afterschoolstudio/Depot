@@ -86,21 +86,23 @@ A given sheet also has some number of lines. You can think of a sheet's lines as
 
 Columns define the fields of a sheet that a line can have data for. Columns can be specific primitive types (```string```, ```bool```, ```int```, etc.), but can also be other special types unique to Depot:
 
-| Column Type     | Icon                                              | Description                                                                                       | Storage Type                       | Default Value            |
-|-----------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------|--------------------------|
-| ID              | None                                              | The ID of a column. These are ideally unique, and Depot will warn you if you duplicate the value. | String value                       | index in sheet as string |
-| GUID            | None                                              | A generated GUID for the given line. These cannot be edited.                                      | String value                       | guid as string           |
-| Text            | ![Text Icon](./images/icons/newText.png)                 | A standard line of text.                                                                          | String value                       | ```""```                 |
-| Long Text       | ![Long Text Icon](./images/icons/newLongText.png)        | Longer line of text. These fields can be resized in the editor.                                   | String Value                       | ```""```                 |
-| Float           | ![Float Icon](./images/icons/newFloat.png)               | Any number                                                                                        | Number value                       | ```0```                  |
-| Int             | ![Int Icon](./images/icons/newInt.png)                   | Integer number                                                                                    | Number value                       | ```0```                  |
-| Bool            | ![Bool Icon](./images/icons/newBool.png)                 | True / False boolean value.                                                                       | ```true``` or ```false```          | ```true```               |
-| Image           | ![Image Icon](./images/icons/newImage.png)               | Path to an image relative to the location of the Depot file (displayed in the sheet)              | String relative path to the image  | ```""```                 |
-| Single Select   | ![Single Select Icon](./images/icons/newEnum.png)        | Exclusive choice between a set number of choices                                                  | String value                       | ```""```                 |
-| Multi Select    | ![Multi Select Icon](./images/icons/newMulti.png)        | Several choices between a set number of choices                                                   | Array of selected values as strings | ```[]```                 |
-| Line Reference  | ![Line Reference Icon](./images/icons/newLineLink.png)   | A reference to a line in a sheet in the current Depot file                                        | String GUID of selected line       | ```""```                 |
-| Sheet Reference | ![Sheet Reference Icon](./images/icons/newSheetLink.png) | A reference to a sheet in the current Depot file                                                  | String GUID of selected sheet      | ```""```                 |
-| List            | ![List Icon](./images/icons/newList.png)                 | An array of structured data                                                                       | Array of structured values         | ```[]```                 |
+|Type|Icon|Description|Storage Type|Default Value|
+|---|---|---|---|---|
+| GUID | None | A generated GUID for the given line. These cannot be edited. | String value | guid as string |
+| ID | None | The ID of a column. These are ideally unique, and Depot will warn you if you duplicate the value. | String value | index in sheet as string |
+| Text | ![New Text Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newText.png) | A standard line of text. | String value | `""` |
+| Long Text | ![New Long Text Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newLongText.png) | Longer line of text. These fields can be resized in the editor. | String Value | `""` |
+| Float | ![New Float Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newFloat.png) | Any number | Number value | `0` |
+| Int | ![New Int Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newInt.png) | Integer number | Number value | `0` |
+| Bool | ![New Bool Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newBool.png) | True / False boolean value. | true or false | `true` |
+| Image | ![New Image Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newImage.png) | Path to an image relative to the location of the Depot file (displayed in the sheet) | String relative path to the image | `""` |
+| Single Select | ![New Single Select Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newEnum.png) | Exclusive choice between a set number of choices | String value | `""` |
+| Multi Select | ![New Multi Select Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newMulti.png) | Several choices between a set number of choices | Array of selected values as strings | `` |
+| Line Reference | ![New Line Reference Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newLineLink.png) | A reference to a line in a sheet in the current Depot file | String GUID of selected line | `""` |
+| Sheet Reference | ![New Sheet Reference Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newSheetLink.png) | A reference to a sheet in the current Depot file | String GUID of selected sheet | `""` |
+| List | ![New List Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newList.png) | An array of structured data | Array of structured values | `[]` |
+| File | ![New File Reference](https://github.com/kkukshtel/Depot/raw/master/images/icons/newFile.png) | Path to a file relative to the location of the Depot file (displayed in the sheet) | String relative path to the image | `""` |
+| Properties | ![New Properties](https://github.com/kkukshtel/Depot/raw/master/images/icons/newProps.png) | This is a top level JSON object that allows you to specify properties for lines and index them directly from a line instead of needing to use an array. | JSON Object | `{}` |
 
 ## Wiki
 For more in-depth documentation on Depot, [you can read the wiki here](https://github.com/kkukshtel/Depot/wiki).
@@ -116,6 +118,18 @@ WIP
 * If the sheet column is modified for a line reference field, the defaults and values stay as their old values but display an error that they link to an unreachable value
 
 ## Release Notes
+
+### 1.3.0
+
+- NEW COLUMN: Properties
+  - Properties allow you to create schemas and data structures that don't need to be indexed by an array. For example, doing something like sheets[0].lines[0].props.key is now possible
+  - Before, everything needed to be a sheet/list, so you would need to do sheets[0].lines[0].props[0].key. If you only have one set of props, you don't want to use arrays all the time!
+  - Nesting: Properties can contain other properties and lists, and list and sheets can contain any number of properties. Nest away!
+- NEW COLUMN: File Reference
+  - Similar to the image reference column, a file refrence allows you to select a file and link it in by path to your Depot file.
+  - This is useful if you want to use a Depot file to corrall all your build platform options, and you want to set file references to platform specific build scripts
+- Bug Fixes:
+  - Fixes issue where renaming display columns messed up line references that pointed to the affected sheet
 
 ### 1.2.0
 
