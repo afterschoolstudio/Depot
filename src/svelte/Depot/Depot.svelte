@@ -88,7 +88,7 @@ $: {
             sheetGuidsFiltered.push(sheet.guid);
         }
         lines[sheet.guid] = { "names": [], "ids": [], "guids" : []};
-        columns[sheet.guid] = { "names": [], "guids" : []};
+        columns[sheet.guid] = { "names": [], "guids" : [], "typeStrs" : []};
         sheet.lines.forEach(line => {
             lines[sheet.guid].names.push(line[sheet.displayColumn])
             lines[sheet.guid].ids.push(line.id)
@@ -97,21 +97,22 @@ $: {
         sheet.columns.forEach(column => {
             columns[sheet.guid].names.push(column.name)
             columns[sheet.guid].guids.push(column.guid)
+            columns[sheet.guid].typeStrs.push(column.typeStr)
         });
         columns[sheet.guid].names.push("id");
         columns[sheet.guid].names.push("guid");
     });
-    depotFileInfo = {"sheets" : {
-                    "names":sheetNames,
-                    "guids":sheetGuids,
-                    },
-                "sheetsFiltered" : {
-                    "names":sheetNamesFiltered,
-                    "guids":sheetGuidsFiltered,
-                    },
-                "lines" : lines,
-                "columns" : columns,
-                };
+    depotFileInfo = {   "sheets" : {
+                            "names":sheetNames,
+                            "guids":sheetGuids,
+                        },
+                        "sheetsFiltered" : {
+                            "names":sheetNamesFiltered,
+                            "guids":sheetGuidsFiltered,
+                        },
+                        "lines" : lines,
+                        "columns" : columns,
+                    };
 }
 
 function createLines(sheetGUID, amount) {

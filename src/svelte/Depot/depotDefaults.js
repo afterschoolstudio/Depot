@@ -228,5 +228,6 @@ export let defaults = {
 
 //every new column needs a name, guid, typeStr, and defaultValue field
 //the @ for columnSelect and lineSelect indicates the field in their type that has the sheet to look up a column or line in
+//[column/lineSelect]@[name of field that holds the sheetname/]
 //typeStr directly maps to svelte fieldtypes
 //the value in the configurable section also maps to svelte field types

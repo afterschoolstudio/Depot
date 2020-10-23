@@ -18,12 +18,12 @@ limitations under the License.
 import {defaults} from './depotDefaults';
 import BooleanField from '../Fields/BooleanField.svelte';
 import EnumField from '../Fields/EnumField.svelte';
-import ImageField from '../Fields/ImageField.svelte';
 import LongTextField from '../Fields/LongTextField.svelte';
-import MultipleField from '../Fields/MultipleField.svelte';
 import NumberField from '../Fields/NumberField.svelte';
 import TextField from '../Fields/TextField.svelte';
 import { createEventDispatcher } from 'svelte';
+import ConfigLineSelect from '../Fields/Config/ConfigLineSelect.svelte';
+import ConfigColumnSelect from '../Fields/Config/ConfigColumnSelect.svelte';
 const dispatch = createEventDispatcher();
 function configUpdate(updateType) {
     dispatch('message', {
@@ -72,15 +72,15 @@ $: {
     }
 }
 
-let configuration = {}
+let columnSettings = {}
 $: {
     if(config.operation === "edit")
     {
-        configuration = data.configurable;
+        columnSettings = data.configurable;
     }
     else if(config.operation === "new")
     {
-        configuration = defaults[config.editType].configurable;
+        columnSettings = defaults[config.editType].configurable;
     }
 }
 
@@ -126,74 +126,48 @@ $: {
         <td>GUID</td>
         <td>{data["guid"]}</td>
     </tr>
-    {#each Object.keys(configuration) as fieldName}
-        {#if typeof configuration[fieldName] !== 'object'}
+    {#each Object.keys(columnSettings) as fieldName}
+        {#if typeof columnSettings[fieldName] !== 'object'}
         <tr>
             <td>{fieldName}</td>
             <td>
                 <!-- commented out fields aren't used for field config -->
-                {#if configuration[fieldName] === "text"}
+                {#if columnSettings[fieldName] === "text"}
                 <div><TextField bind:data={data[fieldName]}/></div>
-                {:else if configuration[fieldName] === "longtext"}
+                {:else if columnSettings[fieldName] === "longtext"}
                 <div><LongTextField bind:data={data[fieldName]}/></div>
                 <!-- {:else if configuration[fieldName] === "image"}
                 <div><ImageField bind:data={data[fieldName]} fileKey={fieldName}/></div> -->
-                {:else if configuration[fieldName] === "bool"}
+                {:else if columnSettings[fieldName] === "bool"}
                 <div><BooleanField bind:data={data[fieldName]}/></div>
-                {:else if configuration[fieldName] === "sheetSelect"}
-                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in configuration && configuration[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.depotInfo.sheetsFiltered.guids} aliases={config.depotInfo.sheetsFiltered.names}/></div>
+                {:else if columnSettings[fieldName] === "sheetSelect"}
+                <div><EnumField allowEmpty={(("sheetSelect@"+fieldName) in columnSettings && columnSettings[("sheetSelect@"+fieldName)].allowEmpty)} bind:data={data[fieldName]} options={config.depotInfo.sheetsFiltered.guids} aliases={config.depotInfo.sheetsFiltered.names}/></div>
 
                 <!-- {:else if configuration[fieldName] === "multiple"}
                 <div><MultipleField bind:data={data[fieldName]}/></div> -->
-                {:else if configuration[fieldName] === "int" || configuration[fieldName] === "float"}
+                {:else if columnSettings[fieldName] === "int" || columnSettings[fieldName] === "float"}
                 <div><NumberField bind:data={data[fieldName]}/></div>
                 
-                {:else if configuration[fieldName] === "enum"}
-                <div><EnumField allowEmpty={false} bind:data={data[fieldName]} options={configuration["enum@"+fieldName].options}/></div>
+                {:else if columnSettings[fieldName] === "enum"}
+                <div><EnumField allowEmpty={false} bind:data={data[fieldName]} options={columnSettings["enum@"+fieldName].options}/></div>
 
                 <!-- column and line select assume a sheet field in the editing object -->
-                {:else if configuration[fieldName].split("@")[0] === "lineSelect"}
-                    {#if data[configuration[fieldName].split("@")[1]] !== ""}
-                    <!-- 1 is the sheet field -->
-                        <div><EnumField bind:data={data[fieldName]}
-                                        options={config.depotInfo.lines[data[configuration[fieldName].split("@")[1]]].guids}
-                                        aliases={config.depotInfo.lines[data[configuration[fieldName].split("@")[1]]].names}/></div>
-                    <!-- if sheet not assigned  -->
-                    {:else}
-                        <div><EnumField bind:data={data[fieldName]}
-                                        options={[]}
-                                        aliases={[]}/></div>
-                    {/if}
+                {:else if columnSettings[fieldName].split("@")[0] === "lineSelect"}
+                    <div><ConfigLineSelect  bind:data={data[fieldName]}
+                                            bind:sheetGUID={data[columnSettings[fieldName].split("@")[1]]}
+                                            config={config}
+                                            /></div>
                     {#if (data["sheet"] !== "" && data["defaultValue"] !== "") && !config.depotInfo.lines[data["sheet"]].guids.includes(data[fieldName])}
                         <div>Warning: Selected value with GUID {data[fieldName]} not in selected sheet</div>
                     {/if}
 
                 <!-- column names are inherently unique, so just bind off name instead of needing guid -->
-                {:else if configuration[fieldName].split("@")[0] === "columnSelect"}
-                    {#if data[configuration[fieldName].split("@")[1]] !== ""}
-                        {#if config.operation === "new" && config.editType === "sheet"}
-                            <!-- sheet isnt created yet so no columns would appear in table info, just add defaults -->
-                            <div><EnumField allowEmpty={false}
-                                            bind:data={data[fieldName]}
-                                            options={["id","guid"]}/>
-                            </div>
-                        {:else}
-                            <div><EnumField allowEmpty={false}
-                                            bind:data={data[fieldName]}
-                                            options={config.depotInfo.columns[
-                                                        config.depotInfo.sheets.guids[
-                                                            config.depotInfo.sheets.names.indexOf(config.originalData[configuration[fieldName].split("@")[1]])
-                                                        ]
-                                                    ].names}/>
-                            </div>
-                        {/if}
-                    <!-- if sheet not assigned  -->
-                    {:else}
-                        <div><EnumField allowEmpty={false}
-                                        bind:data={data[fieldName]}
-                                        options={[]}
-                        /></div>
-                    {/if}
+                {:else if columnSettings[fieldName].split("@")[0] === "columnSelect"}
+                    <div><ConfigColumnSelect    bind:data={data[fieldName]}
+                                                sheetName={data[columnSettings[fieldName].split("@")[1]]}
+                                                config={config}
+                                                fieldName={fieldName}
+                                                columnSettings={columnSettings}/></div>
                 {/if}
             </td>
         </tr>

@@ -1,1 +1,92 @@
-{ "sheets": []}
+{
+    "sheets": [
+        {
+            "name": "newSheet",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "d181d4e7-c7e9-4e14-8f3c-497455b626a5",
+            "columns": [
+                {
+                    "typeStr": "text",
+                    "guid": "36ee86ce-aa1a-47ca-bff5-2b36dbfc3798",
+                    "name": "disp",
+                    "description": "text field",
+                    "defaultValue": "",
+                    "iconName": "newText",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "4c86565b-a0c9-4eef-b6a4-4d2a147bad7f",
+                    "id": "0",
+                    "disp": "displat"
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "newSheet2",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "516efae1-5e21-4058-bbf3-5d631a5b8f0c",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "1deffcbd-d16c-42b3-a298-d1394e22f51b",
+                    "name": "newLineReference",
+                    "description": "new line reference field",
+                    "sheet": "d181d4e7-c7e9-4e14-8f3c-497455b626a5",
+                    "defaultValue": "4c86565b-a0c9-4eef-b6a4-4d2a147bad7f",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "ee8ef4a3-c564-4a98-9221-1ce0cdc786a9",
+                    "id": "0",
+                    "newLineReference": "4c86565b-a0c9-4eef-b6a4-4d2a147bad7f"
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        }
+    ]
+}
