@@ -16,12 +16,12 @@ $ : potentialColumns = config.depotInfo.columns[
                         ];
 $ : {
     //start out with all names
-    validColumnNames =  potentialColumns.names;
+    validColumnNames =  typeof potentialColumns != "undefined" ? potentialColumns.names : [];
     if((columnSettings[fieldName]+"@"+fieldName) in columnSettings) {
         let settings = columnSettings[columnSettings[fieldName]+"@"+fieldName];
         if("allowedTypes" in settings) {
             validColumnNames = validColumnNames.filter(cname => {
-                let cindex = potentialColumns.names.findIndex( c => (c == cname || c == "id" || c == "guid"));
+                let cindex = validColumnNames.findIndex( c => (c == cname || c == "id" || c == "guid"));
                 return settings.allowedTypes.includes(potentialColumns.typeStrs[cindex]);
             });
             validColumnNames.push("id","guid");
