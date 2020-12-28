@@ -113,9 +113,9 @@ WIP
 
 ## Edge Cases WIP
 
-* When the sheet reference field references are deleted, the line value goes to "", the default values are cleared, and the sheet is reset to "".
-* When the line reference field references are deleted the lines that pointed to that line get their linked value set to "". Defaults that pointed to that get pointed to ""
-* If the sheet column is modified for a line reference field, the defaults and values stay as their old values but display an error that they link to an unreachable value
+* When the sheet that a `line reference` field references is deleted, the line value goes to "", the default values are cleared, and the sheet is reset to "".
+* When the line that a `line reference` field references is deleted the lines that pointed to that line get their linked value set to "". Defaults that pointed to that get pointed to "".
+* If the sheet column is modified for a line reference field, the defaults and values stay as their old values but display an error that they link to an unreachable value.
 
 ## Release Notes
 
