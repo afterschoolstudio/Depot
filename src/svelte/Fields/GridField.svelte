@@ -32,6 +32,7 @@ let allowedGridTypes = [];
 $ : {
     allowedGridTypes = gridSettings.allowedTypes;
     let notImplemented = ["lineReference","sheetReference","multiple","enum"]
+    //when those are implemented we need to comb for references to these field types should their set default values be deleted.
     allowedGridTypes = allowedGridTypes.filter(t => !notImplemented.includes(t));
 }
 
