@@ -28,6 +28,7 @@ import {defaults} from './depotDefaults';
 import { v4 as uuidv4 } from 'uuid';
 
 import { createEventDispatcher } from 'svelte';
+import GridFieldTableEditor from '../Fields/GridFieldTableEditor.svelte';
 export let fullData;
 export let sheetData;
 export let inputLineData;
@@ -306,7 +307,7 @@ function validateID(event,line) {
                 <MultipleField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"} on:message/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
                 <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
-                {:else if column.typeStr === "list" || column.typeStr === "props"}
+                {:else if column.typeStr === "list" || column.typeStr === "props" || column.typeStr === "grid"}
                     {#if line.guid in listVisibility && listVisibility[line.guid].guid === column.guid}
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,false)}>
                             <img src={iconPaths["showList"].path} alt="Hide {column.typeStr}">
@@ -323,7 +324,7 @@ function validateID(event,line) {
                             {:else if line[column.name].length > 5}
                                 {column.name} ({line[column.name].length}) : {line[column.name].map(l => l.id).slice(0, 4)}...
                             {/if}
-                        {:else}
+                        {:else if column.typeStr === "props"}
                             <!-- Preview props contents  -->
                             {#each Object.keys(line[column.name]) as k, index}
                                 {#if k !== "guid" && index < 5}
@@ -331,6 +332,13 @@ function validateID(event,line) {
                                 {/if}
                             {/each}
                             ...
+                        {:else if column.typeStr === "grid"}
+                            <!-- Preview grid contents  -->
+                            {#if line[column.name].length > 0 && line[column.name].length <= 5}
+                                {line[column.name]}
+                            {:else if line[column.name].length > 5}
+                                {line[column.name].slice(0, 4)}...
+                            {/if}
                         {/if}
                     {/if}
                 {/if}
@@ -342,23 +350,33 @@ function validateID(event,line) {
         <!-- listVisibility is guid, column  -->
         {#if line.guid in listVisibility}
         <!-- maybe pull this out of the tr and just use a div? -->
-        <tr>
-            <td></td>
-            <td colspan="{totalColumns -  1}">
-                <!--    lineData grabs itself from the values in the lineData in this sheet
-                        this is because lines store their nested values inside of themsevles instead of inside the sheet -->
-                <svelte:self    debug={debug} 
-                                showLineGUIDs={showLineGUIDs} 
-                                originLineGUID={line.guid}
-                                bind:fullData={fullData} 
-                                bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
-                                bind:inputLineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)] 
-                                                       [listVisibility[line.guid].name]} 
-                                depotInfo={depotInfo} 
-                                on:message={handleSubTableEvent}
-                                bind:listVisibility={listVisibility}/>
-            </td>
-        </tr>
+            <tr>
+            {#if listVisibility[line.guid].typeStr === "list" || listVisibility[line.guid].typeStr === "props"}
+                <td></td>
+                <td colspan="{totalColumns -  1}">
+                    <!--    lineData grabs itself from the values in the lineData in this sheet
+                            this is because lines store their nested values inside of themsevles instead of inside the sheet -->
+                    <svelte:self    debug={debug} 
+                                    showLineGUIDs={showLineGUIDs} 
+                                    originLineGUID={line.guid}
+                                    bind:fullData={fullData} 
+                                    bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
+                                    bind:inputLineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)] 
+                                                        [listVisibility[line.guid].name]} 
+                                    depotInfo={depotInfo} 
+                                    on:message={handleSubTableEvent}
+                                    bind:listVisibility={listVisibility}/>
+                </td>
+            {:else if listVisibility[line.guid].typeStr === "grid"}
+                <td></td>
+                <td colspan="{totalColumns -  1}">
+                    <GridFieldTableEditor sheetGUID={sheetData.guid} 
+                                          bind:data={line[listVisibility[line.guid].name]} 
+                                          bind:columnData={listVisibility[line.guid]} 
+                                          on:message/>
+                </td>
+            {/if}
+            </tr>
         {/if}
     {/if}
     {/each}

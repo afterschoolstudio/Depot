@@ -350,10 +350,17 @@ function handleConfigUpdate(event) {
                     }
                     if(editorData.typeStr == "grid")
                     {
+                        var visibilityUpdated = false;
                         if(editorData.defaultValue.length < oldColumnData.defaultValue.length) {
                             //the list got shorter, need to chop off old values from lines
                             iterateSheetLines(sheetIndex, (line) => {
                                 line[editorData.name] = line[editorData.name].slice(0,editorData.defaultValue.length);
+                                if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                                {
+                                    delete listVisibility[line.guid];
+                                    listVisibility[line.guid] = editorData;
+                                    visibilityUpdated = true;
+                                }
                             });
                         }
                         if(editorData.defaultValue.length > oldColumnData.defaultValue.length) {
@@ -361,6 +368,12 @@ function handleConfigUpdate(event) {
                             var addedDefaultValues = editorData.defaultValue.slice(oldColumnData.defaultValue.length);
                             iterateSheetLines(sheetIndex, (line) => {
                                 line[editorData.name] = line[editorData.name].concat(addedDefaultValues);
+                                if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                                {
+                                    delete listVisibility[line.guid];
+                                    listVisibility[line.guid] = editorData;
+                                    visibilityUpdated = true;
+                                }
                             });
                         }
                         oldColumnData.schema.forEach((dataType, dataIndex) => {
@@ -369,10 +382,30 @@ function handleConfigUpdate(event) {
                                     //the data type has changed. in this case, we update all lines to use the new default value of the field
                                     iterateSheetLines(sheetIndex,(line) => {
                                         line[editorData.name][dataIndex] = editorData.defaultValue[dataIndex];
+                                        if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                                        {
+                                            delete listVisibility[line.guid];
+                                            listVisibility[line.guid] = editorData;
+                                            visibilityUpdated = true;
+                                        }
                                     });
                                 }
                             }
-                        })
+                        });
+
+                        if(!visibilityUpdated && 
+                           ((oldColumnData.displayWidth !== editorData.displayWidth) || 
+                            (oldColumnData.columnWidth !== editorData.columnWidth) || 
+                            (oldColumnData.columnHeight !== editorData.columnHeight))) {
+                                //if we havent yet updated the visibility, but something that affects visibility was updated
+                                iterateSheetLines(sheetIndex,(line) => {
+                                    if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                                    {
+                                        delete listVisibility[line.guid];
+                                        listVisibility[line.guid] = editorData;
+                                    }
+                                });
+                            }
                     }
                     if(editorData.typeStr == "list")
                     {
@@ -447,18 +480,15 @@ function handleConfigUpdate(event) {
                 default: //column
                     let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
                     var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
-                    if(!data.sheets[sheetIndex].hidden) {
-                        data.sheets[sheetIndex].lines.forEach(line => {
-                            //delete the entry for this column
-                            delete line[editorConfig.editType];
-                        });
-                    }
-                    else {
-                        iterateNestedLines(sheetIndex,(line) => {
-                            //delete the entry for this column
-                            delete line[editorConfig.editType];
-                        });
-                    }
+
+                    iterateSheetLines(sheetIndex,(line) => {
+                        if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                        {
+                            delete listVisibility[line.guid];
+                        }
+                        delete line[editorConfig.editType];
+                    });
+                   
                     if(data.sheets[sheetIndex].displayColumn === data.sheets[sheetIndex].columns[index].name)
                     {
                         //we deleted the display column, update to default
