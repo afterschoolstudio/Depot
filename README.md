@@ -103,6 +103,7 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 | List | ![New List Icon](https://github.com/kkukshtel/Depot/raw/master/images/icons/newList.png) | An array of structured data | Array of structured values | `[]` |
 | File | ![New File Reference](https://github.com/kkukshtel/Depot/raw/master/images/icons/newFile.png) | Path to a file relative to the location of the Depot file (displayed in the sheet) | String relative path to the image | `""` |
 | Properties | ![New Properties](https://github.com/kkukshtel/Depot/raw/master/images/icons/newProps.png) | This is a top level JSON object that allows you to specify properties for lines and index them directly from a line instead of needing to use an array. | JSON Object | `{}` |
+| Grid | ![New Grid](https://github.com/kkukshtel/Depot/raw/master/images/icons/newGrid.png) | This is a top level Array object that allows you to specify an array of values and index them directly from a line instead of needing to use a list on entries. | Array | `[true,true,true,true]` |
 
 ## Wiki
 For more in-depth documentation on Depot, [you can read the wiki here](https://github.com/kkukshtel/Depot/wiki).
@@ -118,6 +119,13 @@ WIP
 * If the sheet column is modified for a line reference field, the defaults and values stay as their old values but display an error that they link to an unreachable value
 
 ## Release Notes
+
+### 1.4.0
+
+- NEW COLUMN Grid
+  - Grids allow you to define top level arrays that can be indexed like `sheets[0].lines[0].myGrid[0]`. A grid is able to contain values of different types, as configured in the grid settings themselves.
+  - Grids, like Properties, can be nested in nested sheets and properties.
+  - Grid values are limited to Depot's "primitive" types, so `bool`, `int`, `float`, `text`, `longtext`. The Grid could be expanded to contain other types in the future! 
 
 ### 1.3.0
 
