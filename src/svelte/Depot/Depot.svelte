@@ -244,6 +244,18 @@ function iterateNestedLines(subsheetIndex,iteratorFunction) {
     });
 }
 
+function iterateSheetLines(sheetIndex, iteratorFunction) {
+    if(!data.sheets[sheetIndex].hidden) {
+        data.sheets[sheetIndex].lines.forEach(line => {
+            iteratorFunction(line);
+        });
+    } else {
+        iterateNestedLines(sheetIndex,(line) => {
+            iteratorFunction(line);
+        });
+    }
+}
+
 function handleConfigUpdate(event) {
     switch (event.detail.type) {
         case "create":
@@ -258,64 +270,33 @@ function handleConfigUpdate(event) {
                     let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
                     data.sheets[sheetIndex].columns.push(editorData);
                     //if you're creating a column, create a new entry for a column value in every line based off the default value
-                    if(!data.sheets[sheetIndex].hidden)
-                    {
-                        data.sheets[sheetIndex].lines.forEach(line => {
-                            if(editorData.typeStr === "multiple")
-                            {
-                                line[editorData.name] = editorData.defaultValue.split(', ');
-                            }
-                            else
-                            {
-                                line[editorData.name] = editorData.defaultValue;
-                            }
-                        });
-                    }
-                    else
-                    {
-                        iterateNestedLines(sheetIndex,(line) => {
-                            if(editorData.typeStr === "multiple")
-                            {
-                                line[editorData.name] = editorData.defaultValue.split(', ');
-                            }
-                            else
-                            {
-                                line[editorData.name] = editorData.defaultValue;
-                            }
-                        });
-                    }
-                    if(editorData.typeStr === "list") {
-                        // make a new sheet that this list will reference
-                        let newList = JSON.parse(JSON.stringify(defaults["sheet"]));
-                        newList["hidden"] = true;
-                        newList["description"] = "list@"+data.sheets[sheetIndex].guid;
-                        newList["parentSheetGUID"] = data.sheets[sheetIndex].guid;
-                        newList["columnGUID"] = editorData.guid;
+                    iterateSheetLines(sheetIndex,(line) => {
+                        if(editorData.typeStr === "multiple")
+                        {
+                            line[editorData.name] = editorData.defaultValue.split(', ');
+                        }
+                        else
+                        {
+                            line[editorData.name] = editorData.defaultValue;
+                        }
+                    });
+                    if(editorData.typeStr === "list" || editorData.typeStr === "props") {
+                        //list and props are used as hidden sheets internally
+                        // make a new sheet that this will reference
+                        let hiddenSheet = JSON.parse(JSON.stringify(defaults["sheet"]));
+                        hiddenSheet["hidden"] = true;
+                        hiddenSheet["description"] = editorData.typeStr+"@"+data.sheets[sheetIndex].guid;
+                        if(editorData.typeStr === "props") {hiddenSheet["isProps"] = true;}
+                        hiddenSheet["parentSheetGUID"] = data.sheets[sheetIndex].guid;
+                        hiddenSheet["columnGUID"] = editorData.guid;
                         let guid = uuidv4();
-                        newList["guid"] = guid;
+                        hiddenSheet["guid"] = guid;
                         //assign the column's sheet param to this new list
                         data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
-                        newList["name"] = editorData.name;
+                        hiddenSheet["name"] = editorData.name;
                         //the list sheet is not configurable
-                        delete newList.configurable;
-                        data.sheets.push(newList);
-                    }
-                    else if(editorData.typeStr === "props") {
-                        // make a new sheet that this props will reference
-                        let newProps = JSON.parse(JSON.stringify(defaults["sheet"]));
-                        newProps["hidden"] = true;
-                        newProps["isProps"] = true;
-                        newProps["description"] = "props@"+data.sheets[sheetIndex].guid;
-                        newProps["parentSheetGUID"] = data.sheets[sheetIndex].guid;
-                        newProps["columnGUID"] = editorData.guid;
-                        let guid = uuidv4();
-                        newProps["guid"] = guid;
-                        //assign the column's sheet param to this new props
-                        data.sheets[sheetIndex].columns[data.sheets[sheetIndex].columns.findIndex(col => col.guid === editorData.guid)].sheet = guid;
-                        newProps["name"] = editorData.name;
-                        //the list sheet is not configurable
-                        delete newProps.configurable;
-                        data.sheets.push(newProps);
+                        delete hiddenSheet.configurable;
+                        data.sheets.push(hiddenSheet);
                     }
                     editorConfig = {"active":false};
                     sheetsUpdated();
@@ -330,27 +311,17 @@ function handleConfigUpdate(event) {
                 default: //column
                     let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
                     var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
+                    var oldColumnData = JSON.parse(JSON.stringify(data.sheets[sheetIndex].columns[index]));
                     data.sheets[sheetIndex].columns[index] = editorData; //column now has new name maybe
                     //update line entries depending on circumstances - maybe a faster way?
                     if(editorConfig.editType !== editorData.name) //the name changed
                     {
-                        if(!data.sheets[sheetIndex].hidden) {
-                            data.sheets[sheetIndex].lines.forEach(line => {
-                                //make a new key and assign it the the old value
-                                line[editorData.name] = line[editorConfig.editType];
-                                //delete the old key
-                                delete line[editorConfig.editType];
-                            });
-                        }
-                        else
-                        {
-                            iterateNestedLines(sheetIndex,(line) => {
-                                //make a new key and assign it the the old value
-                                line[editorData.name] = line[editorConfig.editType];
-                                //delete the old key
-                                delete line[editorConfig.editType];
-                            });
-                        }
+                        iterateSheetLines(sheetIndex,(line) => {
+                            //make a new key and assign it the the old value
+                            line[editorData.name] = line[editorConfig.editType];
+                            //delete the old key
+                            delete line[editorConfig.editType];
+                        });
 
                         //update display column if it used the old name
                         if(data.sheets[sheetIndex].displayColumn == editorConfig.editType) {
@@ -361,41 +332,80 @@ function handleConfigUpdate(event) {
                     }
                     if(editorData.typeStr == "multiple")
                     {
-                        if(!data.sheets[sheetIndex].hidden) {
-                            data.sheets[sheetIndex].lines.forEach(line => {
-                                //make sure the multiple only has values possible based on config
-                                //this removes old values if config changes
-                                line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
-                            });
-                        }
-                        else
-                        {
-                            iterateNestedLines(sheetIndex,(line) => {
-                                line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
-                            });
-                        }
+                        iterateSheetLines(sheetIndex,(line) => {
+                            //make sure the multiple only has values possible based on config
+                            //this removes old values if config changes
+                            line[editorData.name] = line[editorData.name].filter(value => editorData.options.includes(value));
+                        });
                     }
                     if(editorData.typeStr == "enum")
                     {
-                        if(!data.sheets[sheetIndex].hidden) {
-                            data.sheets[sheetIndex].lines.forEach(line => {
-                                //make sure the enum only has values possible based on config
-                                if(!editorData.options.includes(line[editorData.name]))
+                        iterateSheetLines(sheetIndex,(line) => {
+                            //make sure the enum only has values possible based on config
+                            if(!editorData.options.includes(line[editorData.name]))
+                            {
+                                line[editorData.name] = editorData.defaultValue
+                            }
+                        });
+                    }
+                    if(editorData.typeStr == "grid")
+                    {
+                        var visibilityUpdated = false;
+                        if(editorData.defaultValue.length < oldColumnData.defaultValue.length) {
+                            //the list got shorter, need to chop off old values from lines
+                            iterateSheetLines(sheetIndex, (line) => {
+                                line[editorData.name] = line[editorData.name].slice(0,editorData.defaultValue.length);
+                                if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
                                 {
-                                    line[editorData.name] = editorData.defaultValue
+                                    delete listVisibility[line.guid];
+                                    listVisibility[line.guid] = editorData;
+                                    visibilityUpdated = true;
                                 }
                             });
                         }
-                        else
-                        {
-                            iterateNestedLines(sheetIndex,(line) => {
-                                ///make sure the enum only has values possible based on config
-                                if(!editorData.options.includes(line[editorData.name]))
+                        if(editorData.defaultValue.length > oldColumnData.defaultValue.length) {
+                            //the list got longer, need to add in new values and their default values
+                            var addedDefaultValues = editorData.defaultValue.slice(oldColumnData.defaultValue.length);
+                            iterateSheetLines(sheetIndex, (line) => {
+                                line[editorData.name] = line[editorData.name].concat(addedDefaultValues);
+                                if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
                                 {
-                                    line[editorData.name] = editorData.defaultValue
+                                    delete listVisibility[line.guid];
+                                    listVisibility[line.guid] = editorData;
+                                    visibilityUpdated = true;
                                 }
                             });
                         }
+                        oldColumnData.schema.forEach((dataType, dataIndex) => {
+                            if(dataIndex < editorData.schema.length) { //
+                                if(dataType !== editorData.schema[dataIndex]) {
+                                    //the data type has changed. in this case, we update all lines to use the new default value of the field
+                                    iterateSheetLines(sheetIndex,(line) => {
+                                        line[editorData.name][dataIndex] = editorData.defaultValue[dataIndex];
+                                        if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                                        {
+                                            delete listVisibility[line.guid];
+                                            listVisibility[line.guid] = editorData;
+                                            visibilityUpdated = true;
+                                        }
+                                    });
+                                }
+                            }
+                        });
+
+                        if(!visibilityUpdated && 
+                           ((oldColumnData.displayWidth !== editorData.displayWidth) || 
+                            (oldColumnData.columnWidth !== editorData.columnWidth) || 
+                            (oldColumnData.columnHeight !== editorData.columnHeight))) {
+                                //if we havent yet updated the visibility, but something that affects visibility was updated
+                                iterateSheetLines(sheetIndex,(line) => {
+                                    if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                                    {
+                                        delete listVisibility[line.guid];
+                                        listVisibility[line.guid] = editorData;
+                                    }
+                                });
+                            }
                     }
                     if(editorData.typeStr == "list")
                     {
@@ -470,18 +480,15 @@ function handleConfigUpdate(event) {
                 default: //column
                     let sheetIndex = data.sheets.findIndex(sheet => sheet.guid === editorConfig.sheetGUID);
                     var index = data.sheets[sheetIndex].columns.findIndex(x => x.name === editorConfig.editType); //old name
-                    if(!data.sheets[sheetIndex].hidden) {
-                        data.sheets[sheetIndex].lines.forEach(line => {
-                            //delete the entry for this column
-                            delete line[editorConfig.editType];
-                        });
-                    }
-                    else {
-                        iterateNestedLines(sheetIndex,(line) => {
-                            //delete the entry for this column
-                            delete line[editorConfig.editType];
-                        });
-                    }
+
+                    iterateSheetLines(sheetIndex,(line) => {
+                        if(listVisibility.hasOwnProperty(line.guid) && listVisibility[line.guid].guid == editorData.guid)
+                        {
+                            delete listVisibility[line.guid];
+                        }
+                        delete line[editorConfig.editType];
+                    });
+                   
                     if(data.sheets[sheetIndex].displayColumn === data.sheets[sheetIndex].columns[index].name)
                     {
                         //we deleted the display column, update to default

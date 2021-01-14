@@ -24,6 +24,7 @@ import TextField from '../Fields/TextField.svelte';
 import { createEventDispatcher } from 'svelte';
 import ConfigLineSelect from '../Fields/Config/ConfigLineSelect.svelte';
 import ConfigColumnSelect from '../Fields/Config/ConfigColumnSelect.svelte';
+import GridField from '../Fields/GridField.svelte';
 const dispatch = createEventDispatcher();
 function configUpdate(updateType) {
     dispatch('message', {
@@ -150,6 +151,15 @@ $: {
                 
                 {:else if columnSettings[fieldName] === "enum"}
                 <div><EnumField allowEmpty={false} bind:data={data[fieldName]} options={columnSettings["enum@"+fieldName].options}/></div>
+                
+                {:else if columnSettings[fieldName] === "grid"}
+                <div><GridField bind:schemaData={data[fieldName]}
+                                bind:defaultValues={data["defaultValue"]} 
+                                gridSettings={columnSettings[("grid@"+fieldName)]}
+                                bind:length={data["length"]}
+                                bind:columnWidth={data["columnWidth"]}
+                                bind:columnHeight={data["columnHeight"]}
+                                bind:displayWidth={data["displayWidth"]}/></div>
 
                 <!-- column and line select assume a sheet field in the editing object -->
                 {:else if columnSettings[fieldName].split("@")[0] === "lineSelect"}

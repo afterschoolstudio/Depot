@@ -223,7 +223,28 @@ export let defaults = {
             "name" : "text",
             "description" : "text",
         }
-    }
+    },
+    "grid" : {
+        "typeStr":"grid",
+        "guid":"",
+        "name":"new grid",
+        "description":"new grid field",
+        "defaultValue":[true,true,true,true],
+        "schema":[],
+        "iconName" : "newGrid",
+        "length" : 4,
+        "displayWidth" : 2,
+        "columnWidth" : 50,
+        "columnHeight" : 50,
+        "configurable" : {
+            "name" : "text",
+            "description" : "text",
+            "schema" : "grid",
+            "grid@schema" : {
+                "allowedTypes" : ["int","bool","float","text","longtext","lineReference","sheetReference","multiple","enum"]
+            }
+        }
+    },
 };
 
 //every new column needs a name, guid, typeStr, and defaultValue field
