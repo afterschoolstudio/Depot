@@ -25,6 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
 export let data;
 let debug = false;
 let showLineGUIDs = false;
+let previewDisclosedFields = false;
 let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
@@ -728,7 +729,7 @@ function selectedSheetEdit() {
     {:else}
         <h1>{data.sheets[selectedSheet].name}</h1>
         <p>{data.sheets[selectedSheet].description}</p>
-        <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs}/>
+        <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs} bind:previewDisclosedFields={previewDisclosedFields}/> 
         <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active} on:click={createSheet}>
             <img src={iconPaths["newSheet"].path} alt="New Sheet">
         </button>
@@ -754,6 +755,7 @@ function selectedSheetEdit() {
             <!-- hide the table if editing a field to prevent sending the sheetupdate -->
             <DepotSheet debug={debug} 
                         showLineGUIDs={showLineGUIDs} 
+                        previewDisclosedFields={previewDisclosedFields}
                         bind:fullData={data} 
                         bind:sheetData={data.sheets[selectedSheet]} 
                         bind:inputLineData={data.sheets[selectedSheet].lines} 

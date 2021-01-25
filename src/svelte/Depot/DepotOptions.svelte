@@ -17,9 +17,11 @@ limitations under the License.
 <script>
 export let debug;
 export let showLineGUIDs;
+export let previewDisclosedFields;
 
 </script>
 <input type=checkbox bind:checked={debug}>Debug
 <input type=checkbox bind:checked={showLineGUIDs}>Show Line GUIDs
+<input type=checkbox bind:checked={previewDisclosedFields}>Preview List/Props/Grid Fields
 <br>
 <br>

@@ -45,6 +45,7 @@ $: {
 let lineData;
 export let debug;
 export let showLineGUIDs;
+export let previewDisclosedFields;
 export let depotInfo;
 export let originLineGUID = "";
 export let listVisibility = {};
@@ -317,6 +318,7 @@ function validateID(event,line) {
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,true)}>
                             <img src={iconPaths["hideList"].path} alt="Show {column.typeStr}">
                         </button>
+                        {#if previewDisclosedFields}
                         {#if column.typeStr === "list"}
                             <!-- Preview list contents  -->
                             {#if line[column.name].length > 0 && line[column.name].length <= 5}
@@ -328,7 +330,7 @@ function validateID(event,line) {
                             <!-- Preview props contents  -->
                             {#each Object.keys(line[column.name]) as k, index}
                                 {#if k !== "guid" && index < 5}
-                                    {k} : {line[column.name][k]} 
+                                    {k} : {line[column.name][k]},
                                 {/if}
                             {/each}
                             ...
@@ -339,6 +341,7 @@ function validateID(event,line) {
                             {:else if line[column.name].length > 5}
                                 {line[column.name].slice(0, 4)}...
                             {/if}
+                        {/if}
                         {/if}
                     {/if}
                 {/if}
