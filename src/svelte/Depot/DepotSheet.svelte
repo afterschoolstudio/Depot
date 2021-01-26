@@ -51,13 +51,32 @@ export let originLineGUID = "";
 export let listVisibility = {};
 const dispatch = createEventDispatcher();
 let iconPaths = getContext("iconPaths");
-let hoveringSheet = false;
+
+export let lastHovered;
+export let parentGUID = "";
 function enterSheet() {
-    hoveringSheet = true;
+    dispatch('message', {
+        "type" : "hoverUpdate",
+        "data" : {
+            "action" : "enter",
+            "sheetGUID" : sheetData.guid,
+            "parentGUID" : parentGUID,
+        }
+    });
 }
 
 function leaveSheet() {
-    hoveringSheet = false;
+    if(lastHovered == sheetData.guid) {
+        lastHovered = "";
+    }
+    dispatch('message', {
+        "type" : "hoverUpdate",
+        "data" : {
+            "action" : "exit",
+            "sheetGUID" : sheetData.guid,
+            "parentGUID" : parentGUID
+        }
+    });
 }
 
 function editColumn(column) {
@@ -183,6 +202,26 @@ function handleSubTableEvent(event) {
                 }
             });
             break;
+        case "hoverUpdate":
+            let actionSheet = event.detail.data.sheetGUID;
+            switch (event.detail.data.action) {
+                case "enter":
+                    lastHovered = actionSheet;
+                    break;
+                case "exit":
+                    if(event.detail.data.parentGUID === sheetData.guid) {
+                        lastHovered = sheetData.guid;
+                    }
+                    break;
+            }
+            // dispatch('message', {
+            //     "type" : "update",
+            //     "data" : {
+            //         "sheetGUID" : nestedSheetGUID
+            //     }
+            // });
+            dispatch('message',event.detail);
+            break;
         default:
             //forward messages otherwise from nested table
             dispatch('message',event.detail);
@@ -242,7 +281,7 @@ function validateID(event,line) {
 </script>
     <table on:mouseenter={enterSheet} on:mouseleave={leaveSheet}>
     <!-- This checks if this is a nested sheet, in which case we want to have the UI visible -->
-    {#if sheetData.hidden && hoveringSheet}
+    {#if sheetData.hidden && lastHovered == sheetData.guid}
     <tr>
         <td colspan="{totalColumns}">
             {#each Object.keys(defaults) as columnType}
@@ -377,7 +416,9 @@ function validateID(event,line) {
                                                         [listVisibility[line.guid].name]} 
                                     depotInfo={depotInfo} 
                                     on:message={handleSubTableEvent}
-                                    bind:listVisibility={listVisibility}/>
+                                    bind:listVisibility={listVisibility}
+                                    bind:lastHovered={lastHovered}
+                                    parentGUID={sheetData.guid}/>
                 </td>
             {:else if listVisibility[line.guid].typeStr === "grid"}
                 <td></td>
