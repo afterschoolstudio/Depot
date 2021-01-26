@@ -51,6 +51,14 @@ export let originLineGUID = "";
 export let listVisibility = {};
 const dispatch = createEventDispatcher();
 let iconPaths = getContext("iconPaths");
+let hoveringSheet = false;
+function enterSheet() {
+    hoveringSheet = true;
+}
+
+function leaveSheet() {
+    hoveringSheet = false;
+}
 
 function editColumn(column) {
     dispatch('message', {
@@ -232,8 +240,9 @@ function validateID(event,line) {
 }
 
 </script>
-    <table>
-    {#if sheetData.hidden}
+    <table on:mouseenter={enterSheet} on:mouseleave={leaveSheet}>
+    <!-- This checks if this is a nested sheet, in which case we want to have the UI visible -->
+    {#if sheetData.hidden && hoveringSheet}
     <tr>
         <td colspan="{totalColumns}">
             {#each Object.keys(defaults) as columnType}
