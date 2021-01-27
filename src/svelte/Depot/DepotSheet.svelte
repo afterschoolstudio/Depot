@@ -43,9 +43,15 @@ $: {
     }
 }
 let lineData;
+//from DepotOptions.svelte
 export let debug;
 export let showLineGUIDs;
 export let previewDisclosedFields;
+export let showNestedNames;
+export let showNestedPaths;
+
+
+
 export let depotInfo;
 export let originLineGUID = "";
 export let listVisibility = {};
@@ -54,6 +60,8 @@ let iconPaths = getContext("iconPaths");
 
 export let lastHovered;
 export let parentGUID = "";
+export let baseDataPath = "";
+
 function enterSheet() {
     dispatch('message', {
         "type" : "hoverUpdate",
@@ -127,18 +135,6 @@ function createColumn(columnType) {
                 }
     });
 }
-
-// function editSheet() {
-//     dispatch('message', {
-//         "type" : "editorUpdate",
-//         "data" :{
-//                 "active" : true,
-//                 "operation" : "edit",
-//                 "editType" : "sheet",
-//                 "sheetGUID" : sheetData.guid
-//                 }
-//     });
-// }
 
 function handleSubTableEvent(event) {
     console.log("handing subtable event");
@@ -281,18 +277,27 @@ function validateID(event,line) {
 </script>
     <table on:mouseenter={enterSheet} on:mouseleave={leaveSheet}>
     <!-- This checks if this is a nested sheet, in which case we want to have the UI visible -->
-    {#if sheetData.hidden && lastHovered == sheetData.guid}
-    <tr>
-        <td colspan="{totalColumns}">
-            {#each Object.keys(defaults) as columnType}
-                {#if columnType !== "sheet"}
-                <button class="buttonIcon padded" title="Create new {columnType} column" on:click={() => createColumn(columnType)}>
-                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
-                </button>
-                {/if}
-            {/each}
-        </td>
-    </tr>
+    {#if sheetData.hidden}
+        {#if lastHovered == sheetData.guid}
+        <tr>
+            <td colspan="{totalColumns}">
+                {#each Object.keys(defaults) as columnType}
+                    {#if columnType !== "sheet"}
+                    <button class="buttonIcon padded" title="Create new {columnType} column" on:click={() => createColumn(columnType)}>
+                        <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
+                    </button>
+                    {/if}
+                {/each}
+            </td>
+        </tr>
+        {/if}
+        {#if showNestedNames || showNestedPaths}
+        <tr>
+            <td colspan="{totalColumns}">
+                {#if showNestedNames}<b>{sheetData.name}</b>{/if} {#if showNestedPaths} @ {baseDataPath}{/if}
+            </td>
+        </tr>
+        {/if}
     {/if}
     <tr>
         <th>    </th>
@@ -409,6 +414,8 @@ function validateID(event,line) {
                             this is because lines store their nested values inside of themsevles instead of inside the sheet -->
                     <svelte:self    debug={debug} 
                                     showLineGUIDs={showLineGUIDs} 
+                                    showNestedNames={showNestedNames}
+                                    showNestedPaths={showNestedPaths}
                                     originLineGUID={line.guid}
                                     bind:fullData={fullData} 
                                     bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
@@ -418,7 +425,9 @@ function validateID(event,line) {
                                     on:message={handleSubTableEvent}
                                     bind:listVisibility={listVisibility}
                                     bind:lastHovered={lastHovered}
-                                    parentGUID={sheetData.guid}/>
+                                    parentGUID={sheetData.guid}
+                                    baseDataPath={sheetData.isProps ? baseDataPath + "." + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name : baseDataPath + "[" + i + "]"}/>
+                                    <!-- baseDataPath={listVisibility[line.guid].typeStr === "list" ? baseDataPath + "[" + i + "]" : baseDataPath + "." + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name }/> -->
                 </td>
             {:else if listVisibility[line.guid].typeStr === "grid"}
                 <td></td>

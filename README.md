@@ -120,6 +120,15 @@ WIP
 
 ## Release Notes
 
+### 1.5.0
+
+- Quality of Life updates
+  - Nested sheets (from Lists + Props) will now only display their Add Column UI when that specific table is hovered, cleaning up the general UI of Depot and making it more understandable at a glance
+  - Added in toggle for nested sheet data previewing so it isn't always on by default
+  - Added in ability for a nested sheet to display its name (toggleable from options)
+  - Added in ability for a nested sheet to display its path (toggleable from options)
+  - These last two changes make it much easier to know what data you are editing in what nested sheet. This also paves the way to the idea of "focusing" a given sheet in a structure so you don't have to look at the whole sheet all the time.
+
 ### 1.4.0
 
 - NEW COLUMN Grid

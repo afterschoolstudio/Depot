@@ -26,6 +26,8 @@ export let data;
 let debug = false;
 let showLineGUIDs = false;
 let previewDisclosedFields = false;
+let showNestedNames = true;
+let showNestedPaths = false;
 let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
@@ -729,7 +731,11 @@ function selectedSheetEdit() {
     {:else}
         <h1>{data.sheets[selectedSheet].name}</h1>
         <p>{data.sheets[selectedSheet].description}</p>
-        <DepotOptions bind:debug={debug} bind:showLineGUIDs={showLineGUIDs} bind:previewDisclosedFields={previewDisclosedFields}/> 
+        <DepotOptions bind:debug={debug}
+                      bind:showLineGUIDs={showLineGUIDs}
+                      bind:previewDisclosedFields={previewDisclosedFields}
+                      bind:showNestedNames={showNestedNames}
+                      bind:showNestedPaths={showNestedPaths}/> 
         <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active} on:click={createSheet}>
             <img src={iconPaths["newSheet"].path} alt="New Sheet">
         </button>
@@ -756,12 +762,15 @@ function selectedSheetEdit() {
             <DepotSheet debug={debug} 
                         showLineGUIDs={showLineGUIDs} 
                         previewDisclosedFields={previewDisclosedFields}
+                        showNestedNames={showNestedNames}
+                        showNestedPaths={showNestedPaths}
                         bind:fullData={data} 
                         bind:sheetData={data.sheets[selectedSheet]} 
                         bind:inputLineData={data.sheets[selectedSheet].lines} 
                         depotInfo={depotFileInfo} 
                         on:message={handleTableAction}
-                        bind:listVisibility={listVisibility}/>
+                        bind:listVisibility={listVisibility}
+                        baseDataPath={data.sheets[selectedSheet].name}/>
         {/if}
     {/if}
 {/if}

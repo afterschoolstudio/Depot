@@ -18,10 +18,14 @@ limitations under the License.
 export let debug;
 export let showLineGUIDs;
 export let previewDisclosedFields;
+export let showNestedNames;
+export let showNestedPaths;
 
 </script>
 <input type=checkbox bind:checked={debug}>Debug
 <input type=checkbox bind:checked={showLineGUIDs}>Show Line GUIDs
 <input type=checkbox bind:checked={previewDisclosedFields}>Preview List/Props/Grid Fields
+<input type=checkbox bind:checked={showNestedNames}>Show Nested Sheet Names
+<input type=checkbox bind:checked={showNestedPaths}>Show Nested Sheet Paths
 <br>
 <br>
