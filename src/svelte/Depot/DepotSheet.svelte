@@ -29,6 +29,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { createEventDispatcher } from 'svelte';
 import GridFieldTableEditor from '../Fields/GridFieldTableEditor.svelte';
+import { off } from 'process';
 export let fullData;
 export let sheetData;
 export let inputLineData;
@@ -49,6 +50,8 @@ export let showLineGUIDs;
 export let previewDisclosedFields;
 export let showNestedNames;
 export let showNestedPaths;
+export let allowSchemaEditing;
+export let allowAddRemoveItems;
 
 
 
@@ -278,7 +281,7 @@ function validateID(event,line) {
     <table on:mouseenter={enterSheet} on:mouseleave={leaveSheet}>
     <!-- This checks if this is a nested sheet, in which case we want to have the UI visible -->
     {#if sheetData.hidden}
-        {#if lastHovered == sheetData.guid}
+        {#if lastHovered == sheetData.guid && allowSchemaEditing}
         <tr>
             <td colspan="{totalColumns}">
                 {#each Object.keys(defaults) as columnType}
@@ -308,7 +311,7 @@ function validateID(event,line) {
         <th>ID</th>
         {/if}
         {#each sheetData.columns as column}
-            <th title="{column.description}"><a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a></th>
+            <th title="{column.description}">{#if allowSchemaEditing}<a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a>{:else}{column.name}{/if}</th>
         {/each}
     </tr>
     {#each lineData as line, i}
@@ -316,9 +319,11 @@ function validateID(event,line) {
     {#if Object.keys(line).length !== 0}
         <tr>
             <td style="width:17px">
-            <button class="buttonIcon" title="Remove Line" on:click={() => removeLine(i,line,originLineGUID)}>
-                <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Remove Line">
-            </button>
+                {#if allowAddRemoveItems}
+                    <button class="buttonIcon" title="Remove Line" on:click={() => removeLine(i,line,originLineGUID)}>
+                        <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Remove Line">
+                    </button>
+                {/if}
             </td>
             {#if showLineGUIDs}
             <td>{line.guid}</td>
@@ -416,6 +421,8 @@ function validateID(event,line) {
                                     showLineGUIDs={showLineGUIDs} 
                                     showNestedNames={showNestedNames}
                                     showNestedPaths={showNestedPaths}
+                                    allowSchemaEditing={allowSchemaEditing}
+                                    allowAddRemoveItems={allowAddRemoveItems}
                                     originLineGUID={line.guid}
                                     bind:fullData={fullData} 
                                     bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
@@ -442,31 +449,33 @@ function validateID(event,line) {
         {/if}
     {/if}
     {/each}
-    <!-- dont allow more than one line for a props sheet -->
-    {#if sheetData.isProps && Object.keys(inputLineData).length === 0}
-    <tr>
-        <td></td>
-        <td colspan="{totalColumns -  1}">
-            <button class="buttonIcon addLine" title="Add props" on:click={() => addLines(1,originLineGUID)}>
-                <img src={iconPaths["addPropsLine"].path} alt="Add props">
-            </button>
-        </td>
-    </tr>
-    {:else if !sheetData.isProps}
-    <tr>
-        <td></td>
-        <td colspan="{totalColumns -  1}">
-            <button class="buttonIcon addLine" title="Add one line" on:click={() => addLines(1,originLineGUID)}>
-                <img src={iconPaths["addOneLine"].path} alt="Add one line">
-            </button>
-            <button class="buttonIcon addLine" title="Add five lines" on:click={() => addLines(5,originLineGUID)}>
-                <img src={iconPaths["addFiveLines"].path} alt="Add five lines">
-            </button>
-            <button class="buttonIcon addLine" alt="Add ten lines" on:click={() => addLines(10,originLineGUID)}>
-                <img src={iconPaths["addTenLines"].path} alt="Add ten lines">
-            </button>
-        </td>
-    </tr>
+    {#if allowAddRemoveItems}
+        <!-- dont allow more than one line for a props sheet -->
+        {#if sheetData.isProps && Object.keys(inputLineData).length === 0}
+        <tr>
+            <td></td>
+            <td colspan="{totalColumns -  1}">
+                <button class="buttonIcon addLine" title="Add props" on:click={() => addLines(1,originLineGUID)}>
+                    <img src={iconPaths["addPropsLine"].path} alt="Add props">
+                </button>
+            </td>
+        </tr>
+        {:else if !sheetData.isProps}
+        <tr>
+            <td></td>
+            <td colspan="{totalColumns -  1}">
+                <button class="buttonIcon addLine" title="Add one line" on:click={() => addLines(1,originLineGUID)}>
+                    <img src={iconPaths["addOneLine"].path} alt="Add one line">
+                </button>
+                <button class="buttonIcon addLine" title="Add five lines" on:click={() => addLines(5,originLineGUID)}>
+                    <img src={iconPaths["addFiveLines"].path} alt="Add five lines">
+                </button>
+                <button class="buttonIcon addLine" alt="Add ten lines" on:click={() => addLines(10,originLineGUID)}>
+                    <img src={iconPaths["addTenLines"].path} alt="Add ten lines">
+                </button>
+            </td>
+        </tr>
+        {/if}
     {/if}
     </table>
 {#if debug}

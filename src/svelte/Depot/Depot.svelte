@@ -28,6 +28,8 @@ let showLineGUIDs = false;
 let previewDisclosedFields = false;
 let showNestedNames = true;
 let showNestedPaths = false;
+let allowSchemaEditing = true;
+let allowAddRemoveItems = true;
 let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
@@ -735,20 +737,24 @@ function selectedSheetEdit() {
                       bind:showLineGUIDs={showLineGUIDs}
                       bind:previewDisclosedFields={previewDisclosedFields}
                       bind:showNestedNames={showNestedNames}
-                      bind:showNestedPaths={showNestedPaths}/> 
-        <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active} on:click={createSheet}>
-            <img src={iconPaths["newSheet"].path} alt="New Sheet">
-        </button>
-        <button class="buttonIcon padded" title="Edit sheet" disabled={editorConfig.active} on:click={selectedSheetEdit}>
-            <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
-        </button>
-        {#each Object.keys(defaults) as columnType}
-            {#if columnType !== "sheet"}
-                <button class="buttonIcon padded" disabled={editorConfig.active} title="Create new {columnType} column" on:click={() => selectedSheetColumnCreate(columnType)}>
-                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
-                </button>
-            {/if}
-        {/each}
+                      bind:showNestedPaths={showNestedPaths} 
+                      bind:allowAddRemoveItems={allowAddRemoveItems} 
+                      bind:allowSchemaEditing={allowSchemaEditing}/> 
+        {#if allowSchemaEditing}
+            <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active} on:click={createSheet}>
+                <img src={iconPaths["newSheet"].path} alt="New Sheet">
+            </button>
+            <button class="buttonIcon padded" title="Edit sheet" disabled={editorConfig.active} on:click={selectedSheetEdit}>
+                <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
+            </button>
+            {#each Object.keys(defaults) as columnType}
+                {#if columnType !== "sheet"}
+                    <button class="buttonIcon padded" disabled={editorConfig.active} title="Create new {columnType} column" on:click={() => selectedSheetColumnCreate(columnType)}>
+                        <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
+                    </button>
+                {/if}
+            {/each}
+        {/if}
         <div>
         {#each data.sheets as sheet}
             {#if !sheet.hidden}
@@ -764,6 +770,8 @@ function selectedSheetEdit() {
                         previewDisclosedFields={previewDisclosedFields}
                         showNestedNames={showNestedNames}
                         showNestedPaths={showNestedPaths}
+                        allowSchemaEditing={allowSchemaEditing}
+                        allowAddRemoveItems={allowAddRemoveItems}
                         bind:fullData={data} 
                         bind:sheetData={data.sheets[selectedSheet]} 
                         bind:inputLineData={data.sheets[selectedSheet].lines} 

@@ -20,6 +20,8 @@ export let showLineGUIDs;
 export let previewDisclosedFields;
 export let showNestedNames;
 export let showNestedPaths;
+export let allowSchemaEditing;
+export let allowAddRemoveItems;
 
 </script>
 <input type=checkbox bind:checked={debug}>Debug
@@ -27,5 +29,7 @@ export let showNestedPaths;
 <input type=checkbox bind:checked={previewDisclosedFields}>Preview List/Props/Grid Fields
 <input type=checkbox bind:checked={showNestedNames}>Show Nested Sheet Names
 <input type=checkbox bind:checked={showNestedPaths}>Show Nested Sheet Paths
+<input type=checkbox bind:checked={allowSchemaEditing}>Allow Schema Editing
+<input type=checkbox bind:checked={allowAddRemoveItems}>Add/Remove Items
 <br>
 <br>

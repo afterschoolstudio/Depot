@@ -128,6 +128,8 @@ WIP
   - Added in ability for a nested sheet to display its name (toggleable from options)
   - Added in ability for a nested sheet to display its path (toggleable from options)
   - These last two changes make it much easier to know what data you are editing in what nested sheet. This also paves the way to the idea of "focusing" a given sheet in a structure so you don't have to look at the whole sheet all the time.
+  - Added in ability to "lock"/"unlock" a Depot file ("Allow Schema Editing" option) to locally "lock-in" the structure of a file. This can be toggled on and off at will and is not saved to the depot file directly.
+  - Added in ability to prevent entries in a list or property field from being added or removed ("Add/Remove Items" option).
 
 ### 1.4.0
 
