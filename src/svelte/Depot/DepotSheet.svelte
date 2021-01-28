@@ -426,7 +426,7 @@ function validateID(event,line) {
                                     bind:listVisibility={listVisibility}
                                     bind:lastHovered={lastHovered}
                                     parentGUID={sheetData.guid}
-                                    baseDataPath={sheetData.isProps ? baseDataPath + "." + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name : baseDataPath + "[" + i + "]"}/>
+                                    baseDataPath={baseDataPath + (sheetData.isProps ? "." : "[" + i + "].") + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name}/>
                                     <!-- baseDataPath={listVisibility[line.guid].typeStr === "list" ? baseDataPath + "[" + i + "]" : baseDataPath + "." + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name }/> -->
                 </td>
             {:else if listVisibility[line.guid].typeStr === "grid"}
