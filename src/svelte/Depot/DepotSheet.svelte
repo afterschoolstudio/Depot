@@ -29,7 +29,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { createEventDispatcher } from 'svelte';
 import GridFieldTableEditor from '../Fields/GridFieldTableEditor.svelte';
-import { off } from 'process';
 export let fullData;
 export let sheetData;
 export let inputLineData;
