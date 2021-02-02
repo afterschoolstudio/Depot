@@ -1,6 +1,6 @@
 .vscode/**
 .vscode-test/**
-out/test/**
+out/**
 src/**
 .gitignore
 vsc-extension-quickstart.md
@@ -12,3 +12,4 @@ examples/**
 images/**
 rollup.config.js
 todo.tasks
+node_modules
