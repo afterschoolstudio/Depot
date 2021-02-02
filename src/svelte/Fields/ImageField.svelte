@@ -1,10 +1,20 @@
 <script>
     import { getContext } from 'svelte';
     import { createEventDispatcher } from 'svelte';
+    import tippy from 'sveltejs-tippy';
 
     export let data;
     export let sheetGUID;
     export let fileKey;
+
+    $: props = {
+        content:
+        '<img src="'+data+'">',
+        allowHTML: true,
+        placement: "bottom",
+        duration: [0, 0]
+    };
+
     const nonce = getContext("nonce");
     const dispatch = createEventDispatcher();
     function pickFile() {
@@ -30,21 +40,20 @@
 
 </script>
 
-<!-- <button>Test</button> -->
-{#if data == ""}
-    <button on:click={pickFile}>Pick</button>
-{:else}
-    {#if hovering}
-        <div style="width:400px;" on:mouseleave={()=>{hovering=false}}>
-        <button on:click={pickFile}>Change</button>
-        <button on:click={clearFile}>Clear</button>
-        {data}
-        <br>
-        <img src={data} alt={data}>
-        </div>
+<div on:mouseover={()=>{hovering=true}} on:mouseleave={()=>{hovering=false}}>
+    <!-- <button>Test</button> -->
+    {#if data == ""}
+        <button on:click={pickFile}>Pick</button>
     {:else}
-        <div style="width:50px;" on:mouseover={()=>{hovering=true}}>
-        <img src={data} alt={data}>
+        <div style="width:50px;">
+        <span>
+        <img src={data} title={data} alt={data} use:tippy={props}>
+        {#if hovering}
+            <button on:click={pickFile}>Change</button>
+            <button on:click={clearFile}>Clear</button>
+            <!-- {data} -->
+        {/if}
+        </span>
         </div>
     {/if}
-{/if}
+</div>
