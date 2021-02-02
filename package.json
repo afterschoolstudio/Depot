@@ -7,7 +7,7 @@
 	"contributors": [
 		"Kyle Kukshtel"
 	],
-	"version": "1.5.6",
+	"version": "1.5.7",
 	"engines": {
 		"vscode": "^1.48.0"
 	},
