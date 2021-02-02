@@ -40,20 +40,33 @@
 
 </script>
 
+<style>
+    .row {
+        display: flex;
+        width: 75px;
+    }
+    .bCol {
+        display: flex;
+        flex-direction: column;
+        width: 25px;
+        height: 50px;
+        align-items: stretch
+    }
+</style>
+
 <div on:mouseover={()=>{hovering=true}} on:mouseleave={()=>{hovering=false}}>
     <!-- <button>Test</button> -->
     {#if data == ""}
         <button on:click={pickFile}>Pick</button>
     {:else}
-        <div style="width:50px;">
-        <span>
-        <img src={data} title={data} alt={data} use:tippy={props}>
-        {#if hovering}
-            <button on:click={pickFile}>Change</button>
-            <button on:click={clearFile}>Clear</button>
-            <!-- {data} -->
-        {/if}
-        </span>
+        <div class="row">
+            <img style="width:50px;" src={data} title={data} alt={data} use:tippy={props} on:click={pickFile}>
+            {#if hovering}
+                <div class="bCol">
+                    <button style="height: 25px" title="Clear image" on:click={clearFile}>X</button>
+                    <button style="height: 25px" title="Change image" on:click={pickFile}>...</button>
+                </div>
+            {/if}
         </div>
-    {/if}
+{/if}
 </div>
