@@ -160,7 +160,12 @@ limitations under the License.
         text-align: left;
         border-collapse: collapse;
     }
-    :global(table td, table th) {
+    :global(table td) {
+        border:3px solid #252526;
+        padding: 0px;
+        /* width: 50% */
+    } 
+    :global(table td) {
         border:3px solid #252526;
         padding: 0px;
         /* width: 50% */
