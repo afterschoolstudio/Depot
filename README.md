@@ -44,6 +44,20 @@ Note that once Depot is installed, the extension will try to open any file with 
 ### Custom File Extensions
 You can also use a custom file extension for Depot by editing your ```settings.json``` file and adding the following line:
 
+### For most recent Code Versions
+
+```
+{
+    "workbench.editorAssociations": {
+        "*.foo" : "depot.data",
+        "*.bar" : "depot.data"
+    }
+}
+```
+
+
+### For Code Versions Before 1.56
+
 ```
 "workbench.editorAssociations": [
     {
