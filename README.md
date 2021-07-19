@@ -3,7 +3,12 @@
 # Depot
 **Depot** is a structured data editor for Visual Studio Code that leverages Code's Custom Editor API to allow you to edit JSON data like a spreadsheet. Data you would normally store in raw JSON or XML can instead be stored, edited, and managed, all through a _single_ Depot file.
 
+### Requirements
+* Visual Studio Code 1.48+
+
 [Download as a Visual Studio Code Extension Here](https://marketplace.visualstudio.com/items?itemName=afterschool.depot)
+
+![](https://img.shields.io/github/sponsors/afterschoolstudio?style=social&logo=github-sponsors)
 
 ## Features
 * Edit data normally stored as raw JSON in a spreadsheet style interface
@@ -12,9 +17,11 @@
 
 ![Depot logo](images/depot_screenshot.png)
 
-## Requirements
+## Sponsor
 
-* Visual Studio Code 1.48+
+If you use or find value in Depot, we'd love it if you could sponsor the project! Click the link below or [navigate here](https://github.com/sponsors/afterschoolstudio) to choose a tier to support this project at.
+
+[![Sponsor Link](https://img.shields.io/github/sponsors/afterschoolstudio?style=social&logo=github-sponsors)](https://github.com/sponsors/afterschoolstudio)
 
 ## Quickstart
 
