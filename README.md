@@ -8,7 +8,7 @@
 
 [Download as a Visual Studio Code Extension Here](https://marketplace.visualstudio.com/items?itemName=afterschool.depot)
 
-![](https://img.shields.io/github/sponsors/afterschoolstudio?style=social&logo=github-sponsors)
+[![Sponsor Link](https://img.shields.io/github/sponsors/afterschoolstudio?style=social&logo=github-sponsors)](https://github.com/sponsors/afterschoolstudio)
 
 ## Features
 * Edit data normally stored as raw JSON in a spreadsheet style interface
