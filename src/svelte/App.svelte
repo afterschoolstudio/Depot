@@ -18,10 +18,11 @@ limitations under the License.
     import Depot from './Depot/Depot.svelte'
     import { onMount, setContext } from 'svelte';
     import resolvePath from 'object-resolve-path';
+    setContext("nonce", nonce);
+    setContext("iconPaths", icons);
 
 	onMount(() => {
-        setContext("nonce", nonce);
-        setContext("iconPaths", icons);
+        console.log("on mount");
         vscode.postMessage({
             type: 'init-view',
 		});
@@ -39,6 +40,7 @@ limitations under the License.
                 //the extension is sending us an init event with the document text
                 //not this is the document NOT the state, the state takes precendece
                 const state = vscode.getState();
+				dataType = message.jsonType;
                 if (state) {
                     //we push this state from the vscode workspace to the JSON this component is looking at
                     console.log("found previous state: " + state.text);
@@ -52,7 +54,6 @@ limitations under the License.
                     // it's then recieved in the windowMessage function where we update our content
                     updateContent(message.text);
 				}
-				dataType = message.jsonType;
                 return;
 			case 'update':
                 console.log("updating view");
@@ -114,6 +115,7 @@ limitations under the License.
             jsonData = JSON.parse(text);
             // vscode.window.showInformationMessage(interactableJSON);
 		} catch {
+            console.log("issue with content load");
             // vscode.window.showErrorMessage("json read issue");
 			// notesContainer.style.display = 'none';
 			// errorContainer.innerText = 'Error: Document is not valid json';

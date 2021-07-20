@@ -92,11 +92,11 @@
 			}
 		]
 	},
-    "capabilities": {
-        "untrustedWorkspaces": {
-          "supported": true
-        }
-    },
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
+	},
 	"scripts": {
 		"svelte-build": "rollup -c",
 		"svelte-dev": "rollup -c -w",
