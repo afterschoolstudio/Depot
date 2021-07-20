@@ -78,12 +78,12 @@ function getBannedNames(referenceSheetGUID, config) {
 
 let depotFileInfo = {};
 $: {
-    var sheetNames = [];
-    var sheetGuids = [];
-    var sheetNamesFiltered = [];
-    var sheetGuidsFiltered = [];
-    var lines = {};
-    var columns = {};
+    let sheetNames = [];
+    let sheetGuids = [];
+    let sheetNamesFiltered = [];
+    let sheetGuidsFiltered = [];
+    let lines = {};
+    let columns = {};
     data.sheets.forEach(sheet => {
         sheetNames.push(sheet.name);
         sheetGuids.push(sheet.guid);
@@ -116,7 +116,7 @@ $: {
                             "guids":sheetGuidsFiltered,
                         },
                         "lines" : lines,
-                        "columns" : columns,
+                        "columns" : columns
                     };
 }
 
