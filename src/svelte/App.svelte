@@ -22,6 +22,7 @@ limitations under the License.
 	onMount(() => {
         setContext("nonce", nonce);
         setContext("iconPaths", icons);
+        setContext("openWithSchemaEditingOn", openWithSchemaEditingOn);
         vscode.postMessage({
             type: 'init-view',
 		});
