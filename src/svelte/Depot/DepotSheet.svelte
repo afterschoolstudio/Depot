@@ -139,9 +139,9 @@ function createColumn(columnType) {
 }
 
 function handleSubTableEvent(event) {
-    console.log("handing subtable event");
-    console.log(event);
-    console.log(originLineGUID)
+    // console.log("handing subtable event");
+    // console.log(event);
+    // console.log(originLineGUID)
     switch (event.detail.type) {
         case "lineEdit":
             let nestedSheetGUID = event.detail.data.sheetGUID;
@@ -151,7 +151,7 @@ function handleSubTableEvent(event) {
             var refLineColumn = listVisibility[event.detail.data.originLineGUID];
             switch (event.detail.data.operation) {
                 case "add":
-                    console.log("adding nested line from",nestedSheetGUID,"with index",nestedSheetIndex,"from line",originLineGUID,"with index",refLineIndex,"at column",refLineColumn.name,"with guid",refLineColumn.guid)
+                    // console.log("adding nested line from",nestedSheetGUID,"with index",nestedSheetIndex,"from line",originLineGUID,"with index",refLineIndex,"at column",refLineColumn.name,"with guid",refLineColumn.guid)
                     for (let index = 1; index <= event.detail.data.amount; index++) {
                         var newLine = {};
                         newLine["guid"] = uuidv4();
@@ -229,7 +229,7 @@ function handleSubTableEvent(event) {
 
 let totalColumns = 0;
 $: {
-    console.log(sheetData);
+    // console.log(sheetData);
     if(showLineGUIDs)
     {
         totalColumns = sheetData.columns.length + 3;

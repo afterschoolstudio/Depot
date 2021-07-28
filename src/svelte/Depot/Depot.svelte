@@ -34,6 +34,7 @@ let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
+    data = data;
     // selectedSheetlineData = data.sheets[selectedSheet].lines;
     // selectedSheetData = data.sheets[selectedSheet];
     dispatch('message', {
@@ -187,10 +188,10 @@ function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
             }
         });
     } else {
-        console.log(lines);
-        console.log(trailIndex);
-        console.log(pathTrail[trailIndex]);
-        console.log(lines[pathTrail[trailIndex]]);
+        // console.log(lines);
+        // console.log(trailIndex);
+        // console.log(pathTrail[trailIndex]);
+        // console.log(lines[pathTrail[trailIndex]]);
         if(Array.isArray(lines[pathTrail[trailIndex]])) {
             if(lines[pathTrail[trailIndex]].length > 0) {
                 // [0].listVarName
@@ -229,17 +230,17 @@ function iterateNestedLines(subsheetIndex,iteratorFunction) {
         [6].level1[0].level2
         etc.
     */
-    console.log("paths: " + affectedLines.paths);
+    // console.log("paths: " + affectedLines.paths);
     affectedLines.paths.forEach(linePath => {
         /* linePath comes in like [0].level1[0].level2 */
         // subsheetLines is the array of lines nested inside this line entry
-        console.log(resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath));
+        // console.log(resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath));
         let subsheetLines = resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath);
         if(Array.isArray(subsheetLines)) {
             //top level and subsheet
             subsheetLines.forEach(line => {
-                console.log("destination line:");
-                console.log(line);
+                // console.log("destination line:");
+                // console.log(line);
                 iteratorFunction(line);
             });
         } else {
@@ -634,19 +635,21 @@ function handleTableAction(event) {
                     {
                         delete listVisibility[deletedGUID];
                     }
+                    sheetsUpdated();
                     break;
                 case "add":
                     if(!data.sheets[sheetIndex].hidden) {
                         createLines(event.detail.data.sheetGUID,event.detail.data.amount);
+                        //createLines calls sheetsUpdated()
                     }
                     else {
                         //line additions to subsheets are handled in DepotSheet
                     }
-                break;
+                    break;
                 default:
+                    sheetsUpdated();
                     break;
             }
-            sheetsUpdated();
             break;
         case "pickFile":
             //forward events from fields
