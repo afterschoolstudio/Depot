@@ -120,11 +120,7 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 
 		const fileOptions: vscode.OpenDialogOptions = {
 			canSelectMany: false,
-			openLabel: 'Open',
-			filters: {
-			   'All files': ['*'],
-			   'Text files': ['txt']
-		   }
+			openLabel: 'Select'
 	   };
 
 		// Receive message from the webview.
