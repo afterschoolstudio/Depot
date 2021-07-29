@@ -194,13 +194,6 @@ function handleSubTableEvent(event) {
                 default:
                     break;
             }
-            //push updates
-            dispatch('message', {
-                "type" : "update",
-                "data" : {
-                    "sheetGUID" : nestedSheetGUID
-                }
-            });
             break;
         case "hoverUpdate":
             let actionSheet = event.detail.data.sheetGUID;
@@ -214,12 +207,6 @@ function handleSubTableEvent(event) {
                     }
                     break;
             }
-            // dispatch('message', {
-            //     "type" : "update",
-            //     "data" : {
-            //         "sheetGUID" : nestedSheetGUID
-            //     }
-            // });
             dispatch('message',event.detail);
             break;
         default:
@@ -262,12 +249,6 @@ function validateID(event,line) {
                 {
                    let index = lineData.findIndex(l => l.guid === line.guid);
                    lineData[index].id = "DUPLICATE("+line.id+")";
-                }
-            });
-            dispatch('message', {
-                "type" : "update",
-                "data" : {
-                    "sheetGUID" : sheetData.guid
                 }
             });
             break;

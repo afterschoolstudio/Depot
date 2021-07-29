@@ -33,14 +33,6 @@ let allowAddRemoveItems = true;
 let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
-function sheetsUpdated() {
-    // data = data;
-    // selectedSheetlineData = data.sheets[selectedSheet].lines;
-    // selectedSheetData = data.sheets[selectedSheet];
-    // dispatch('message', {
-    //     "type" : "update"
-    // });
-}
 
 let selectedSheet = 0;
 function focusSheet(index) {
@@ -139,8 +131,6 @@ function createLines(sheetGUID, amount) {
         });
         data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines, newLine];
     }
-    // data.sheets[sheetIndex] = data.sheets[sheetIndex];
-    sheetsUpdated();
 }
 
 function getSubsheetParentInfo(subsheetIndex) {
@@ -306,7 +296,6 @@ function handleConfigUpdate(event) {
                         data.sheets = [...data.sheets, hiddenSheet];
                     }
                     editorConfig = {"active":false};
-                    sheetsUpdated();
                     break;
             }
             break;
@@ -431,7 +420,6 @@ function handleConfigUpdate(event) {
                     break;
             }
             editorConfig = {"active":false};
-            sheetsUpdated();
             break;
         case "delete":
             switch (editorConfig.editType) {
@@ -511,7 +499,6 @@ function handleConfigUpdate(event) {
                     break;
             }
             editorConfig = {"active":false};
-            sheetsUpdated();
             break;
         case "close":
             editorConfig = {"active":false};
@@ -535,7 +522,6 @@ function handleConfigUpdate(event) {
                     });
                 }
             });
-            sheetsUpdated();
             handleTableAction({"detail":{
                 "type" : "editorUpdate",
                 "data" : {
@@ -605,9 +591,6 @@ function handleTableAction(event) {
                     break;
             }
             break;
-        case "update":
-            sheetsUpdated();
-            break;
         case "lineEdit":
             switch (event.detail.data.operation) {
                 case "remove":
@@ -636,7 +619,6 @@ function handleTableAction(event) {
                     {
                         delete listVisibility[deletedGUID];
                     }
-                    sheetsUpdated();
                     break;
                 case "add":
                     if(!data.sheets[sheetIndex].hidden) {
@@ -648,7 +630,6 @@ function handleTableAction(event) {
                     }
                     break;
                 default:
-                    sheetsUpdated();
                     break;
             }
             break;
