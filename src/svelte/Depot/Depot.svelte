@@ -34,12 +34,12 @@ let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
 function sheetsUpdated() {
-    data = data;
+    // data = data;
     // selectedSheetlineData = data.sheets[selectedSheet].lines;
     // selectedSheetData = data.sheets[selectedSheet];
-    dispatch('message', {
-        "type" : "update"
-    });
+    // dispatch('message', {
+    //     "type" : "update"
+    // });
 }
 
 let selectedSheet = 0;
@@ -137,8 +137,9 @@ function createLines(sheetGUID, amount) {
                 newLine[column.name] = column.defaultValue;
             }
         });
-        data.sheets[sheetIndex].lines.push(newLine);
+        data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines, newLine];
     }
+    // data.sheets[sheetIndex] = data.sheets[sheetIndex];
     sheetsUpdated();
 }
 
@@ -267,7 +268,7 @@ function handleConfigUpdate(event) {
         case "create":
             switch (editorConfig.editType) {
                 case "sheet":
-                    data.sheets.push(editorData);
+                    data.sheets = [...data.sheets,editorData]
                     focusSheet(data.sheets.length - 1);
                     editorConfig = {"active":false};
                     createLines(editorData.guid,1); //calls sheets updated as well
@@ -302,7 +303,7 @@ function handleConfigUpdate(event) {
                         hiddenSheet["name"] = editorData.name;
                         //the list sheet is not configurable
                         delete hiddenSheet.configurable;
-                        data.sheets.push(hiddenSheet);
+                        data.sheets = [...data.sheets, hiddenSheet];
                     }
                     editorConfig = {"active":false};
                     sheetsUpdated();
@@ -442,7 +443,7 @@ function handleConfigUpdate(event) {
                             deleteListColumn(column);
                         }
                     });
-                    data.sheets.splice(selectedSheet,1);
+                    data.sheets = [...data.sheets.slice(0,selectedSheet),...data.sheets.slice(selectedSheet + 1)]
                     focusSheet(0);
                     //delete any references to this and set to ""
                     data.sheets.forEach(sheet => {
@@ -471,7 +472,7 @@ function handleConfigUpdate(event) {
                                 {
                                     column.sheet = "";
                                     column.defaultValue = "";
-                                    editedColumns.push(column);
+                                    editedColumns = [...editedColumns,column]
                                 }
                             });
                             sheet.lines.forEach(line => {
@@ -505,7 +506,7 @@ function handleConfigUpdate(event) {
                         deleteListColumn(data.sheets[sheetIndex].columns[index]);
                     }
                     //delete the column
-                    data.sheets[sheetIndex].columns.splice(index,1);
+                    data.sheets[sheetIndex].columns = [...data.sheets[sheetIndex].columns.slice(0,index),...data.sheets[sheetIndex].columns.slice(index+1)]
                     //TODO: may need to do more here if column name change was referenced by other sheet?
                     break;
             }
@@ -565,7 +566,7 @@ function deleteListColumn(col) {
             deleteListColumn(column);
         }
     });
-    data.sheets.splice(delSheetIndex,1);
+    data.sheets = [...data.sheets.slice(0,delSheetIndex),...data.sheets.slice(delSheetIndex+1)];
 }
 
 let editorConfig = {"active" : false}
@@ -611,7 +612,7 @@ function handleTableAction(event) {
             switch (event.detail.data.operation) {
                 case "remove":
                     const deletedGUID = event.detail.data.line.guid;
-                    data.sheets[sheetIndex].lines.splice(event.detail.data.lineIndex,1);
+                    data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines.slice(0,event.detail.data.lineIndex),...data.sheets[sheetIndex].lines.slice(event.detail.data.lineIndex+1)];
                     data.sheets.forEach(sheet => {
                         var lineRefColumns = sheet.columns.filter(column => column.typeStr === "lineReference");
                         if(lineRefColumns.length > 0) {

@@ -167,7 +167,7 @@ function handleSubTableEvent(event) {
                         });
                         if(!fullData.sheets[nestedSheetIndex].isProps) {
                             newLine["id"] = lineData[refLineIndex][refLineColumn.name].length + "";
-                            lineData[refLineIndex][refLineColumn.name].push(newLine);
+                            lineData[refLineIndex][refLineColumn.name] = [...lineData[refLineIndex][refLineColumn.name], newLine];
                         } else {
                             lineData[refLineIndex][refLineColumn.name] = newLine;
                         }
@@ -175,7 +175,9 @@ function handleSubTableEvent(event) {
                     break;
                 case "remove":
                     if(!fullData.sheets[nestedSheetIndex].isProps) {
-                        lineData[refLineIndex][refLineColumn.name].splice(event.detail.data.lineIndex,1);
+                        var rmArray = lineData[refLineIndex][refLineColumn.name];
+                        var rmIndex = event.detail.data.lineIndex;
+                        lineData[refLineIndex][refLineColumn.name] = [...rmArray.slice(0,rmIndex),...rmArray.slice(rmIndex+1)];
                     } else {
                         //note this doesnt remove the props config, just this entry in this line
                         lineData[refLineIndex][refLineColumn.name] = {};

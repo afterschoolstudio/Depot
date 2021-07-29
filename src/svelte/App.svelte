@@ -32,6 +32,13 @@ limitations under the License.
 	let dataType = "";
     let jsonData = {};
 
+    $: {
+        vscode.postMessage({
+            type: 'update',
+            data: jsonData
+        });
+    }
+
 	function handleWebviewMessage(event) {
         const message = event.data; // The json data that the extension sent
 		switch (message.type) {
