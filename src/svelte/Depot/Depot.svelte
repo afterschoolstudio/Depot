@@ -648,7 +648,7 @@ function handleTableAction(event) {
                 //this is every line with this path, we now need to filter this down to the specific 
                 let filtered = affectedLines.filter(linePath => {
                     let subsheetLines = resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath);
-                    return subsheetLines[fileKey.lineIndex].guid == fileKey.line.guid;
+                    return Array.isArray(subsheetLines) ? subsheetLines[fileKey.lineIndex].guid == fileKey.line.guid : subsheetLines.guid == fileKey.line.guid;
                 });
                 //filtered now has one element in it with only the path to the cooresponding line
                 fileKey["linePath"] = filtered[0];

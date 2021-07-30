@@ -79,14 +79,18 @@ limitations under the License.
                 var dataPath = message.fileKey;
                 if("linePath" in dataPath) {
                     let line = resolvePath(jsonData["sheets"][dataPath.sheet].lines, dataPath.linePath);
-                    line[dataPath.lineIndex][dataPath.column.name] = message.filePath;
+                    if(Array.isArray(line))
+                    {
+                        line[dataPath.lineIndex][dataPath.column.name] = message.filePath;
+                    }
+                    else
+                    {
+                        line[dataPath.column.name] = message.filePath;
+                    }
                 } else {
                     jsonData["sheets"][dataPath.sheet].lines[dataPath.lineIndex][dataPath.column.name] = message.filePath;
                 }
-                vscode.postMessage({
-                    type: 'update',
-                    data: jsonData
-                });
+                jsonData = jsonData;
                 return;
 		}
     }

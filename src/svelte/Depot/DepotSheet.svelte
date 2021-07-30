@@ -31,18 +31,7 @@ import { createEventDispatcher } from 'svelte';
 import GridFieldTableEditor from '../Fields/GridFieldTableEditor.svelte';
 export let fullData;
 export let sheetData;
-export let inputLineData;
-//maybe just switch on sheetData below instead of trying to cast an array?
-//that way you could also (i think) just write to the single bound lineData?
-$: {
-    if(Array.isArray(inputLineData)) {
-        lineData = inputLineData;
-    } else {
-        //this is a props sheet so we need to spoof a linedata array
-        lineData = [inputLineData]
-    }
-}
-let lineData;
+export let inputLineData; //this will be an array if this sheet isn't props, or an object if it is props
 //from DepotOptions.svelte
 export let debug;
 export let showLineGUIDs;
@@ -146,8 +135,6 @@ function handleSubTableEvent(event) {
         case "lineEdit":
             let nestedSheetGUID = event.detail.data.sheetGUID;
             let nestedSheetIndex = fullData.sheets.findIndex(sheet => sheet.guid === nestedSheetGUID);
-            //this is the line in the parent sheet that caught the event from the subsheet
-            var refLineIndex = lineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
             var refLineColumn = listVisibility[event.detail.data.originLineGUID];
             switch (event.detail.data.operation) {
                 case "add":
@@ -165,29 +152,97 @@ function handleSubTableEvent(event) {
                                 newLine[column.name] = column.defaultValue;
                             }
                         });
+                        //if the sheet we clicked add on isn't a props sheet
                         if(!fullData.sheets[nestedSheetIndex].isProps) {
-                            newLine["id"] = lineData[refLineIndex][refLineColumn.name].length + "";
-                            lineData[refLineIndex][refLineColumn.name] = [...lineData[refLineIndex][refLineColumn.name], newLine];
+                            
+                            if(!sheetData.isProps)  //the target linedata is an array and our inputdata is an array
+                            {
+                                //this is the line in the parent sheet that caught the event from the subsheet
+                                let refLineIndex = inputLineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
+                                newLine["id"] = inputLineData[refLineIndex][refLineColumn.name].length + "";
+                                inputLineData[refLineIndex][refLineColumn.name] = [...inputLineData[refLineIndex][refLineColumn.name], newLine];
+                            }
+                            else                    //the target linedata is an array and our inputdata is an object
+                            {
+                                newLine["id"] = inputLineData[refLineColumn.name].length + "";
+                                inputLineData[refLineColumn.name] = [...inputLineData[refLineColumn.name], newLine];
+                            }
+                        //the sheet we clicked add on IS a props sheet
                         } else {
-                            lineData[refLineIndex][refLineColumn.name] = newLine;
+                            if(!sheetData.isProps)  //the target linedata is an object and our inputdata is an array
+                            {
+                                let refLineIndex = inputLineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
+                                inputLineData[refLineIndex][refLineColumn.name] = newLine;
+                            }
+                            else                        //the target linedata is an object and our inputdata is an object
+                            {
+                                inputLineData[refLineColumn.name] = newLine;
+                            }
                         }
                     }
                     break;
                 case "remove":
+                    //if the sheet we're removing on isn't a props sheet
                     if(!fullData.sheets[nestedSheetIndex].isProps) {
-                        var rmArray = lineData[refLineIndex][refLineColumn.name];
-                        var rmIndex = event.detail.data.lineIndex;
-                        lineData[refLineIndex][refLineColumn.name] = [...rmArray.slice(0,rmIndex),...rmArray.slice(rmIndex+1)];
+                        if(!sheetData.isProps)
+                        {
+                            let refLineIndex = inputLineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
+                            var rmArray = inputLineData[refLineIndex][refLineColumn.name];
+                            var rmIndex = event.detail.data.lineIndex;
+                            inputLineData[refLineIndex][refLineColumn.name] = [...rmArray.slice(0,rmIndex),...rmArray.slice(rmIndex+1)];
+    
+                            //delete this from visibility
+                            //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
+                            //this doesn't happen right now so creates some garbage in listVisibility
+                            if(inputLineData[refLineIndex].guid in listVisibility)
+                            {
+                                delete listVisibility[refLineIndex];
+                            }
+                        }
+                        else
+                        {
+                            var rmArray = inputLineData[refLineColumn.name];
+                            var rmIndex = event.detail.data.lineIndex;
+                            inputLineData[refLineColumn.name] = [...rmArray.slice(0,rmIndex),...rmArray.slice(rmIndex+1)];
+    
+                            //delete this from visibility
+                            //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
+                            //this doesn't happen right now so creates some garbage in listVisibility
+                            if(inputLineData.guid in listVisibility)
+                            {
+                                delete listVisibility[listVisibility.findIndex(l => l.guid === inputLineData.guid)];
+                            }
+                        }
                     } else {
-                        //note this doesnt remove the props config, just this entry in this line
-                        lineData[refLineIndex][refLineColumn.name] = {};
-                    }
-                    //delete this from visibility
-                    //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
-                    //this doesn't happen right now so creates some garbage in listVisibility
-                    if(lineData[refLineIndex].guid in listVisibility)
-                    {
-                        delete listVisibility[refLineIndex];
+                        if(!sheetData.isProps) {
+                            //note this doesnt remove the props config, just this entry in this line
+                            let refLineIndex = inputLineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
+                            
+                            //delete this from visibility
+                            //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
+                            //this doesn't happen right now so creates some garbage in listVisibility
+                            if(inputLineData[refLineIndex][refLineColumn.name].guid in listVisibility)
+                            {
+                                let delIndex = listVisibility.findIndex(l => l.guid === inputLineData[refLineIndex][refLineColumn.name].guid);
+                                delete listVisibility[delIndex];
+                            }
+
+                            inputLineData[refLineIndex][refLineColumn.name] = {};
+
+                        }
+                        else {
+                            //delete this from visibility
+                            //TODO: if the line has nested lists as well that are visbile, this needs to delete those lines as well from visbility
+                            //this doesn't happen right now so creates some garbage in listVisibility
+                            if(inputLineData.guid in listVisibility)
+                            {
+                                let delIndex = listVisibility.findIndex(l => l.guid === inputLineData.guid);
+                                delete listVisibility[delIndex];
+                            }
+
+                            //note this doesnt remove the props config, just this entry in this line
+                            inputLineData[refLineColumn.name] = {};
+                        }
                     }
                     //nested sheet lines cannot be referened so we can just delete this from the list
                     break;
@@ -244,13 +299,16 @@ function setListVisible(line,column,visible) {
 function validateID(event,line) {
     switch (event.detail.type) {
         case "validate":
-            lineData.forEach(ld => {
-                if(line.guid !== ld.guid && line.id === ld.id)
-                {
-                   let index = lineData.findIndex(l => l.guid === line.guid);
-                   lineData[index].id = "DUPLICATE("+line.id+")";
-                }
-            });
+            if(!sheetData.isProps)
+            {
+                inputLineData.forEach(ld => {
+                    if(line.guid !== ld.guid && line.id === ld.id)
+                    {
+                       let index = inputLineData.findIndex(l => l.guid === line.guid);
+                       lineData[index].id = "DUPLICATE("+line.id+")";
+                    }
+                });
+            }
             break;
         default:
             //forward messages otherwise from nested table
@@ -260,43 +318,45 @@ function validateID(event,line) {
 }
 
 </script>
-    <table on:mouseenter={enterSheet} on:mouseleave={leaveSheet}>
-    <!-- This checks if this is a nested sheet, in which case we want to have the UI visible -->
-    {#if sheetData.hidden}
-        {#if lastHovered == sheetData.guid && allowSchemaEditing}
-        <tr>
-            <td colspan="{totalColumns}">
-                {#each Object.keys(defaults) as columnType}
-                    {#if columnType !== "sheet"}
-                    <button class="buttonIcon padded" title="Create new {columnType} column" on:click={() => createColumn(columnType)}>
-                        <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
-                    </button>
-                    {/if}
-                {/each}
-            </td>
-        </tr>
-        {/if}
-        {#if showNestedNames || showNestedPaths}
-        <tr>
-            <td colspan="{totalColumns}">
-                {#if showNestedNames}<b>{sheetData.name}</b>{/if} {#if showNestedPaths} @ {baseDataPath}{/if}
-            </td>
-        </tr>
-        {/if}
-    {/if}
+<table on:mouseenter={enterSheet} on:mouseleave={leaveSheet}>
+<!-- This checks if this is a nested sheet, in which case we want to have the UI visible -->
+{#if sheetData.hidden}
+    {#if (lastHovered == sheetData.guid) && allowSchemaEditing}
     <tr>
-        <th>    </th>
-        {#if showLineGUIDs}
-        <th>GUID</th>
-        {/if}
-        {#if !sheetData.isProps}
-        <th>ID</th>
-        {/if}
-        {#each sheetData.columns as column}
-            <th title="{column.description}">{#if allowSchemaEditing}<a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a>{:else}{column.name}{/if}</th>
-        {/each}
+        <td colspan="{totalColumns}">
+            {#each Object.keys(defaults) as columnType}
+                {#if columnType !== "sheet"}
+                <button class="buttonIcon padded" title="Create new {columnType} column" on:click={() => createColumn(columnType)}>
+                    <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
+                </button>
+                {/if}
+            {/each}
+        </td>
     </tr>
-    {#each lineData as line, i}
+    {/if}
+    {#if showNestedNames || showNestedPaths}
+    <tr>
+        <td colspan="{totalColumns}">
+            {#if showNestedNames}<b>{sheetData.name}</b>{/if} {#if showNestedPaths} @ {baseDataPath}{/if}
+        </td>
+    </tr>
+    {/if}
+{/if}
+<tr>
+    <th>    </th>
+    {#if showLineGUIDs}
+    <th>GUID</th>
+    {/if}
+    {#if !sheetData.isProps}
+    <th>ID</th>
+    {/if}
+    {#each sheetData.columns as column}
+        <th title="{column.description}">{#if allowSchemaEditing}<a href={"#"} on:click={()=> editColumn(column.name)}>{column.name}</a>{:else}{column.name}{/if}</th>
+    {/each}
+</tr>
+{#if !sheetData.isProps}
+    <!-- SHEET DRAWING FOR LIST/NORMAL SHEET -->
+    {#each inputLineData as line, i}
     <!-- this prevents us from preemptively drawing empty an empty props entry -->
     {#if Object.keys(line).length !== 0}
         <tr>
@@ -310,9 +370,7 @@ function validateID(event,line) {
             {#if showLineGUIDs}
             <td>{line.guid}</td>
             {/if}
-            {#if !sheetData.isProps}
             <td><TextField sheetGUID={sheetData.guid} bind:data={line["id"]} on:message={(event) => validateID(event,line)}/></td>
-            {/if}
             {#each sheetData.columns as column, c}
                 <td title="{column.description}">
                 <div>
@@ -399,6 +457,8 @@ function validateID(event,line) {
                 <td colspan="{totalColumns -  1}">
                     <!--    lineData grabs itself from the values in the lineData in this sheet
                             this is because lines store their nested values inside of themsevles instead of inside the sheet -->
+
+                    <!-- if our sheet isnt props, our linedata will be an array -->
                     <svelte:self    debug={debug} 
                                     showLineGUIDs={showLineGUIDs} 
                                     showNestedNames={showNestedNames}
@@ -408,15 +468,13 @@ function validateID(event,line) {
                                     originLineGUID={line.guid}
                                     bind:fullData={fullData} 
                                     bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)]} 
-                                    bind:inputLineData={lineData[lineData.findIndex(refLine => refLine.guid === line.guid)] 
-                                                        [listVisibility[line.guid].name]} 
+                                    bind:inputLineData={inputLineData[inputLineData.findIndex(refLine => refLine.guid === line.guid)][listVisibility[line.guid].name]} 
                                     depotInfo={depotInfo} 
                                     on:message={handleSubTableEvent}
                                     bind:listVisibility={listVisibility}
                                     bind:lastHovered={lastHovered}
                                     parentGUID={sheetData.guid}
                                     baseDataPath={baseDataPath + (sheetData.isProps ? "." : "[" + i + "].") + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name}/>
-                                    <!-- baseDataPath={listVisibility[line.guid].typeStr === "list" ? baseDataPath + "[" + i + "]" : baseDataPath + "." + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[line.guid].sheet)].name }/> -->
                 </td>
             {:else if listVisibility[line.guid].typeStr === "grid"}
                 <td></td>
@@ -431,9 +489,139 @@ function validateID(event,line) {
         {/if}
     {/if}
     {/each}
+{:else}
+    <!-- SHEET DRAWING FOR PROPS SHEET -->
+    <!-- this prevents us from preemptively drawing empty an empty props entry -->
+    {#if Object.keys(inputLineData).length !== 0}
+        <tr>
+            <td style="width:17px">
+                {#if allowAddRemoveItems}
+                    <button class="buttonIcon" title="Remove Line" on:click={() => removeLine(0,inputLineData,originLineGUID)}>
+                        <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Remove Line">
+                    </button>
+                {/if}
+            </td>
+            {#if showLineGUIDs}
+            <td>{inputLineData.guid}</td>
+            {/if}
+            {#each sheetData.columns as column, c}
+                <td title="{column.description}">
+                <div>
+                <!-- message from field updates bubble to Depot.svelte -->
+                {#if column.typeStr === "text"}
+                <TextField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                {:else if column.typeStr === "longtext"}
+                <LongTextField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                {:else if column.typeStr === "image"}
+                <ImageField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message fileKey={{"line":inputLineData,"lineIndex":0,"column":column,"columnIndex":c}}/>
+                {:else if column.typeStr === "file"}
+                <FileField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message fileKey={{"line":inputLineData,"lineIndex":0,"column":column,"columnIndex":c}}/>
+                {:else if column.typeStr === "bool"}
+                <BooleanField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                {:else if column.typeStr === "enum"}
+                <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                {:else if column.typeStr === "sheetReference"}
+                <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names} on:message/>
+                {:else if column.typeStr === "lineReference"}
+                    {#if column.sheet !== ""}
+                    <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} 
+                                options={depotInfo.lines[column.sheet].guids} 
+                                aliases={depotInfo.lines[column.sheet].names} on:message/>
+                    {:else}
+                    <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} 
+                                options={[]} 
+                                aliases={[]} on:message/>
+                    {/if}
+                    {#if inputLineData[column.name] !== "" && !depotInfo.lines[column.sheet].guids.includes(inputLineData[column.name])}
+                        <div title="Selected value with GUID {inputLineData[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
+                    {/if}
+                {:else if column.typeStr === "multiple"}
+                <MultipleField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"} on:message/>
+                {:else if column.typeStr === "int" || column.typeStr === "float"}
+                <NumberField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                {:else if column.typeStr === "list" || column.typeStr === "props" || column.typeStr === "grid"}
+                    {#if inputLineData.guid in listVisibility && listVisibility[inputLineData.guid].guid === column.guid}
+                        <button class="buttonIcon" on:click={()=>setListVisible(inputLineData,column,false)}>
+                            <img src={iconPaths["showList"].path} alt="Hide {column.typeStr}">
+                        </button>
+                        ...
+                    {:else}
+                        <button class="buttonIcon" on:click={()=>setListVisible(inputLineData,column,true)}>
+                            <img src={iconPaths["hideList"].path} alt="Show {column.typeStr}">
+                        </button>
+                        {#if previewDisclosedFields}
+                        {#if column.typeStr === "list"}
+                            <!-- Preview list contents  -->
+                            {#if inputLineData[column.name].length > 0 && inputLineData[column.name].length <= 5}
+                                {column.name} ({inputLineData[column.name].length}) : {inputLineData[column.name].map(l => l.id)}
+                            {:else if inputLineData[column.name].length > 5}
+                                {column.name} ({inputLineData[column.name].length}) : {inputLineData[column.name].map(l => l.id).slice(0, 4)}...
+                            {/if}
+                        {:else if column.typeStr === "props"}
+                            <!-- Preview props contents  -->
+                            {#each Object.keys(inputLineData[column.name]) as k, index}
+                                {#if k !== "guid" && index < 5}
+                                    {k} : {inputLineData[column.name][k]},
+                                {/if}
+                            {/each}
+                            ...
+                        {:else if column.typeStr === "grid"}
+                            <!-- Preview grid contents  -->
+                            {#if inputLineData[column.name].length > 0 && inputLineData[column.name].length <= 5}
+                                {inputLineData[column.name]}
+                            {:else if inputLineData[column.name].length > 5}
+                                {inputLineData[column.name].slice(0, 4)}...
+                            {/if}
+                        {/if}
+                        {/if}
+                    {/if}
+                {/if}
+                </div>
+                </td>
+            {/each}
+        </tr>
+        <!-- if line has a hidden sheet currently set to visible -->
+        <!-- listVisibility is guid, column  -->
+        {#if inputLineData.guid in listVisibility}
+        <!-- maybe pull this out of the tr and just use a div? -->
+            <tr>
+            {#if listVisibility[inputLineData.guid].typeStr === "list" || listVisibility[inputLineData.guid].typeStr === "props"}
+                <td></td>
+                <td colspan="{totalColumns -  1}">
+                <!-- if our sheet is props, our line data is just an object to be indexed by key -->
+                <svelte:self    debug={debug} 
+                                showLineGUIDs={showLineGUIDs} 
+                                showNestedNames={showNestedNames}
+                                showNestedPaths={showNestedPaths}
+                                allowSchemaEditing={allowSchemaEditing}
+                                allowAddRemoveItems={allowAddRemoveItems}
+                                originLineGUID={inputLineData.guid}
+                                bind:fullData={fullData} 
+                                bind:sheetData={fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[inputLineData.guid].sheet)]} 
+                                bind:inputLineData={inputLineData[listVisibility[inputLineData.guid].name]} 
+                                depotInfo={depotInfo} 
+                                on:message={handleSubTableEvent}
+                                bind:listVisibility={listVisibility}
+                                bind:lastHovered={lastHovered}
+                                parentGUID={sheetData.guid}
+                                baseDataPath={baseDataPath + (sheetData.isProps ? "." : "[" + 0 + "].") + fullData.sheets[fullData.sheets.findIndex(sheet => sheet.guid === listVisibility[inputLineData.guid].sheet)].name}/>
+                </td>
+            {:else if listVisibility[inputLineData.guid].typeStr === "grid"}
+                <td></td>
+                <td colspan="{totalColumns -  1}">
+                    <GridFieldTableEditor sheetGUID={sheetData.guid} 
+                                        bind:data={inputLineData[listVisibility[inputLineData.guid].name]} 
+                                        bind:columnData={listVisibility[inputLineData.guid]} 
+                                        on:message/>
+                </td>
+            {/if}
+            </tr>
+        {/if}
+    {/if}
+{/if}
     {#if allowAddRemoveItems}
         <!-- dont allow more than one line for a props sheet -->
-        {#if sheetData.isProps && Object.keys(inputLineData).length === 0}
+        {#if sheetData.isProps && inputLineData && Object.keys(inputLineData).length === 0 && inputLineData.constructor === Object}
         <tr>
             <td></td>
             <td colspan="{totalColumns -  1}">
@@ -459,7 +647,7 @@ function validateID(event,line) {
         </tr>
         {/if}
     {/if}
-    </table>
+</table>
 {#if debug}
 <p>Current Table Data:</p>
 <pre>{JSON.stringify({sheetData},null,2)}</pre>
