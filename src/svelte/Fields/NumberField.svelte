@@ -1,21 +1,9 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-
-    export let data;
-    export let sheetGUID;
-    export let min;
-    export let max;
-    const dispatch = createEventDispatcher();
-    function fieldUpdated() {
-        dispatch('message', {
-            "type" : "update",
-            "data" : {
-                "sheetGUID" : sheetGUID
-            }
-        });
-    }
+export let data;
+export let min;
+export let max;
 </script>
-<input type=number bind:value={data} min={min} max={max} on:input={fieldUpdated}>
+<input type=number bind:value={data} min={min} max={max}>
 
 <style>
     input {

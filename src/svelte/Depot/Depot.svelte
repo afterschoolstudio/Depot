@@ -33,13 +33,6 @@ let allowAddRemoveItems = true;
 let iconPaths = getContext("iconPaths");
 
 const dispatch = createEventDispatcher();
-function sheetsUpdated() {
-    // selectedSheetlineData = data.sheets[selectedSheet].lines;
-    // selectedSheetData = data.sheets[selectedSheet];
-    dispatch('message', {
-        "type" : "update"
-    });
-}
 
 let selectedSheet = 0;
 function focusSheet(index) {
@@ -78,12 +71,12 @@ function getBannedNames(referenceSheetGUID, config) {
 
 let depotFileInfo = {};
 $: {
-    var sheetNames = [];
-    var sheetGuids = [];
-    var sheetNamesFiltered = [];
-    var sheetGuidsFiltered = [];
-    var lines = {};
-    var columns = {};
+    let sheetNames = [];
+    let sheetGuids = [];
+    let sheetNamesFiltered = [];
+    let sheetGuidsFiltered = [];
+    let lines = {};
+    let columns = {};
     data.sheets.forEach(sheet => {
         sheetNames.push(sheet.name);
         sheetGuids.push(sheet.guid);
@@ -116,7 +109,7 @@ $: {
                             "guids":sheetGuidsFiltered,
                         },
                         "lines" : lines,
-                        "columns" : columns,
+                        "columns" : columns
                     };
 }
 
@@ -136,9 +129,8 @@ function createLines(sheetGUID, amount) {
                 newLine[column.name] = column.defaultValue;
             }
         });
-        data.sheets[sheetIndex].lines.push(newLine);
+        data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines, newLine];
     }
-    sheetsUpdated();
 }
 
 function getSubsheetParentInfo(subsheetIndex) {
@@ -187,10 +179,10 @@ function getValidLinesWithListPath(lines,pathTrail,trailIndex,basePath) {
             }
         });
     } else {
-        console.log(lines);
-        console.log(trailIndex);
-        console.log(pathTrail[trailIndex]);
-        console.log(lines[pathTrail[trailIndex]]);
+        // console.log(lines);
+        // console.log(trailIndex);
+        // console.log(pathTrail[trailIndex]);
+        // console.log(lines[pathTrail[trailIndex]]);
         if(Array.isArray(lines[pathTrail[trailIndex]])) {
             if(lines[pathTrail[trailIndex]].length > 0) {
                 // [0].listVarName
@@ -229,17 +221,17 @@ function iterateNestedLines(subsheetIndex,iteratorFunction) {
         [6].level1[0].level2
         etc.
     */
-    console.log("paths: " + affectedLines.paths);
+    // console.log("paths: " + affectedLines.paths);
     affectedLines.paths.forEach(linePath => {
         /* linePath comes in like [0].level1[0].level2 */
         // subsheetLines is the array of lines nested inside this line entry
-        console.log(resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath));
+        // console.log(resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath));
         let subsheetLines = resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath);
         if(Array.isArray(subsheetLines)) {
             //top level and subsheet
             subsheetLines.forEach(line => {
-                console.log("destination line:");
-                console.log(line);
+                // console.log("destination line:");
+                // console.log(line);
                 iteratorFunction(line);
             });
         } else {
@@ -266,7 +258,7 @@ function handleConfigUpdate(event) {
         case "create":
             switch (editorConfig.editType) {
                 case "sheet":
-                    data.sheets.push(editorData);
+                    data.sheets = [...data.sheets,editorData]
                     focusSheet(data.sheets.length - 1);
                     editorConfig = {"active":false};
                     createLines(editorData.guid,1); //calls sheets updated as well
@@ -301,10 +293,9 @@ function handleConfigUpdate(event) {
                         hiddenSheet["name"] = editorData.name;
                         //the list sheet is not configurable
                         delete hiddenSheet.configurable;
-                        data.sheets.push(hiddenSheet);
+                        data.sheets = [...data.sheets, hiddenSheet];
                     }
                     editorConfig = {"active":false};
-                    sheetsUpdated();
                     break;
             }
             break;
@@ -429,7 +420,6 @@ function handleConfigUpdate(event) {
                     break;
             }
             editorConfig = {"active":false};
-            sheetsUpdated();
             break;
         case "delete":
             switch (editorConfig.editType) {
@@ -441,7 +431,7 @@ function handleConfigUpdate(event) {
                             deleteListColumn(column);
                         }
                     });
-                    data.sheets.splice(selectedSheet,1);
+                    data.sheets = [...data.sheets.slice(0,selectedSheet),...data.sheets.slice(selectedSheet + 1)]
                     focusSheet(0);
                     //delete any references to this and set to ""
                     data.sheets.forEach(sheet => {
@@ -470,7 +460,7 @@ function handleConfigUpdate(event) {
                                 {
                                     column.sheet = "";
                                     column.defaultValue = "";
-                                    editedColumns.push(column);
+                                    editedColumns = [...editedColumns,column]
                                 }
                             });
                             sheet.lines.forEach(line => {
@@ -504,12 +494,11 @@ function handleConfigUpdate(event) {
                         deleteListColumn(data.sheets[sheetIndex].columns[index]);
                     }
                     //delete the column
-                    data.sheets[sheetIndex].columns.splice(index,1);
+                    data.sheets[sheetIndex].columns = [...data.sheets[sheetIndex].columns.slice(0,index),...data.sheets[sheetIndex].columns.slice(index+1)]
                     //TODO: may need to do more here if column name change was referenced by other sheet?
                     break;
             }
             editorConfig = {"active":false};
-            sheetsUpdated();
             break;
         case "close":
             editorConfig = {"active":false};
@@ -533,7 +522,6 @@ function handleConfigUpdate(event) {
                     });
                 }
             });
-            sheetsUpdated();
             handleTableAction({"detail":{
                 "type" : "editorUpdate",
                 "data" : {
@@ -564,7 +552,7 @@ function deleteListColumn(col) {
             deleteListColumn(column);
         }
     });
-    data.sheets.splice(delSheetIndex,1);
+    data.sheets = [...data.sheets.slice(0,delSheetIndex),...data.sheets.slice(delSheetIndex+1)];
 }
 
 let editorConfig = {"active" : false}
@@ -603,14 +591,11 @@ function handleTableAction(event) {
                     break;
             }
             break;
-        case "update":
-            sheetsUpdated();
-            break;
         case "lineEdit":
             switch (event.detail.data.operation) {
                 case "remove":
                     const deletedGUID = event.detail.data.line.guid;
-                    data.sheets[sheetIndex].lines.splice(event.detail.data.lineIndex,1);
+                    data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines.slice(0,event.detail.data.lineIndex),...data.sheets[sheetIndex].lines.slice(event.detail.data.lineIndex+1)];
                     data.sheets.forEach(sheet => {
                         var lineRefColumns = sheet.columns.filter(column => column.typeStr === "lineReference");
                         if(lineRefColumns.length > 0) {
@@ -638,15 +623,48 @@ function handleTableAction(event) {
                 case "add":
                     if(!data.sheets[sheetIndex].hidden) {
                         createLines(event.detail.data.sheetGUID,event.detail.data.amount);
+                        //createLines calls sheetsUpdated()
                     }
                     else {
                         //line additions to subsheets are handled in DepotSheet
                     }
-                break;
+                    break;
+                case "copy":
+                    if(!data.sheets[sheetIndex].hidden) {
+                        var newLine = JSON.parse(JSON.stringify(event.detail.data.line));
+                        let baseID = newLine.id.split("_copy_")[0];
+                        let currentCopies =  data.sheets[sheetIndex].lines.filter(x => x.id.includes(baseID + "_copy_")).length;
+                        newLine["id"] = newLine.id + "_copy_" + currentCopies;
+                        function reassignGUIDS(line)
+                        {
+                            Object.keys(line).forEach((key) => {
+                                if(key === "guid")
+                                {
+                                    line[key] = uuidv4();
+                                }
+                                else if(Array.isArray(line[key]))
+                                {
+                                    line[key].forEach((lineItem) => {
+                                        reassignGUIDS(lineItem);
+                                    });
+                                }
+                                else if(typeof line[key] === 'object')
+                                {
+                                    reassignGUIDS(line[key]);
+                                }
+                            });
+                        }
+                        reassignGUIDS(newLine);
+
+                        data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines, newLine];
+                    }
+                    else {
+                        //line copies in subsheets are handled in DepotSheet
+                    }
+                    break;
                 default:
                     break;
             }
-            sheetsUpdated();
             break;
         case "pickFile":
             //forward events from fields
@@ -663,7 +681,7 @@ function handleTableAction(event) {
                 //this is every line with this path, we now need to filter this down to the specific 
                 let filtered = affectedLines.filter(linePath => {
                     let subsheetLines = resolvePath(data.sheets[parentInfo.parentIndex].lines, linePath);
-                    return subsheetLines[fileKey.lineIndex].guid == fileKey.line.guid;
+                    return Array.isArray(subsheetLines) ? subsheetLines[fileKey.lineIndex].guid == fileKey.line.guid : subsheetLines.guid == fileKey.line.guid;
                 });
                 //filtered now has one element in it with only the path to the cooresponding line
                 fileKey["linePath"] = filtered[0];

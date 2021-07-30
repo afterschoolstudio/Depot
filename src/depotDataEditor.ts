@@ -75,22 +75,7 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 		};
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview,document);
 
-		function updateWebview() {
-			webviewPanel.webview.postMessage({
-				type: 'update',
-				text: document.getText(),
-			});
-		}
 		function initWebview() {
-			// This is sketched in here for people to easily extend Depot by providing their own extensions
-			// That allow a different route through the scaffolded code
-			// let dataType = "";
-			// switch (document.fileName.split('.').pop()) 
-			// {
-			// 	case 'dpo':
-			// 		dataType = 'depot';
-			// 		break;			
-			// }
 			let dataType = 'depot';
 			webviewPanel.webview.postMessage({
 				type: 'init',
@@ -98,6 +83,13 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 				jsonType: dataType
 			});
 		}
+
+
+		// NOTE: This is all commented out because all updates currently only come in from
+		// events that the webview emits after it has been editied.
+		// I'm keeping this in here in case it needs to change, but commenting it out for now
+		// because we were effectively double-subscribing to every event and causing errors, and don't need this second
+		// update. 
 
 		// Hook up event handlers so that we can synchronize the webview with the text document.
 		//
@@ -107,24 +99,27 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 		// Remember that a single text document can also be shared between multiple custom
 		// editors (this happens for example when you split a custom editor)
 
-		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-			if (e.document.uri.toString() === document.uri.toString()) {
-				updateWebview();
-			}
-		});
+		// const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
+		// 	if (e.document.uri.toString() === document.uri.toString()) {
+		// 		updateWebview();
+		// 	}
+		// });
 
-		// Make sure we get rid of the listener when our editor is closed.
-		webviewPanel.onDidDispose(() => {
-			changeDocumentSubscription.dispose();
-		});
+		// function updateWebview() {
+		// 	webviewPanel.webview.postMessage({
+		// 		type: 'update',
+		// 		text: document.getText(),
+		// 	});
+		// }
+
+		// // Make sure we get rid of the listener when our editor is closed.
+		// webviewPanel.onDidDispose(() => {
+		// 	changeDocumentSubscription.dispose();
+		// });
 
 		const fileOptions: vscode.OpenDialogOptions = {
 			canSelectMany: false,
-			openLabel: 'Open',
-			filters: {
-			   'All files': ['*'],
-			   'Text files': ['txt']
-		   }
+			openLabel: 'Select'
 	   };
 
 		// Receive message from the webview.
@@ -141,7 +136,6 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 					return;
 				case 'pickFile':
 					vscode.window.showOpenDialog(fileOptions).then(fileUri => {
-						console.log(fileUri);
 						if (fileUri && fileUri[0]) {
 							console.log('Selected file: ' + fileUri[0].path + ' for key: ' + e.fileKey);
 							console.log("relative location from editor to file is: " + path.relative(document.uri.path,fileUri[0].path));

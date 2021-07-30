@@ -1,8 +1,5 @@
 {
-    "workbench.editorAssociations": [
-        {
-            "viewType": "depot.data",
-            "filenamePattern": "*.test"
-        }
-    ]
+    "workbench.editorAssociations": {
+        "*.test": "depot.data"
+    }
 }

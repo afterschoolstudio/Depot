@@ -18,21 +18,29 @@ limitations under the License.
     import Depot from './Depot/Depot.svelte'
     import { onMount, setContext } from 'svelte';
     import resolvePath from 'object-resolve-path';
+    setContext("nonce", nonce);
+    setContext("iconPaths", icons);
+    setContext("openWithSchemaEditingOn", openWithSchemaEditingOn);
 
 	onMount(() => {
-        setContext("nonce", nonce);
-        setContext("iconPaths", icons);
-        setContext("openWithSchemaEditingOn", openWithSchemaEditingOn);
-        vscode.postMessage({
-            type: 'init-view',
-		});
-    });
+      console.log("on mount");
+      vscode.postMessage({
+          type: 'init-view',
+      });
+  });
     
 
 	let dataType = "";
     let jsonData = {};
 
-	function windowMessage(event) {
+    $: {
+        vscode.postMessage({
+            type: 'update',
+            data: jsonData
+        });
+    }
+
+	function handleWebviewMessage(event) {
         const message = event.data; // The json data that the extension sent
 		switch (message.type) {
             case 'init':
@@ -40,9 +48,10 @@ limitations under the License.
                 //the extension is sending us an init event with the document text
                 //not this is the document NOT the state, the state takes precendece
                 const state = vscode.getState();
+				dataType = message.jsonType;
                 if (state) {
                     //we push this state from the vscode workspace to the JSON this component is looking at
-                    console.log("found previous state: " + state.text);
+                    // console.log("found previous state: " + state.text);
                     updateContent(state.text);
                 }
                 else
@@ -53,41 +62,45 @@ limitations under the License.
                     // it's then recieved in the windowMessage function where we update our content
                     updateContent(message.text);
 				}
-				dataType = message.jsonType;
                 return;
-			case 'update':
-                console.log("updating view");
-				const text = message.text;
+            // This is commented out as part of the change to get rid of the update callback in the extension but left here in case a need arises again
+			// case 'update':
+            //     console.log("updating view");
+			// 	const text = message.text;
 
-                // Update our webview's content
-				updateContent(text);
+            //     // Update our webview's content
+			// 	updateContent(text);
 
-				// Then persist state information.
-				// This state is returned in the call to `vscode.getState` below when a webview is reloaded.
-				vscode.setState({ text });
+			// 	// Then persist state information.
+			// 	// This state is returned in the call to `vscode.getState` below when a webview is reloaded.
+			// 	vscode.setState({ text });
 
-                return;
+            //     return;
             case 'filePicked':
                 var dataPath = message.fileKey;
                 if("linePath" in dataPath) {
                     let line = resolvePath(jsonData["sheets"][dataPath.sheet].lines, dataPath.linePath);
-                    line[dataPath.lineIndex][dataPath.column.name] = message.filePath;
+                    if(Array.isArray(line))
+                    {
+                        line[dataPath.lineIndex][dataPath.column.name] = message.filePath;
+                    }
+                    else
+                    {
+                        line[dataPath.column.name] = message.filePath;
+                    }
                 } else {
                     jsonData["sheets"][dataPath.sheet].lines[dataPath.lineIndex][dataPath.column.name] = message.filePath;
                 }
-                vscode.postMessage({
-                    type: 'update',
-                    data: jsonData
-                });
+                jsonData = jsonData;
                 return;
 		}
     }
 	
-	function handleMessage(event) {
-        console.log(event);
+	function handleDepotMessage(event) {
+        // console.log(event);
         switch (event.detail.type) {
             case "update":
-                console.log("pushing data",jsonData)
+                // console.log("pushing data",jsonData)
                 //this is where we could conform the data, like flooring an int field if it gets a float value
                 vscode.postMessage({
                     type: 'update',
@@ -110,25 +123,20 @@ limitations under the License.
 	function updateContent(/** @type {string} */ text) {
         console.log("updating content");
 		try {
-            console.log(JSON.parse(text));
-            // interactableData.update(n => n = JSON.parse(text))
+            vscode.setState({ text });
             jsonData = JSON.parse(text);
-            // vscode.window.showInformationMessage(interactableJSON);
 		} catch {
-            // vscode.window.showErrorMessage("json read issue");
-			// notesContainer.style.display = 'none';
-			// errorContainer.innerText = 'Error: Document is not valid json';
-			// errorContainer.style.display = '';
+            console.log("issue with content load");
 			return;
 		}
 	}
 </script>
 
-<svelte:window on:message={windowMessage}/>
+<svelte:window on:message={handleWebviewMessage}/>
 {#if dataType == ""}
 	<p>Loading</p>
 {:else if dataType === "depot"}
-    <Depot bind:data={jsonData} on:message={handleMessage}/>
+    <Depot bind:data={jsonData} on:message={handleDepotMessage}/>
 {:else}
 	<p>Error: Invalid Data Type {dataType}</p>
 {/if}
@@ -161,7 +169,12 @@ limitations under the License.
         text-align: left;
         border-collapse: collapse;
     }
-    :global(table td, table th) {
+    :global(table td) {
+        border:3px solid #252526;
+        padding: 0px;
+        /* width: 50% */
+    } 
+    :global(table td) {
         border:3px solid #252526;
         padding: 0px;
         /* width: 50% */

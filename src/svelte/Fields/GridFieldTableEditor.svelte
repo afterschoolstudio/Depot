@@ -5,17 +5,6 @@ import EnumField from "./EnumField.svelte";
 import LongTextField from "./LongTextField.svelte";
 import NumberField from "./NumberField.svelte";
 import TextField from "./TextField.svelte";
-import { createEventDispatcher } from 'svelte';
-
-const dispatch = createEventDispatcher();
-function fieldUpdated() {
-    dispatch('message', {
-        "type" : "update",
-        "data" : {
-            "sheetGUID" : sheetGUID
-        }
-    });
-}
 
 export let data;
 export let columnData;
@@ -41,11 +30,11 @@ $ : {
                         {#if schema === "text"}
                             <TextField sheetGUID={sheetGUID} bind:data={data[i]} on:message/>
                         {:else if schema === "bool"}
-                            <BooleanField sheetGUID={sheetGUID} bind:data={data[i]} on:message/>
+                            <BooleanField bind:data={data[i]}/>
                         {:else if schema === "longtext"}
-                            <LongTextField sheetGUID={sheetGUID} bind:data={data[i]} on:message/>
+                            <LongTextField bind:data={data[i]}/>
                         {:else if schema === "float" || schema === "int"}
-                            <NumberField sheetGUID={sheetGUID} bind:data={data[i]} on:message/>
+                            <NumberField bind:data={data[i]}/>
                         {/if}
                         </div>
                     </td>
