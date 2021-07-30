@@ -1,23 +1,11 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-
-    export let data;
-    export let sheetGUID;
-    export let options = [];
-    export let aliases = [];
-    export let allowEmpty = true;
-    const dispatch = createEventDispatcher();
-    function fieldUpdated() {
-        dispatch('message', {
-            "type" : "update",
-            "data" : {
-                "sheetGUID" : sheetGUID
-            }
-        });
-    }
+export let data;
+export let options = [];
+export let aliases = [];
+export let allowEmpty = true;
 </script>
 <!-- svelte-ignore a11y-no-onchange -->
-<select bind:value={data} on:change={fieldUpdated}>
+<select bind:value={data}>
     {#if allowEmpty}
         <option value="">
         </option>

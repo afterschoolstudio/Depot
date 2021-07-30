@@ -433,34 +433,34 @@ function validateID(event,line) {
                 {#if column.typeStr === "text"}
                 <TextField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
                 {:else if column.typeStr === "longtext"}
-                <LongTextField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
+                <LongTextField bind:data={line[column.name]}/>
                 {:else if column.typeStr === "image"}
                 <ImageField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "file"}
                 <FileField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message fileKey={{"line":line,"lineIndex":i,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "bool"}
-                <BooleanField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
+                <BooleanField bind:data={line[column.name]}/>
                 {:else if column.typeStr === "enum"}
-                <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <EnumField bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')}/>
                 {:else if column.typeStr === "sheetReference"}
-                <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names} on:message/>
+                <EnumField bind:data={line[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names}/>
                 {:else if column.typeStr === "lineReference"}
                     {#if column.sheet !== ""}
-                    <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} 
+                    <EnumField  bind:data={line[column.name]} 
                                 options={depotInfo.lines[column.sheet].guids} 
-                                aliases={depotInfo.lines[column.sheet].names} on:message/>
+                                aliases={depotInfo.lines[column.sheet].names}/>
                     {:else}
-                    <EnumField sheetGUID={sheetData.guid} bind:data={line[column.name]} 
+                    <EnumField  bind:data={line[column.name]} 
                                 options={[]} 
-                                aliases={[]} on:message/>
+                                aliases={[]}/>
                     {/if}
                     {#if line[column.name] !== "" && !depotInfo.lines[column.sheet].guids.includes(line[column.name])}
                         <div title="Selected value with GUID {line[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
                     {/if}
                 {:else if column.typeStr === "multiple"}
-                <MultipleField sheetGUID={sheetData.guid} bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"} on:message/>
+                <MultipleField bind:data={line[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"}/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
-                <NumberField sheetGUID={sheetData.guid} bind:data={line[column.name]} on:message/>
+                <NumberField bind:data={line[column.name]}/>
                 {:else if column.typeStr === "list" || column.typeStr === "props" || column.typeStr === "grid"}
                     {#if line.guid in listVisibility && listVisibility[line.guid].guid === column.guid}
                         <button class="buttonIcon" on:click={()=>setListVisible(line,column,false)}>
@@ -566,34 +566,34 @@ function validateID(event,line) {
                 {#if column.typeStr === "text"}
                 <TextField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
                 {:else if column.typeStr === "longtext"}
-                <LongTextField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                <LongTextField bind:data={inputLineData[column.name]}/>
                 {:else if column.typeStr === "image"}
                 <ImageField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message fileKey={{"line":inputLineData,"lineIndex":0,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "file"}
                 <FileField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message fileKey={{"line":inputLineData,"lineIndex":0,"column":column,"columnIndex":c}}/>
                 {:else if column.typeStr === "bool"}
-                <BooleanField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                <BooleanField bind:data={inputLineData[column.name]}/>
                 {:else if column.typeStr === "enum"}
-                <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} on:message/>
+                <EnumField bind:data={inputLineData[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')}/>
                 {:else if column.typeStr === "sheetReference"}
-                <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names} on:message/>
+                <EnumField bind:data={inputLineData[column.name]} options={depotInfo.sheetsFiltered.guids} aliases={depotInfo.sheetsFiltered.names}/>
                 {:else if column.typeStr === "lineReference"}
                     {#if column.sheet !== ""}
-                    <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} 
+                    <EnumField  bind:data={inputLineData[column.name]} 
                                 options={depotInfo.lines[column.sheet].guids} 
-                                aliases={depotInfo.lines[column.sheet].names} on:message/>
+                                aliases={depotInfo.lines[column.sheet].names}/>
                     {:else}
-                    <EnumField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} 
+                    <EnumField  bind:data={inputLineData[column.name]} 
                                 options={[]} 
-                                aliases={[]} on:message/>
+                                aliases={[]}/>
                     {/if}
                     {#if inputLineData[column.name] !== "" && !depotInfo.lines[column.sheet].guids.includes(inputLineData[column.name])}
                         <div title="Selected value with GUID {inputLineData[column.name]} not in selected sheet. Select proper sheet in column settings">ERROR</div>
                     {/if}
                 {:else if column.typeStr === "multiple"}
-                <MultipleField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"} on:message/>
+                <MultipleField bind:data={inputLineData[column.name]} options={sheetData.columns.find(x => x.name === column.name).options.split(', ')} displayType={"displayType" in column ? column.displayType : "vertical"}/>
                 {:else if column.typeStr === "int" || column.typeStr === "float"}
-                <NumberField sheetGUID={sheetData.guid} bind:data={inputLineData[column.name]} on:message/>
+                <NumberField bind:data={inputLineData[column.name]} />
                 {:else if column.typeStr === "list" || column.typeStr === "props" || column.typeStr === "grid"}
                     {#if inputLineData.guid in listVisibility && listVisibility[inputLineData.guid].guid === column.guid}
                         <button class="buttonIcon" on:click={()=>setListVisible(inputLineData,column,false)}>

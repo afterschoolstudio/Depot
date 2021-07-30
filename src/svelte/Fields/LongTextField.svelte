@@ -1,20 +1,7 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-
-    export let data;
-    export let sheetGUID;
-    const dispatch = createEventDispatcher();
-    function fieldUpdated() {
-        dispatch('message', {
-            "type" : "update",
-            "data" : {
-                "sheetGUID" : sheetGUID
-            }
-        });
-    }
+export let data;
 </script>
-<textarea bind:value={data} on:input={fieldUpdated}></textarea>
-
+<textarea bind:value={data}></textarea>
 <style>
     input {
         padding: 5px 5px 5px 5px;

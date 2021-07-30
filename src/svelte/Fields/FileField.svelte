@@ -18,12 +18,6 @@
     }
     function clearFile() {
         data = "";
-        dispatch('message', {
-            "type" : "update",
-            "data" : {
-                "sheetGUID" : sheetGUID
-            }
-        });
     }
 
     let hovering = false;

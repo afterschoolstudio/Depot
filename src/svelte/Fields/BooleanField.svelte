@@ -1,16 +1,4 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-
-    export let data;
-    export let sheetGUID;
-    const dispatch = createEventDispatcher();
-    function fieldUpdated() {
-        dispatch('message', {
-            "type" : "update",
-            "data" : {
-                "sheetGUID" : sheetGUID
-            }
-        });
-    }
+export let data;
 </script>
-<input type=checkbox bind:checked={data} on:change={fieldUpdated}>
+<input type=checkbox bind:checked={data}>
