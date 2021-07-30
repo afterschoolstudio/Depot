@@ -194,6 +194,9 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = getNonce();
 
+		// get 'openWithSchemaEditingOn' config
+		const openWithSchemaEditingOn = vscode.workspace.getConfiguration('depot').get('openWithSchemaEditingOn');
+
         return /* html */`
         <!DOCTYPE html>
         <html lang="en">
@@ -217,6 +220,7 @@ export class DepotEditorProvider implements vscode.CustomTextEditorProvider {
 			// console.log(${strung});
 			const nonce = "${nonce}";
 			const icons = ${strung};
+			const openWithSchemaEditingOn = ${openWithSchemaEditingOn};
 			const vscode = acquireVsCodeApi();
 		</script>
         </body>

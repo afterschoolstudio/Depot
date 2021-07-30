@@ -28,7 +28,7 @@ let showLineGUIDs = false;
 let previewDisclosedFields = false;
 let showNestedNames = true;
 let showNestedPaths = false;
-let allowSchemaEditing = true;
+let allowSchemaEditing = getContext("openWithSchemaEditingOn");
 let allowAddRemoveItems = true;
 let iconPaths = getContext("iconPaths");
 

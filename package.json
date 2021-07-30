@@ -70,6 +70,11 @@
 					"type": "string",
 					"default": "depot.dpo",
 					"description": "Default filename for creating a new Depot file from the command palette"
+				},
+				"depot.openWithSchemaEditingOn": {
+					"type": "boolean",
+					"default": true,
+					"description": "Depot files are opened with schema editing ON."
 				}
 			}
 		},

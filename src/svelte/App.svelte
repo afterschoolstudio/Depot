@@ -20,13 +20,14 @@ limitations under the License.
     import resolvePath from 'object-resolve-path';
     setContext("nonce", nonce);
     setContext("iconPaths", icons);
+    setContext("openWithSchemaEditingOn", openWithSchemaEditingOn);
 
 	onMount(() => {
-        console.log("on mount");
-        vscode.postMessage({
-            type: 'init-view',
-		});
-    });
+      console.log("on mount");
+      vscode.postMessage({
+          type: 'init-view',
+      });
+  });
     
 
 	let dataType = "";
