@@ -4,14 +4,6 @@
     export let data;
     export let sheetGUID;
     const dispatch = createEventDispatcher();
-    function fieldUpdated() {
-        dispatch('message', {
-            "type" : "update",
-            "data" : {
-                "sheetGUID" : sheetGUID
-            }
-        });
-    }
     function validateText() {
         dispatch('message', {
             "type" : "validate",
@@ -21,7 +13,7 @@
         });
     }
 </script>
-<input bind:value={data} on:blur={validateText} on:input={fieldUpdated}>
+<input bind:value={data} on:blur={validateText}>
 
 <style>
     input {
