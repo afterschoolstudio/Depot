@@ -1,17 +1,13 @@
 <script>
-// import { createEventDispatcher } from 'svelte';
+import { getContext } from 'svelte';
 export let filterText;
-// const dispatch = createEventDispatcher();
-// function validateText() {
-//     dispatch('message', {
-//         "type" : "filter",
-//         "data" : {
-//             "filter" : sheetGUID
-//         }
-//     });
-// }
+let iconPaths = getContext("iconPaths");
+function refreshText()
+{
+    filterText = filterText;
+}
 </script>
-<input bind:value={filterText}>
+<input bind:value={filterText} on:blur={refreshText} on:input={refreshText} on:change={refreshText}>
 
 <style>
     input {
@@ -28,5 +24,33 @@ export let filterText;
         width: 100%;
         height: 100%;
         box-sizing: border-box;
+    }
+
+    .buttonIcon {
+        background-color: #3A3A3A;
+        border: none;
+        color: white;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .buttonIcon:hover {
+        background-color: #2A2D2E;
+    }
+    .buttonIcon:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .buttonIcon:active:focus {
+        outline: none;
+        box-shadow: none;
+    }
+    .buttonIcon.padded {
+        margin: 5px 5px 5px 0px;
+        width: 45px;
+        height: 45px;
+    }
+    .buttonIcon.addLine {
+        margin: 5px 0px 5px 0px;
+        padding: 0px 0px 0px 0px;
     }
 </style>

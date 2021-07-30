@@ -57,6 +57,19 @@ export let baseDataPath = "";
 let filterText = "";
 let filteredLinesIndicies = [];
 $ : {
+    try {
+        var parsed = JSON.parse("{" + filterText + "}");
+        Object.keys(parsed).forEach((key) => {
+            inputLineData.forEach((line, index) => {
+                if(key in line && line[key] === parsed[key]) {}
+                else {
+                    filteredLinesIndicies = [...filteredLinesIndicies,index];
+                }
+            });
+        });
+    } catch(e) {
+        filteredLinesIndicies = [];
+    }
 }
 
 function enterSheet() {
@@ -400,6 +413,24 @@ function validateID(event,line) {
     </tr>
     {/if}
 {/if}
+{#if !sheetData.isProps}
+<tr>
+    <td colspan="{totalColumns}">
+        <p>Filter (Showing {inputLineData.length - filteredLinesIndicies.length}/{inputLineData.length} Items)</p>
+    </td>
+</tr>
+<tr>
+    <td colspan="{1}">
+        <button class="buttonIcon" title="Clear Filter" on:click={() => {filterText = "";}}>
+            <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Clear Filter">
+        </button>
+    </td>
+    <td colspan="{totalColumns-1}">
+        <SheetFilter bind:filterText={filterText}/>
+    </td>
+</tr>
+<tr><td colspan="{totalColumns}"> </td></tr>
+{/if}
 <tr>
     <th>    </th>
     {#if showLineGUIDs}
@@ -413,12 +444,9 @@ function validateID(event,line) {
     {/each}
 </tr>
 {#if !sheetData.isProps}
-    <tr>
-        <p>Filter:</p>
-        <SheetFilter bind:filterText={filterText}/>
-    </tr>
     <!-- SHEET DRAWING FOR LIST/NORMAL SHEET -->
     {#each inputLineData as line, i}
+    {#if !filteredLinesIndicies.includes(i)}
     <!-- this prevents us from preemptively drawing empty an empty props entry -->
     {#if Object.keys(line).length !== 0}
         <tr>
@@ -552,6 +580,7 @@ function validateID(event,line) {
             {/if}
             </tr>
         {/if}
+    {/if}
     {/if}
     {/each}
 {:else}
