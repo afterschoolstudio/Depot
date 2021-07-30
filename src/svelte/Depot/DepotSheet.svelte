@@ -103,6 +103,19 @@ function removeLine(lineIndex, line, originGUID) {
     });
 }
 
+function copyLine(lineIndex, line, originGUID) {
+    dispatch('message', {
+        "type" : "lineEdit",
+        "data" : {
+            "operation" : "copy",
+            "lineIndex" : lineIndex,
+            "line" : line,
+            "originLineGUID" : originGUID,
+            "sheetGUID" : sheetData.guid
+        }
+    });
+}
+
 function addLines(amount,originGUID) {
     dispatch('message', {
         "type" : "lineEdit",
@@ -246,6 +259,45 @@ function handleSubTableEvent(event) {
                     }
                     //nested sheet lines cannot be referened so we can just delete this from the list
                     break;
+                case "copy":
+                    //inputLineData will only be an array here because copy functionality is not exposed on props "lines"
+                    var newLine = JSON.parse(JSON.stringify(event.detail.data.line));
+                    let baseID = newLine.id.split("_copy_")[0];
+                    function reassignGUIDS(line)
+                    {
+                        Object.keys(line).forEach((key) => {
+                            if(key === "guid")
+                            {
+                                line[key] = uuidv4();
+                            }
+                            else if(Array.isArray(line[key]))
+                            {
+                                line[key].forEach((lineItem) => {
+                                    reassignGUIDS(lineItem);
+                                });
+                            }
+                            else if(typeof line[key] === 'object')
+                            {
+                                reassignGUIDS(line[key]);
+                            }
+                        });
+                    }
+                    reassignGUIDS(newLine);
+                    //cant copy props lines (by design), so following function all use spread for arrays
+                    if(!sheetData.isProps)
+                    {
+                        let refLineIndex = inputLineData.findIndex(line => line.guid === event.detail.data.originLineGUID);
+                        let currentCopies =  inputLineData[refLineIndex][refLineColumn.name].filter(x => x.id.includes(baseID + "_copy_")).length;
+                        newLine["id"] = newLine.id + "_copy_" + currentCopies;
+                        inputLineData[refLineIndex][refLineColumn.name] = [...inputLineData[refLineIndex][refLineColumn.name], newLine];
+                    }
+                    else
+                    {
+                        let currentCopies =  inputLineData[refLineColumn.name].filter(x => x.id.includes(baseID + "_copy_")).length;
+                        newLine["id"] = newLine.id + "_copy_" + currentCopies;
+                        inputLineData[refLineColumn.name] = [...inputLineData[refLineColumn.name], newLine];
+                    }
+                    break;
                 default:
                     break;
             }
@@ -305,7 +357,7 @@ function validateID(event,line) {
                     if(line.guid !== ld.guid && line.id === ld.id)
                     {
                        let index = inputLineData.findIndex(l => l.guid === line.guid);
-                       lineData[index].id = "DUPLICATE("+line.id+")";
+                       inputLineData[index].id = "DUPLICATE("+line.id+")";
                     }
                 });
             }
@@ -366,6 +418,9 @@ function validateID(event,line) {
                         <img style="max-width:17px" src={iconPaths["removeLine"].path} alt="Remove Line">
                     </button>
                 {/if}
+                <button class="buttonIcon" title="Copy Line" on:click={() => copyLine(i,line,originLineGUID)}>
+                    <img style="max-width:17px" src={iconPaths["copyLine"].path} alt="Copy Line">
+                </button>
             </td>
             {#if showLineGUIDs}
             <td>{line.guid}</td>

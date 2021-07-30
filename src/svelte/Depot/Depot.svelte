@@ -629,6 +629,39 @@ function handleTableAction(event) {
                         //line additions to subsheets are handled in DepotSheet
                     }
                     break;
+                case "copy":
+                    if(!data.sheets[sheetIndex].hidden) {
+                        var newLine = JSON.parse(JSON.stringify(event.detail.data.line));
+                        let baseID = newLine.id.split("_copy_")[0];
+                        let currentCopies =  data.sheets[sheetIndex].lines.filter(x => x.id.includes(baseID + "_copy_")).length;
+                        newLine["id"] = newLine.id + "_copy_" + currentCopies;
+                        function reassignGUIDS(line)
+                        {
+                            Object.keys(line).forEach((key) => {
+                                if(key === "guid")
+                                {
+                                    line[key] = uuidv4();
+                                }
+                                else if(Array.isArray(line[key]))
+                                {
+                                    line[key].forEach((lineItem) => {
+                                        reassignGUIDS(lineItem);
+                                    });
+                                }
+                                else if(typeof line[key] === 'object')
+                                {
+                                    reassignGUIDS(line[key]);
+                                }
+                            });
+                        }
+                        reassignGUIDS(newLine);
+
+                        data.sheets[sheetIndex].lines = [...data.sheets[sheetIndex].lines, newLine];
+                    }
+                    else {
+                        //line copies in subsheets are handled in DepotSheet
+                    }
+                    break;
                 default:
                     break;
             }
