@@ -24,6 +24,7 @@ import LongTextField from '../Fields/LongTextField.svelte';
 import MultipleField from '../Fields/MultipleField.svelte';
 import NumberField from '../Fields/NumberField.svelte';
 import FileField from '../Fields/FileField.svelte';
+import SheetFilter from './SheetFilter.svelte';
 import {defaults} from './depotDefaults';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -52,6 +53,11 @@ let iconPaths = getContext("iconPaths");
 export let lastHovered;
 export let parentGUID = "";
 export let baseDataPath = "";
+
+let filterText = "";
+let filteredLinesIndicies = [];
+$ : {
+}
 
 function enterSheet() {
     dispatch('message', {
@@ -407,6 +413,10 @@ function validateID(event,line) {
     {/each}
 </tr>
 {#if !sheetData.isProps}
+    <tr>
+        <p>Filter:</p>
+        <SheetFilter bind:filterText={filterText}/>
+    </tr>
     <!-- SHEET DRAWING FOR LIST/NORMAL SHEET -->
     {#each inputLineData as line, i}
     <!-- this prevents us from preemptively drawing empty an empty props entry -->
