@@ -129,11 +129,7 @@ Columns define the fields of a sheet that a line can have data for. Columns can 
 ## Wiki
 For more in-depth documentation on Depot, [you can read the wiki here](https://github.com/kkukshtel/Depot/wiki).
 
-## Extending Depot
-
-WIP
-
-## Edge Cases WIP
+## Edge Cases
 
 * When the sheet a line reference field references is deleted, the line value goes to "", the default values are cleared, and the sheet is reset to "".
 * When the linw a line reference field references is deleted the lines that pointed to that line get their linked value set to "". Defaults that pointed to that get pointed to ""
