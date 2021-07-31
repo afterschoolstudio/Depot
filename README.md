@@ -139,17 +139,14 @@ For more in-depth documentation on Depot, [you can read the wiki here](https://g
 
 Read the [Changelog](./CHANGELOG.md) for older versions and minor releases
 
-### 1.5.0
-
-- Quality of Life updates
-  - Nested sheets (from Lists + Props) will now only display their Add Column UI when that specific table is hovered, cleaning up the general UI of Depot and making it more understandable at a glance
-  - Added in toggle for nested sheet data previewing so it isn't always on by default
-  - Added in ability for a nested sheet to display its name (toggleable from options)
-  - Added in ability for a nested sheet to display its path (toggleable from options)
-  - These last two changes make it much easier to know what data you are editing in what nested sheet. This also paves the way to the idea of "focusing" a given sheet in a structure so you don't have to look at the whole sheet all the time.
-  - Added in ability to "lock"/"unlock" a Depot file ("Allow Schema Editing" option) to locally "lock-in" the structure of a file. This can be toggled on and off at will and is not saved to the depot file directly.
-  - Added in ability to prevent entries in a list or property field from being added or removed ("Add/Remove Items" option).
-  - Image previews pop out in a tooltip when hovered instead of expanding inline.
+### 1.6.0
+- [Launched Github Sponsor Profile](7i5jem7qfdze5trgz7x4juo7od2qn5dsp2n4gaopurskbyn3d5za)! Read more on the [Changelog](./CHANGELOG.md).
+- Optimizations and Quality of Life
+  - Improves performance when working with large data files
+  - Adds in ability for any line to be copied (see specifics in [Changelog](./CHANGELOG.md))
+  - Adds ```depot.openWithSchemaEditingOn``` to settings to allow you to disable schema editing by default
+  - Filepicker no longer assumes text files
+  - Fixes compilation issues on fresh clone
 
 ---
 
