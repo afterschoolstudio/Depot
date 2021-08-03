@@ -833,6 +833,9 @@ function selectedSheetEdit() {
         width: 45px;
         height: 45px;
     }
+    .buttonIcon:disabled {
+        opacity: 40%;
+    }
 
     .sheetButton {
         background-color: #3A3A3A;
