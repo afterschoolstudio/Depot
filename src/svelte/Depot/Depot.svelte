@@ -39,6 +39,8 @@ function focusSheet(index) {
     selectedSheet = index;
 }
 
+let selectedTool = "";
+
 let listVisibility = {};
 
 function getBannedNames(referenceSheetGUID, config) {
@@ -707,6 +709,8 @@ function createSheet() {
     editorData["guid"] = sheetGUID; //assign columns and sheets guids
     editorConfig["bannedNames"] = getBannedNames(sheetGUID,editorConfig);
     editorConfig["depotInfo"] = depotFileInfo;
+
+    selectedTool = "newSheet";
 }
 
 function selectedSheetColumnCreate(columnType) {
@@ -719,6 +723,8 @@ function selectedSheetColumnCreate(columnType) {
                 "sheetGUID" : data.sheets[selectedSheet].guid
                 }
     }});
+
+    selectedTool = columnType;
 }
 
 function selectedSheetEdit() {
@@ -731,6 +737,8 @@ function selectedSheetEdit() {
                 "sheetGUID" : data.sheets[selectedSheet].guid
                 }
     }});
+
+    selectedTool = "editSheet";
 }
 
 </script>
@@ -759,15 +767,15 @@ function selectedSheetEdit() {
                       bind:allowAddRemoveItems={allowAddRemoveItems} 
                       bind:allowSchemaEditing={allowSchemaEditing}/> 
         {#if allowSchemaEditing}
-            <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active} on:click={createSheet}>
+            <button class="buttonIcon padded" title="New sheet" disabled={editorConfig.active && selectedTool !== "newSheet"} on:click={createSheet}>
                 <img src={iconPaths["newSheet"].path} alt="New Sheet">
             </button>
-            <button class="buttonIcon padded" title="Edit sheet" disabled={editorConfig.active} on:click={selectedSheetEdit}>
+            <button class="buttonIcon padded" title="Edit sheet" disabled={editorConfig.active && selectedTool !== "editSheet"} on:click={selectedSheetEdit}>
                 <img src={iconPaths["editSheet"].path} alt="Edit Sheet">
             </button>
             {#each Object.keys(defaults) as columnType}
                 {#if columnType !== "sheet"}
-                    <button class="buttonIcon padded" disabled={editorConfig.active} title="Create new {columnType} column" on:click={() => selectedSheetColumnCreate(columnType)}>
+                    <button class="buttonIcon padded" disabled={editorConfig.active && selectedTool !== columnType} title="Create new {columnType} column" on:click={() => selectedSheetColumnCreate(columnType)}>
                         <img src={iconPaths[defaults[columnType].iconName].path} alt="Create new {columnType} column">
                     </button>
                 {/if}
@@ -835,6 +843,9 @@ function selectedSheetEdit() {
     }
     .buttonIcon:disabled {
         opacity: 40%;
+    }
+    .buttonIcon:disabled:hover {
+        background-color: #3A3A3A;
     }
 
     .sheetButton {
