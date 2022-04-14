@@ -6,7 +6,17 @@
   import AutoComplete from "./Autocomplete.svelte";
 </script>
 
-<AutoComplete items={options} {aliases} {allowEmpty} bind:selectedItem={data} />
+<AutoComplete
+  items={options}
+  {aliases}
+  {allowEmpty}
+  keywordsFunction={(text) => {
+    if (aliases.length === options.length && aliases.length > 0)
+      return aliases[options.findIndex((o) => o === text)];
+    return text;
+  }}
+  bind:selectedItem={data}
+/>
 <!-- svelte-ignore a11y-no-onchange -->
 <!-- <input list={enumId} class="fullWidth sheetButton" bind:value={data} />
 <datalist id={enumId}>
