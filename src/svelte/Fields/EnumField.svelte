@@ -3,7 +3,6 @@
   export let options = [];
   export let aliases = [];
   export let allowEmpty = true;
-  console.log(options, aliases, data, allowEmpty);
   import AutoComplete from "./Autocomplete.svelte";
 </script>
 
