@@ -3,7 +3,7 @@ export let data;
 </script>
 <textarea bind:value={data}></textarea>
 <style>
-    input {
+    textarea {
         padding: 5px 5px 5px 5px;
         /* margin: 5px; */
         box-sizing: border-box;
