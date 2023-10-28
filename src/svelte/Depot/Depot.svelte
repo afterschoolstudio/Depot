@@ -781,31 +781,33 @@ function selectedSheetEdit() {
                 {/if}
             {/each}
         {/if}
-        <div>
-        {#each data.sheets as sheet}
-            {#if !sheet.hidden}
-            <button class="sheetButton {data.sheets.indexOf(sheet) == selectedSheet ? "selected" : ""}" title="Select sheet" on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
+        <div class="sheets">
+            <div>
+            {#each data.sheets as sheet}
+                {#if !sheet.hidden}
+                <button class="sheetButton {data.sheets.indexOf(sheet) == selectedSheet ? "selected" : ""}" title="Select sheet" on:click={focusSheet(data.sheets.indexOf(sheet))} disabled={editorConfig.active}>{sheet.name}</button>
+                {/if}
+            {/each}
+            </div>
+            <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
+            {#if !editorConfig.active}
+                <!-- hide the table if editing a field to prevent sending the sheetupdate -->
+                <DepotSheet debug={debug} 
+                            showLineGUIDs={showLineGUIDs} 
+                            previewDisclosedFields={previewDisclosedFields}
+                            showNestedNames={showNestedNames}
+                            showNestedPaths={showNestedPaths}
+                            allowSchemaEditing={allowSchemaEditing}
+                            allowAddRemoveItems={allowAddRemoveItems}
+                            bind:fullData={data} 
+                            bind:sheetData={data.sheets[selectedSheet]} 
+                            bind:inputLineData={data.sheets[selectedSheet].lines} 
+                            depotInfo={depotFileInfo} 
+                            on:message={handleTableAction}
+                            bind:listVisibility={listVisibility}
+                            baseDataPath={data.sheets[selectedSheet].name}/>
             {/if}
-        {/each}
         </div>
-        <DepotConfigurator debug={debug} data={editorConfig.active ? editorData : {}} config={editorConfig} on:message={handleConfigUpdate}/>
-        {#if !editorConfig.active}
-            <!-- hide the table if editing a field to prevent sending the sheetupdate -->
-            <DepotSheet debug={debug} 
-                        showLineGUIDs={showLineGUIDs} 
-                        previewDisclosedFields={previewDisclosedFields}
-                        showNestedNames={showNestedNames}
-                        showNestedPaths={showNestedPaths}
-                        allowSchemaEditing={allowSchemaEditing}
-                        allowAddRemoveItems={allowAddRemoveItems}
-                        bind:fullData={data} 
-                        bind:sheetData={data.sheets[selectedSheet]} 
-                        bind:inputLineData={data.sheets[selectedSheet].lines} 
-                        depotInfo={depotFileInfo} 
-                        on:message={handleTableAction}
-                        bind:listVisibility={listVisibility}
-                        baseDataPath={data.sheets[selectedSheet].name}/>
-        {/if}
     {/if}
 {/if}
 
@@ -816,16 +818,20 @@ function selectedSheetEdit() {
 {/if}
 
 <style>
+    .sheets {
+        background-color: var(--vscode-sideBar-background);
+    }
+
     .buttonIcon {
-        background-color: #3A3A3A;
+        background-color: var(--vscode-button-background);
         border: none;
-        color: white;
+        color: var(--vscode-button-foreground);
         display: inline-block;
         cursor: pointer;
     }
 
     .buttonIcon:hover {
-        background-color: #2A2D2E;
+        background-color: var(--vscode-button-hoverBackground);
     }
 
     .buttonIcon:focus {
@@ -845,23 +851,27 @@ function selectedSheetEdit() {
         opacity: 40%;
     }
     .buttonIcon:disabled:hover {
-        background-color: #3A3A3A;
+        background-color: var(--vscode-button-background);
     }
 
     .sheetButton {
-        background-color: #3A3A3A;
-        border: none;
-        color: white;
+        background-color: var(--vscode-tab-inactiveBackground);
+        border: 0px;
+        border-right: 1px solid var(--vscode-tab-border);
+        color: var(--vscode-tab-inactiveForeground);
         display: inline-block;
         cursor: pointer;
-        margin: 0px 5px 0px 0px;
+        margin: 0px;
         padding: 8px 8px 8px 8px;
     }
+
     .sheetButton:hover {
-        background-color: #252526;
+        background-color: var(--vscode-tab-unfocusedHoverBackground);
+        color: var(--vscode-tab-unfocusedHoverForeground);
     }
     .sheetButton.selected {
-        background-color: #252526;
+        background-color: var(--vscode-tab-activeBackground);
+        color: var(--vscode-tab-activeForeground);
     }
     .sheetButton:focus {
         outline: none;
