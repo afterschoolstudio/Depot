@@ -162,7 +162,7 @@ function handleSubTableEvent(event) {
                             }
                             else
                             {
-                                newLine[column.name] = column.defaultValue;
+                                newLine[column.name] = Array.isArray(column.defaultValue) ? column.defaultValue.split() : column.defaultValue;
                             }
                         });
                         //if the sheet we clicked add on isn't a props sheet
