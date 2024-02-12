@@ -164,20 +164,20 @@ limitations under the License.
 
 	/* Table Stuff */
 	:global(table) {
-        /* border: 2px solid #252526; */
+				/* background-color: var(--vscode-tab-inactiveBackground); */
         width: 100%;
         text-align: left;
         border-collapse: collapse;
+        background: var(--vscode-editor-background);
     }
     :global(table td) {
-        border:3px solid #252526;
-        padding: 0px;
+        border-right: 1px solid var(--vscode-panel-border);
+        border-left:  1px solid var(--vscode-panel-border);
+        padding: 0px 3px;
         /* width: 50% */
     } 
-    :global(table td) {
-        border:3px solid #252526;
-        padding: 0px;
-        /* width: 50% */
+    :global(table tr:nth-child(even)) {
+        background-color: var(--vscode-tree-tableOddRowsBackground);
     } 
     :global(table tbody td) {
         font-size: 13px;
@@ -187,10 +187,14 @@ limitations under the License.
         padding: 5px;
     }
     :global(table th) {
-        background: #252526;
+        border-right: 1px solid var(--vscode-panel-border);
+        border-left:  1px solid var(--vscode-panel-border);
+        background: var(--vscode-editor-background);
         font-size: 13px;
         font-weight: bold;
         text-align: left;
+				position: sticky;
+				top: 0;
     }
 
 </style>

@@ -710,15 +710,16 @@ function validateID(event,line) {
 {/if}
 
 <style>
+
     .buttonIcon {
-        background-color: #3A3A3A;
+        background-color: var(--vscode-button-background);
         border: none;
-        color: white;
+        color: var(--vscode-button-foreground);
         display: inline-block;
         cursor: pointer;
     }
     .buttonIcon:hover {
-        background-color: #2A2D2E;
+      background-color: var(--vscode-button-hoverBackground);
     }
     .buttonIcon:focus {
         outline: none;

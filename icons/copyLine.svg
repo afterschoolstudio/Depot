@@ -1,11 +1,6 @@
 <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0)">
-<rect x="2.5" y="2.5" width="8" height="8" stroke="white"/>
-<rect x="6.5" y="6.5" width="8" height="8" fill="#3A3A3A" stroke="white"/>
+<g>
+	<rect x="6.5" y="6.5" width="8" height="8" style="fill:none;stroke:white;stroke-width:1px;"/>
+	<path d="M10.5,6.5L6.5,6.5L6.5,10.5L2.5,10.5L2.5,2.5L10.5,2.5L10.5,6.5Z" style="fill:none;stroke:white;stroke-width:1px;"/>
 </g>
-<defs>
-<clipPath id="clip0">
-<rect width="17" height="17" fill="white"/>
-</clipPath>
-</defs>
 </svg>

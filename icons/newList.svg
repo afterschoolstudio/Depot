@@ -1,12 +1,17 @@
 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 29.5V6H26.5V23.5H20.5V29.5H8Z" fill="#3A3A3A" stroke="white"/>
-<line x1="20.6464" y1="29.6464" x2="26.6464" y2="23.6464" stroke="white"/>
-<line x1="11" y1="11.5" x2="23" y2="11.5" stroke="white"/>
-<line x1="11" y1="14.5" x2="23" y2="14.5" stroke="white"/>
-<line x1="11" y1="17.5" x2="23" y2="17.5" stroke="white"/>
-<path d="M13 33.5V10H31.5V27.5H25.5V33.5H13Z" fill="#3A3A3A" stroke="white"/>
-<line x1="25.6464" y1="33.6464" x2="31.6464" y2="27.6464" stroke="white"/>
-<line x1="16" y1="15.5" x2="28" y2="15.5" stroke="white"/>
-<line x1="16" y1="18.5" x2="28" y2="18.5" stroke="white"/>
-<line x1="16" y1="21.5" x2="28" y2="21.5" stroke="white"/>
+<path d="M28.204,10L13,10L13,31.486L6.608,31.486L6.608,4.435L28.204,4.435L28.204,10Z" style="fill:none;"/>
+<clipPath id="_clip1">
+	<path d="M28.204,10L13,10L13,31.486L6.608,31.486L6.608,4.435L28.204,4.435L28.204,10Z"/>
+</clipPath>
+<g clip-path="url(#_clip1)">
+	<path d="M8,29.5L8,6L26.5,6L26.5,23.5L20.5,23.5L20.5,29.5L8,29.5Z" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+	<path d="M11,11.5L23,11.5" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+	<path d="M11,14.5L23,14.5" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+	<path d="M11,17.5L23,17.5" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+</g>
+<path d="M13,33.5L13,10L31.5,10L31.5,27.5L25.5,27.5L25.5,33.5L13,33.5Z" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+<path d="M25.646,33.646L31.646,27.646" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+<path d="M16,15.5L28,15.5" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+<path d="M16,18.5L28,18.5" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
+<path d="M16,21.5L28,21.5" style="fill:none;fill-rule:nonzero;stroke:white;stroke-width:1px;"/>
 </svg>
